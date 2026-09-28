@@ -1,0 +1,87 @@
+.booking-section {
+  max-width: 900px;
+  margin: -45px auto 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 20;
+}
+
+.booking-bar {
+  background-color: var(--mirage);
+  color: white;
+  padding: 24px 32px;
+  border-radius: 4px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.booking-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.booking-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.booking-item .icon {
+  height: 24px;
+  width: auto;
+}
+
+.booking-info label {
+  display: block;
+  color: rgba(242, 238, 235, 0.8);
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.booking-info input,
+.booking-info select {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+}
+
+.booking-info select {
+  appearance: none;
+  background-color: var(--mirage);
+}
+
+.arrow-down {
+  display: none;
+  color: var(--twine);
+  font-size: 14px;
+}
+
+.divider {
+  display: none;
+  width: 1px;
+  height: 40px;
+  background-color: rgba(202, 198, 198, 0.2);
+}
+
+@media (min-width: 768px) {
+  .booking-bar {
+    flex-direction: row;
+  }
+
+  .arrow-down,
+  .divider {
+    display: block;
+  }
+}

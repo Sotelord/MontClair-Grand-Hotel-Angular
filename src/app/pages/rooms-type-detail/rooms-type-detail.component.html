@@ -1,0 +1,15 @@
+@if (roomType) {
+  <app-page-header
+    superiorText="CATEGORÍA SELECCIONADA"
+    [title]="roomType.name"
+    [description]="roomType.description"
+    [backgroundImage]="roomType.imageUrl"
+  ></app-page-header>
+  <app-room-list-card [rooms]="rooms"></app-room-list-card>
+} @else {
+  <app-page-header
+    superiorText="MONTCLAIR GRAND HOTEL"
+    title="Categoría no encontrada"
+    description="El tipo de habitación que buscas no existe."
+  ></app-page-header>
+}

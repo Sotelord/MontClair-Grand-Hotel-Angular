@@ -1,0 +1,33 @@
+<section
+  class="bg-mirage bg-cover bg-center text-white pt-20 pb-16 px-6 lg:px-12 relative overflow-hidden"
+  [style.background-image]="
+    backgroundImage()
+      ? 'linear-gradient(to right, rgba(20,30,38,0.9), rgba(20,30,38,0.8)), url(\'' +
+        backgroundImage() +
+        '\')'
+      : null
+  "
+>
+  <div class="max-w-4xl mx-auto text-center">
+    <p
+      class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold mb-4"
+    >
+      {{ superiorText() }}
+    </p>
+    <h1
+      class="font-serif text-4xl sm:text-5xl md:text-[54px] font-normal tracking-[2px] leading-tight mb-5"
+    >
+      {{ title() }}
+    </h1>
+    <p
+      class="font-sans text-xs md:text-[13px] text-[#C2C9D1] font-light leading-relaxed max-w-2xl mx-auto mb-8"
+    >
+      {{ description() }}
+    </p>
+    <div class="flex items-center justify-center gap-3" aria-hidden="true">
+      <div class="h-[1px] w-14 bg-twine/40"></div>
+      <div class="w-2.5 h-2.5 rotate-45 border border-twine bg-twine"></div>
+      <div class="h-[1px] w-14 bg-twine/40"></div>
+    </div>
+  </div>
+</section>

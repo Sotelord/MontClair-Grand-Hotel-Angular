@@ -1,0 +1,48 @@
+<section
+  id="habitaciones"
+  class="rooms-section"
+  aria-labelledby="habitaciones-titulo"
+>
+  <div class="container rooms-layout">
+    <div class="rooms-intro">
+      <div class="section-subtitle">
+        <span>Descansa con estilo</span>
+        <div class="line"></div>
+      </div>
+      <h2 id="habitaciones-titulo">Habitaciones que elevan tu experiencia</h2>
+      <p>
+        Cada detalle ha sido cuidadosamente seleccionado para ofrecerte el
+        máximo confort, elegancia y privacidad.
+      </p>
+      <a href="/rooms/cards" class="btn btn-primary"
+        >Ver Todas las Habitaciones</a
+      >
+    </div>
+
+    <div class="rooms-carousel">
+      <button
+        type="button"
+        class="carousel-btn"
+        (click)="onPreviousClick()"
+        aria-label="Habitación anterior"
+      >
+        ‹
+      </button>
+
+      <div class="rooms-grid">
+        @for (roomType of visibleRoomTypes(); track roomType.id) {
+          <app-room-card [roomType]="roomType" [compact]="$index !== 1" />
+        }
+      </div>
+
+      <button
+        type="button"
+        class="carousel-btn"
+        (click)="onNextClick()"
+        aria-label="Habitación siguiente"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+</section>

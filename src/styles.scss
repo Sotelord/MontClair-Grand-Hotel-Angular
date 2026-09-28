@@ -1,5 +1,4 @@
 :root {
-  /* Colores del diseÃ±o de Figma */
   --twine: #bf925a;
   --twine-hover: #73503c;
   --mirage: #141e26;
@@ -7,9 +6,9 @@
   --woodsmoke: #111413;
   --silver: #cac6c6;
 
-  /* TipografÃ­as */
   --font-serif: "Cinzel", serif;
   --font-sans: "Inter", sans-serif;
+  --font-display: "Cormorant Garamond", serif;
 }
 
 html {
@@ -46,12 +45,6 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
-}
-
-.logo-img img {
-  height: 70px;
-  width: 200px;
-  object-fit: cover;
 }
 
 a {
@@ -131,19 +124,6 @@ ul {
 .full-width {
   width: 100%;
   margin-top: 15px;
-}
-
-.header {
-  background-color: var(--pampas);
-  border-bottom: 1px solid rgba(202, 198, 198, 0.5);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 24px;
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .logo-link {
@@ -227,101 +207,6 @@ ul {
 
   .header {
     padding: 15px 48px;
-  }
-}
-
-.main-footer {
-  padding: 64px 24px 48px 24px;
-  background-color: var(--pampas);
-  border-top: 1px solid rgba(202, 198, 198, 0.5);
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px;
-}
-
-@media (min-width: 768px) {
-  .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .footer-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.footer-logo-col {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.footer-logo-col .logo-title {
-  font-size: 26px;
-}
-
-.slogan {
-  font-size: 11px;
-  margin-top: 16px;
-}
-
-.footer-col h4 {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
-}
-
-.footer-col ul {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 12px;
-}
-
-.footer-col ul a:hover {
-  color: var(--twine);
-}
-
-.contact-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  line-height: 1.5;
-}
-
-.contact-list li img {
-  height: 14px;
-  width: auto;
-  margin-top: 2px;
-}
-
-.copyright-bar {
-  background-color: var(--mirage);
-  padding: 24px;
-  font-size: 11px;
-  color: rgba(242, 238, 235, 0.8);
-}
-
-.legal-links {
-  display: flex;
-  gap: 40px;
-}
-
-.legal-links a:hover {
-  color: var(--twine);
-}
-
-@media (max-width: 768px) {
-  .copyright-bar .container {
-    flex-direction: column;
-    gap: 16px;
-    text-align: center;
   }
 }
 
@@ -435,4 +320,19 @@ ul {
 
 .flex {
   display: flex;
+}
+
+.section-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-subtitle span {
+  color: var(--twine);
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }

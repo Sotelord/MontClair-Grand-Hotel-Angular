@@ -22,21 +22,48 @@
             colors: {
               twine: "#BF925A",
               "twine-hover": "#73503C",
+              "twine-dark": "#73503C",
               mirage: "#141E26",
               pampas: "#F2EEEB",
               woodsmoke: "#111413",
               silver: "#CAC6C6",
+              ivory: "#FDFBF7",
             },
             fontFamily: {
               serif: ["Cinzel", "serif"],
               sans: ["Inter", "sans-serif"],
+              display: ["Cormorant Garamond", "serif"],
             },
           },
         },
       };
     </script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
   </head>
   <body>
     <app-root></app-root>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+      var swiper = new Swiper(".mySwiper", {
+        slidesPerView: 1,
+        spaceBetween: 28,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+          dynamicBullets: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        breakpoints: {
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 4 },
+        },
+      });
+    </script>
   </body>
 </html>

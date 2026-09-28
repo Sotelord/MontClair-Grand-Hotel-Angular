@@ -1,0 +1,11 @@
+<app-page-header
+  superiorText="MONTCLAIR GRAND HOTEL"
+  title="Habitaciones"
+  description="Espacios donde el diseño de vanguardia se encuentra con la calidez del hogar. Cada rincón ha sido pensado para cautivar tus sentidos."
+></app-page-header>
+<app-introduction></app-introduction>
+<app-rooms-carousel
+  [roomTypesArray]="roomTypesArray"
+  (roomTypeSelected)="verDetalleRoomType($event)"
+></app-rooms-carousel>
+<app-baner-reserva></app-baner-reserva>

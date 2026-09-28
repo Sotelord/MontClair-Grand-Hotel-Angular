@@ -1,0 +1,33 @@
+<section class="bg-pampas py-14 px-6 lg:px-12">
+  <div class="max-w-7xl mx-auto">
+    <div
+      class="swiper mySwiper !pb-14 px-12"
+      style="
+        --swiper-navigation-color: #bf925a;
+        --swiper-pagination-color: #bf925a;
+        --swiper-navigation-size: 24px;
+      "
+    >
+      <div class="swiper-wrapper">
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+            @for (roomType of roomTypesArray(); track roomType.id) {
+              <div class="carousel-slide">
+                <app-room-card
+                  [roomType]="roomType"
+                  [showFeatures]="false"
+                  actionText="Ver Habitaciones"
+                  [linkToDetail]="true"
+                  (roomTypeSelected)="onRoomTypeSelected($event)"
+                />
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination !bottom-0"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+</section>

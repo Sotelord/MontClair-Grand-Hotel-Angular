@@ -1,0 +1,13 @@
+<article class="service-card">
+  @if (service().icon) {
+    <div
+      class="service-icon"
+      [style.mask-image]="'url(\'' + service().icon + '\')'"
+      [style.-webkit-mask-image]="'url(\'' + service().icon + '\')'"
+    ></div>
+  } @else {
+    <p>No hay icono</p>
+  }
+  <h3>{{ service().name }}</h3>
+  <p>{{ service().description }}</p>
+</article>

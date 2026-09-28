@@ -1,0 +1,14 @@
+<section
+  id="servicios"
+  class="services-section"
+  aria-labelledby="servicios-titulo"
+>
+  <h2 id="servicios-titulo" class="services-title">
+    Nuestros servicios destacados
+  </h2>
+  <div class="container services-grid">
+    @for (service of serviceArray().slice(0, 4); track $index) {
+      <app-service-card [service]="service"></app-service-card>
+    }
+  </div>
+</section>

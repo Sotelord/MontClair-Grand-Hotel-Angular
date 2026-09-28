@@ -1,0 +1,61 @@
+<section class="booking-section" aria-label="Consultar disponibilidad">
+  <form id="form-disponibilidad" class="booking-bar">
+    <div class="booking-group">
+      <div class="booking-item">
+        <img src="images/Calendario.png" alt="" class="icon" />
+        <div class="booking-info">
+          <label for="booking-check-in">Check-In</label>
+          <input
+            type="text"
+            id="booking-check-in"
+            name="checkIn"
+            value="24 Mayo 2027"
+            readonly
+          />
+        </div>
+      </div>
+      <span class="arrow-down" aria-hidden="true">v</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="booking-group">
+      <div class="booking-item">
+        <img src="images/Calendario.png" alt="" class="icon" />
+        <div class="booking-info">
+          <label for="booking-check-out">Check-Out</label>
+          <input
+            type="text"
+            id="booking-check-out"
+            name="checkOut"
+            value="26 Mayo 2027"
+            readonly
+          />
+        </div>
+      </div>
+      <span class="arrow-down" aria-hidden="true">v</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="booking-group">
+      <div class="booking-item">
+        <img src="images/Num Persona.png" alt="" class="icon" />
+        <div class="booking-info">
+          <label for="booking-huespedes">Huéspedes</label>
+          <select id="booking-huespedes" name="huespedes">
+            <option value="2 Adultos, 1 Niño" selected>
+              2 Adultos, 1 Niño
+            </option>
+            <option value="2 Adultos">2 Adultos</option>
+          </select>
+        </div>
+      </div>
+      <span class="arrow-down" aria-hidden="true">v</span>
+    </div>
+
+    <button type="submit" class="btn btn-primary submit-btn">
+      Ver Disponibilidad
+    </button>
+  </form>
+</section>
