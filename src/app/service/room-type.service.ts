@@ -22,6 +22,19 @@ export class RoomTypeService {
     return this.roomTypes.find((roomType) => roomType.id === id);
   }
 
+  addRoomType(roomType: RoomType): void {
+    const newId = this.roomTypes.length > 0 ? Math.max(...this.roomTypes.map(r => r.id)) + 1 : 1;
+    roomType.id = newId;
+    this.roomTypes.push(roomType);
+  }
+
+  updateRoomType(roomType: RoomType): void {
+    const index = this.roomTypes.findIndex((type) => type.id === roomType.id);
+    if (index !== -1) {
+      this.roomTypes[index] = roomType;
+    }
+  }
+
   private roomTypes: RoomType[] = [
     {
       id: 1,

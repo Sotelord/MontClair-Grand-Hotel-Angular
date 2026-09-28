@@ -1,33 +1,45 @@
-<section class="bg-pampas py-14 px-6 lg:px-12">
-  <div class="max-w-7xl mx-auto">
-    <div
-      class="swiper mySwiper !pb-14 px-12"
-      style="
-        --swiper-navigation-color: #bf925a;
-        --swiper-pagination-color: #bf925a;
-        --swiper-navigation-size: 24px;
-      "
+<section class="bg-pampas py-14 px-6 lg:px-12 relative group">
+  <div class="max-w-7xl mx-auto relative">
+    
+    <!-- Botón Anterior -->
+    <button
+      (click)="scrollLeft()"
+      class="absolute left-[-20px] top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-twine shadow-lg rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
-      <div class="swiper-wrapper">
-        <div class="carousel-viewport">
-          <div class="carousel-track">
-            @for (roomType of roomTypesArray(); track roomType.id) {
-              <div class="carousel-slide">
-                <app-room-card
-                  [roomType]="roomType"
-                  [showFeatures]="false"
-                  actionText="Ver Habitaciones"
-                  [linkToDetail]="true"
-                  (roomTypeSelected)="onRoomTypeSelected($event)"
-                />
-              </div>
-            }
-          </div>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      </svg>
+    </button>
+
+    <!-- Contenedor del Carrusel Native -->
+    <div 
+      #carousel
+      class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scroll-smooth scrollbar-hide"
+      style="scrollbar-width: none; -ms-overflow-style: none;"
+    >
+      @for (roomType of roomTypesArray(); track roomType.id) {
+        <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] flex">
+          <app-room-card
+            [roomType]="roomType"
+            [showFeatures]="false"
+            actionText="Ver Habitaciones"
+            [linkToDetail]="true"
+            (roomTypeSelected)="onRoomTypeSelected($event)"
+            class="w-full flex"
+          />
         </div>
-      </div>
-      <div class="swiper-pagination !bottom-0"></div>
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
+      }
     </div>
+
+    <!-- Botón Siguiente -->
+    <button
+      (click)="scrollRight()"
+      class="absolute right-[-20px] top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-twine shadow-lg rounded-full w-10 h-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+      </svg>
+    </button>
+
   </div>
 </section>
