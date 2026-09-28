@@ -1,59 +1,97 @@
-# MontClairGrandHotel
+# Montclair Grand Hotel
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.23.
+Frontend en Angular del sitio web y panel administrativo del **Montclair Grand Hotel**, desarrollado como parte del Sprint 6. Los datos de habitaciones, servicios, clientes y reservas se manejan actualmente con información quemada (mock) dentro de los servicios de Angular, sin conexión a un backend real.
 
-## Development server
+## Requisitos previos
 
-To start a local development server, run:
+- [Node.js](https://nodejs.org/) (versión 18 o superior recomendada)
+- [Angular CLI](https://angular.dev/tools/cli) v19
+
+```bash
+npm install -g @angular/cli
+```
+
+## Instalación
+
+1. Clonar el repositorio y ubicarse en la carpeta del proyecto:
+
+```bash
+cd MontClairGrandHotel
+```
+
+2. Instalar las dependencias:
+
+```bash
+npm install
+```
+
+## Ejecución en desarrollo
+
+Levantar el servidor local con:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Luego abrir el navegador en `http://localhost:4200/`. La aplicación se recarga automáticamente al modificar los archivos fuente.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Otros comandos útiles
 
 ```bash
-ng generate component component-name
+ng build      # Compila el proyecto de producción en dist/
+ng test       # Ejecuta las pruebas unitarias con Karma
+ng generate component nombre-componente   # Genera un nuevo componente
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Estructura de carpetas
 
-```bash
-ng generate --help
+```
+src/app/
+├── components/            # Componentes reutilizables compartidos
+│   ├── navbar/             # Barra de navegación del sitio público
+│   ├── footer/             # Pie de página del sitio público
+│   ├── admin-navbar/       # Barra de navegación del panel admin
+│   ├── admin-footer/       # Pie de página del panel admin
+│   ├── admin-page-header/  # Encabezado de páginas del panel admin
+│   ├── page-header/        # Encabezado genérico de páginas públicas
+│   └── room-card/          # Tarjeta de presentación de una habitación
+│
+├── pages/                  # Páginas (vistas) de la aplicación
+│   ├── landing-page/        # Página de inicio, con sus propios subcomponentes
+│   │   └── components/       # hero, booking-bar, services-section, room-section,
+│   │                          # gallery-banner, location-map, service-card
+│   ├── rooms-cards/          # Listado de habitaciones disponibles
+│   │   └── components/       # introduction, rooms-carousel, baner-reserva
+│   ├── rooms-type-detail/    # Detalle de un tipo de habitación
+│   │   └── components/       # room-item-card, room-list-card
+│   ├── room-types-admin/     # Panel admin: listado de tipos de habitación
+│   │   └── components/       # room-types-table
+│   └── room-type-form/       # Panel admin: formulario de alta/edición de tipo de habitación
+│
+├── service/                # Servicios con los datos quemados (mock)
+│   ├── room.service.ts
+│   ├── room-type.service.ts
+│   ├── client.service.ts
+│   ├── reservation.service.ts
+│   ├── reservation-room.service.ts
+│   ├── adquired-service.service.ts
+│   └── services.service.ts
+│
+├── models/                 # Interfaces/modelos de datos (Room, Client, Reservation, etc.)
+│
+├── app.component.ts        # Componente raíz: alterna entre layout público y admin
+└── app.routes.ts           # Definición de rutas de la aplicación
 ```
 
-## Building
+## Páginas de la aplicación
 
-To build the project run:
+| Ruta | Página | Descripción |
+|---|---|---|
+| `/` | Landing Page | Página principal del hotel: hero, barra de reserva, servicios, habitaciones destacadas, galería y ubicación. |
+| `/rooms/cards` | Listado de habitaciones | Muestra las habitaciones disponibles en formato de tarjetas/carrusel. |
+| `/rooms/type/:id` | Detalle de tipo de habitación | Información detallada de un tipo de habitación específico. |
+| `/admin/rooms-types` | Administración de tipos de habitación | Panel admin con tabla de tipos de habitación existentes. |
+| `/admin/room-types/add` | Crear tipo de habitación | Formulario para agregar un nuevo tipo de habitación. |
+| `/admin/room-types/edit/:id` | Editar tipo de habitación | Formulario para editar un tipo de habitación existente. |
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+El layout (navbar/footer) cambia automáticamente entre la versión pública y la versión de administración según si la ruta actual comienza con `/admin`.
