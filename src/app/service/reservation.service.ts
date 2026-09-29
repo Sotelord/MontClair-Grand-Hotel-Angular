@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Reservation } from '../models/reservation.model';
+import { ClientService } from './client.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReservationService {
-  constructor() {}
+  constructor(private clientService: ClientService) {}
 
   getReservations(): Reservation[] {
     return this.reservations;
@@ -15,10 +16,11 @@ export class ReservationService {
     return this.reservations.find((item) => item.id === id);
   }
 
-  private reservations: Reservation[] = [
+  private get reservations(): Reservation[] {
+    return [
     {
       id: 1,
-      clientId: 1,
+      client: this.clientService.getClientById(1)!,
       checkInDate: '2026-09-27',
       checkOutDate: '2026-09-30',
       numberOfPeople: 2,
@@ -26,7 +28,7 @@ export class ReservationService {
     },
     {
       id: 2,
-      clientId: 2,
+      client: this.clientService.getClientById(2)!,
       checkInDate: '2026-09-28',
       checkOutDate: '2026-10-01',
       numberOfPeople: 2,
@@ -34,7 +36,7 @@ export class ReservationService {
     },
     {
       id: 3,
-      clientId: 3,
+      client: this.clientService.getClientById(3)!,
       checkInDate: '2026-09-29',
       checkOutDate: '2026-10-02',
       numberOfPeople: 2,
@@ -42,7 +44,7 @@ export class ReservationService {
     },
     {
       id: 4,
-      clientId: 4,
+      client: this.clientService.getClientById(4)!,
       checkInDate: '2026-09-30',
       checkOutDate: '2026-10-03',
       numberOfPeople: 2,
@@ -50,11 +52,12 @@ export class ReservationService {
     },
     {
       id: 5,
-      clientId: 5,
+      client: this.clientService.getClientById(5)!,
       checkInDate: '2026-10-01',
       checkOutDate: '2026-10-04',
       numberOfPeople: 2,
       status: 'CONFIRMED',
     },
-  ];
+    ];
+  }
 }

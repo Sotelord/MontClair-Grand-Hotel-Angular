@@ -11,6 +11,10 @@ export class ServicesService {
     return this.serviceArray;
   }
 
+  getServiceById(id: number): Service | undefined {
+    return this.serviceArray.find((service) => service.id === id);
+  }
+
   private serviceArray: Service[] = [
     {
       id: 1,

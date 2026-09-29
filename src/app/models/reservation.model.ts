@@ -1,6 +1,8 @@
+import { Client } from './client.model';
+
 export interface Reservation {
   id: number;
-  clientId: number;
+  client: Client;
   checkInDate: string;
   checkOutDate: string;
   numberOfPeople: number;

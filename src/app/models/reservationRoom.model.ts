@@ -1,6 +1,9 @@
+import { Reservation } from './reservation.model';
+import { Room } from './room.model';
+
 export interface ReservationRoom {
   id: number;
-  reservationId: number;
-  roomId: number;
+  reservation: Reservation;
+  room: Room;
   pricePerNight: number;
 }
