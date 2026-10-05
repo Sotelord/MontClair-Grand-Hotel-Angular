@@ -15,6 +15,26 @@ export class ServicesService {
     return this.serviceArray.find((service) => service.id === id);
   }
 
+  addService(service: Service): void {
+    const newId = this.serviceArray.length > 0 ? Math.max(...this.serviceArray.map(s => s.id)) + 1 : 1;
+    service.id = newId;
+    this.serviceArray.push(service);
+  }
+
+  updateService(service: Service): void {
+    const index = this.serviceArray.findIndex((s) => s.id === service.id);
+    if (index !== -1) {
+      this.serviceArray[index] = service;
+    }
+  }
+
+  deleteService(service: Service): void {
+    const index = this.serviceArray.findIndex((s) => s.id === service.id);
+    if (index !== -1) {
+      this.serviceArray.splice(index, 1);
+    }
+  }
+
   private serviceArray: Service[] = [
     {
       id: 1,

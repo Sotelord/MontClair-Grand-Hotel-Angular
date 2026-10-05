@@ -1,0 +1,68 @@
+<div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse text-xs">
+      <thead>
+        <tr class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10">
+          <th scope="col" class="py-4 px-6 font-semibold">ID</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Nombre del Servicio</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Descripción</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Tarifa Base</th>
+          <th scope="col" class="py-4 px-6 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#E8E2DA]">
+        @for (service of services(); track service.id) {
+          <tr class="hover:bg-pampas/60 transition group">
+            <td class="py-4 px-6 font-mono text-twine-dark font-semibold text-[11px]">
+              {{ formatId(service.id) }}
+            </td>
+            <td class="py-4 px-6">
+              <span class="font-serif font-semibold text-woodsmoke text-sm">{{ service.name }}</span>
+            </td>
+            <td class="py-4 px-6 text-woodsmoke/70 max-w-xs">
+              {{ service.description }}
+            </td>
+            <td class="py-4 px-6 font-semibold text-twine-dark text-[12px]">
+              <span>{{ formatPrice(service.price) }}</span>
+            </td>
+            <td class="py-4 px-6 text-right">
+              <div class="inline-flex items-center gap-2">
+                <button
+                  type="button"
+                  class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
+                  title="Editar Servicio"
+                  aria-label="Editar Servicio"
+                  (click)="onEdit(service)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
+                  title="Eliminar Servicio"
+                  aria-label="Eliminar Servicio"
+                  (click)="onDelete(service)"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+        @if (services().length === 0) {
+          <tr>
+            <td colspan="5" class="py-12 text-center text-woodsmoke/50 italic">
+              No se encontraron servicios registrados actualmente.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

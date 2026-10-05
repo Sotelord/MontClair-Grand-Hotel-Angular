@@ -1,0 +1,116 @@
+<div class="min-h-screen bg-pampas font-sans">
+  <!-- Header -->
+  <div class="bg-mirage py-12 px-6 shadow-md border-b border-white/10 relative">
+    <div class="max-w-2xl mx-auto text-center relative z-10">
+      <h4 class="font-sans text-[10px] tracking-[4px] text-twine uppercase font-bold mb-3">
+        Administración
+      </h4>
+      <h1 class="font-serif text-3xl md:text-4xl text-white tracking-[2px] uppercase">
+        {{ isEditMode ? 'Editar Servicio' : 'Nuevo Servicio' }}
+      </h1>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div class="flex items-center justify-center p-6 py-12">
+    <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden">
+      
+      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+
+      <form [formGroup]="serviceForm" (ngSubmit)="handleSubmit()" class="space-y-6">
+        
+        <div>
+          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+            Nombre del Servicio *
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="ej. Restaurante Gourmet"
+            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+            Descripción *
+          </label>
+          <textarea
+            formControlName="description"
+            rows="3"
+            placeholder="Descripción corta del servicio..."
+            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition resize-none"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+              Tarifa Base (€) *
+            </label>
+            <input
+              type="number"
+              formControlName="price"
+              placeholder="ej. 40.0"
+              class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+              Tag / Etiqueta *
+            </label>
+            <input
+              type="text"
+              formControlName="tag"
+              placeholder="ej. EXPERIENCIA 01"
+              class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+              Horario *
+            </label>
+            <input
+              type="text"
+              formControlName="schedule"
+              placeholder="ej. 8:00 AM - 10:00 PM"
+              class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+            URL de la Imagen *
+          </label>
+          <input
+            type="text"
+            formControlName="imageUrl"
+            placeholder="https://..."
+            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+          />
+        </div>
+
+        <div class="pt-4 flex flex-col sm:flex-row gap-3">
+          <button
+            type="submit"
+            class="w-full sm:w-auto bg-twine text-white px-8 py-3 rounded-[2px] font-sans text-[10px] uppercase tracking-[2px] font-bold hover:bg-twine-hover transition-colors shadow-sm"
+          >
+            Guardar Servicio
+          </button>
+          
+          <a
+            routerLink="/admin/services"
+            class="w-full sm:w-auto bg-white border border-[#E8E2DA] text-woodsmoke/80 px-8 py-3 rounded-[2px] font-sans text-[10px] uppercase tracking-[2px] font-bold hover:bg-pampas transition-colors text-center"
+          >
+            Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

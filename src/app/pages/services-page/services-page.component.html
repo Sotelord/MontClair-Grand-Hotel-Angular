@@ -1,0 +1,71 @@
+<div class="bg-pampas min-h-screen pb-20">
+  <!-- Header Section -->
+  <section class="bg-mirage py-16 md:py-20 text-center border-b border-white/10">
+    <div class="container mx-auto px-6">
+      <h4 class="font-sans text-[9px] sm:text-[10px] tracking-[4px] text-twine uppercase font-bold mb-4">
+        MONTCLAIR GRAND HOTEL
+      </h4>
+      <h1 class="font-serif text-3xl md:text-4xl text-white tracking-[2px] uppercase mb-4">
+        Nuestros Servicios
+      </h1>
+      <p class="text-white/60 text-xs max-w-2xl mx-auto font-sans leading-relaxed">
+        Experiencias cuidadosamente seleccionadas para acompañar una estancia exquisita en Mónaco, con el mismo
+        lenguaje visual refinado, cálido y mediterráneo de Montclair Grand Hotel.
+      </p>
+      <div class="flex items-center justify-center gap-3 mt-8">
+        <div class="h-[1px] w-8 bg-twine/40"></div>
+        <div class="w-1.5 h-1.5 rotate-45 bg-twine"></div>
+        <div class="h-[1px] w-8 bg-twine/40"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid Section -->
+  <section class="max-w-7xl mx-auto px-6 pt-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (service of services; track service.id) {
+        <article class="bg-white border border-[#E8E2DA] flex flex-col group transition-shadow hover:shadow-xl">
+          <!-- Image -->
+          <div class="aspect-[4/3] overflow-hidden relative">
+            <img 
+              [src]="service.imageUrl" 
+              [alt]="service.name"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+          
+          <!-- Content -->
+          <div class="p-8 flex flex-col flex-1 text-center items-center">
+            <span class="font-sans text-[9px] tracking-[2px] text-twine uppercase font-bold mb-3">
+              {{ service.tag || 'EXPERIENCIA' }}
+            </span>
+            <h3 class="font-serif text-lg md:text-xl text-woodsmoke tracking-[1px] uppercase mb-4">
+              {{ service.name }}
+            </h3>
+            <p class="text-[11px] text-woodsmoke/70 leading-relaxed mb-6 line-clamp-3">
+              {{ service.description }}
+            </p>
+            
+            <div class="flex gap-2 w-full justify-center mb-8">
+              <span class="border border-[#E8E2DA] px-3 py-1.5 text-[9px] uppercase tracking-[1px] text-woodsmoke/80 font-semibold truncate">
+                {{ service.schedule || '24 HORAS' }}
+              </span>
+              <span class="border border-[#E8E2DA] px-3 py-1.5 text-[9px] uppercase tracking-[1px] text-woodsmoke/80 font-semibold truncate">
+                {{ service.priceLabel || 'CONSULTAR' }}
+              </span>
+            </div>
+
+            <div class="mt-auto w-full">
+              <a 
+                [routerLink]="['/services', service.id]"
+                class="block w-full border border-twine text-twine uppercase tracking-[2px] font-bold text-[10px] py-3.5 transition-colors duration-300 hover:bg-twine hover:text-white"
+              >
+                VER MÁS
+              </a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+</div>
