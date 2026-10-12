@@ -6,7 +6,11 @@ import { RoomTypeService } from './room-type.service';
   providedIn: 'root',
 })
 export class RoomService {
-  constructor(private roomTypeService: RoomTypeService) {}
+  private rooms: Room[] = [];
+
+  constructor(private roomTypeService: RoomTypeService) {
+    this.rooms = this.seedRooms();
+  }
 
   getRooms(): Room[] {
     return this.rooms;
@@ -17,10 +21,60 @@ export class RoomService {
   }
 
   getRoomsByTypeId(typeId: number): Room[] {
-    return this.rooms.filter((room) => room.roomType.id === typeId);
+    return this.rooms.filter((room) => room.roomType?.id === typeId);
   }
 
-  private get rooms(): Room[] {
+  isNumberTaken(num: string, excludeId?: number): boolean {
+    const cleanNum = num.trim();
+    return this.rooms.some((r) => r.number === cleanNum && r.id !== excludeId);
+  }
+
+  addRoom(newRoom: Omit<Room, 'id'> | Room): { success: boolean; message?: string; room?: Room } {
+    if (this.isNumberTaken(newRoom.number)) {
+      return { success: false, message: `No se pudo guardar: Ya existe una habitación con el número '${newRoom.number}'.` };
+    }
+
+    const nextId = this.rooms.length > 0 ? Math.max(...this.rooms.map((r) => r.id)) + 1 : 1;
+    const roomToAdd: Room = {
+      ...newRoom,
+      id: nextId,
+      highlights: newRoom.highlights || [],
+      galleryImages: newRoom.galleryImages || [],
+    };
+
+    this.rooms.unshift(roomToAdd);
+    return { success: true, room: roomToAdd };
+  }
+
+  updateRoom(room: Room): { success: boolean; message?: string } {
+    const index = this.rooms.findIndex((r) => r.id === room.id);
+    if (index === -1) {
+      return { success: false, message: 'La habitación no fue encontrada.' };
+    }
+
+    if (this.isNumberTaken(room.number, room.id)) {
+      return { success: false, message: `No se pudo guardar: Ya existe una habitación con el número '${room.number}'.` };
+    }
+
+    this.rooms[index] = {
+      ...this.rooms[index],
+      ...room,
+      highlights: room.highlights || this.rooms[index].highlights || [],
+      galleryImages: room.galleryImages || this.rooms[index].galleryImages || [],
+    };
+    return { success: true };
+  }
+
+  deleteRoom(id: number): { success: boolean; message?: string } {
+    const index = this.rooms.findIndex((r) => r.id === id);
+    if (index === -1) {
+      return { success: false, message: 'La habitación no existe.' };
+    }
+    this.rooms.splice(index, 1);
+    return { success: true };
+  }
+
+  private seedRooms(): Room[] {
     return [
     {
       id: 1,

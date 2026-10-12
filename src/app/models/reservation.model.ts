@@ -1,4 +1,5 @@
 import { Client } from './client.model';
+import { ReservationRoom } from './reservationRoom.model';
 
 export interface Reservation {
   id: number;
@@ -7,4 +8,5 @@ export interface Reservation {
   checkOutDate: string;
   numberOfPeople: number;
   status: string;
+  reservationRooms?: ReservationRoom[];
 }

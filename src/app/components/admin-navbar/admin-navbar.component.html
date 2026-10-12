@@ -11,7 +11,7 @@
     </a>
   </div>
 
-  <nav class="hidden sm:flex items-center gap-6 text-white/90">
+  <nav class="hidden md:flex items-center gap-6 text-white/90">
     <a
       routerLink="/admin/rooms"
       class="text-[9px] uppercase tracking-[2px] font-semibold hover:text-twine transition"
@@ -28,7 +28,7 @@
       >Reservas</a
     >
     <a
-      routerLink="/clients"
+      routerLink="/admin/clients"
       class="text-[9px] uppercase tracking-[2px] font-semibold hover:text-twine transition"
       >Clientes</a
     >
@@ -38,6 +38,7 @@
       >Servicios</a
     >
   </nav>
+
   <div class="flex-1 flex justify-end gap-4 items-center">
     <a
       routerLink="/rooms/cards"
@@ -45,5 +46,14 @@
     >
       Vista Pública →
     </a>
+
+    <button
+      type="button"
+      (click)="logout()"
+      class="text-[10px] uppercase tracking-[1.5px] font-bold text-white/70 hover:text-white border border-white/20 hover:border-white/50 px-3 py-1.5 rounded-[2px] transition cursor-pointer"
+      title="Cerrar Sesión Administrativa"
+    >
+      Salir
+    </button>
   </div>
 </header>

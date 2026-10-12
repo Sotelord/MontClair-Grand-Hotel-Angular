@@ -51,12 +51,12 @@
     </p>
 
     <div class="pt-3 border-t border-[#E8E2DA]">
-      <button
-        type="button"
+      <a
+        [routerLink]="['/rooms', room().id]"
         class="block w-full text-center border border-twine/70 text-twine hover:bg-twine hover:text-white text-[9px] uppercase tracking-[2px] font-bold py-2.5 rounded-[2px] transition-all duration-300 cursor-pointer"
       >
         Ver Detalles / Reservar
-      </button>
+      </a>
     </div>
   </div>
 </article>
