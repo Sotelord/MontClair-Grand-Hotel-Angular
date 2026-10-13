@@ -159,25 +159,43 @@ export class ClientReservationComponent implements OnInit {
       return;
     }
 
-    if (this.bookingForm.invalid) {
-      this.bookingForm.markAllAsTouched();
-      this.errorMessage =
-        'Por favor complete todos los datos requeridos para la reserva.';
+    const val = this.bookingForm.value;
+
+    if (!val.roomId || !this.selectedRoom) {
+      this.errorMessage = 'Por favor seleccione una habitación disponible.';
       return;
     }
 
-    const val = this.bookingForm.value;
+    if (!val.checkInDate || !val.checkOutDate) {
+      this.errorMessage = 'Por favor seleccione las fechas de llegada y salida.';
+      return;
+    }
+
     if (new Date(val.checkOutDate) <= new Date(val.checkInDate)) {
       this.errorMessage =
         'La fecha de salida debe ser posterior a la fecha de llegada.';
       return;
     }
 
+    const guests = Number(val.numberOfPeople);
+    if (!guests || guests < 1) {
+      this.errorMessage =
+        'El número de huéspedes debe ser de al menos 1 persona.';
+      return;
+    }
+
     if (
       this.selectedRoom &&
-      Number(val.numberOfPeople) > this.selectedRoom.capacity
+      guests > this.selectedRoom.capacity
     ) {
-      this.errorMessage = `La habitación seleccionada tiene una capacidad máxima de ${this.selectedRoom.capacity} huéspedes.`;
+      this.errorMessage = `La habitación seleccionada (${this.selectedRoom.name}) tiene una capacidad máxima de ${this.selectedRoom.capacity} personas. Por favor ajuste el número de huéspedes a ${this.selectedRoom.capacity} o menos.`;
+      return;
+    }
+
+    if (this.bookingForm.invalid) {
+      this.bookingForm.markAllAsTouched();
+      this.errorMessage =
+        'Por favor revise los campos requeridos para la reserva.';
       return;
     }
 

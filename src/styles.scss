@@ -26,10 +26,22 @@ body {
   background-color: var(--pampas);
   color: var(--woodsmoke);
   font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
   min-height: 100vh !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  letter-spacing: 1.5px;
+}
+
+p, span, a, label, button, input, select, textarea {
+  font-family: var(--font-sans);
 }
 
 .bg-mirage-dark {

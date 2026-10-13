@@ -219,11 +219,22 @@
               {{ poi.name }}
             </h3>
             <div
-              class="flex items-center gap-2 mb-3 text-xs font-mono text-twine-dark font-semibold"
+              class="flex items-center gap-2 mb-3 text-xs font-sans text-twine font-semibold tracking-wide"
             >
-              <span>📍 {{ poi.distance }}</span>
-              <span>•</span>
-              <span>⏱ {{ poi.time }}</span>
+              <span class="inline-flex items-center gap-1">
+                <svg class="w-3.5 h-3.5 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ poi.distance }}
+              </span>
+              <span class="text-woodsmoke/30">•</span>
+              <span class="inline-flex items-center gap-1">
+                <svg class="w-3.5 h-3.5 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                {{ poi.time }}
+              </span>
             </div>
             <p class="text-[11px] text-woodsmoke/70 leading-relaxed font-light">
               {{ poi.description }}
@@ -240,13 +251,15 @@
           <div
             class="w-8 h-8 rounded-full bg-twine/10 text-twine flex items-center justify-center font-bold text-xs mb-4"
           >
-            ✦
+            <svg class="w-4 h-4 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
           </div>
           <h3 class="font-serif text-base text-woodsmoke uppercase mb-1">
             {{ transfer.title }}
           </h3>
           <span
-            class="text-[11px] font-mono text-twine-dark font-semibold block mb-2"
+            class="text-[11px] font-sans text-twine font-semibold tracking-wide block mb-2"
             >{{ transfer.duration }}</span
           >
           <p class="text-xs text-woodsmoke/70 font-light leading-relaxed">

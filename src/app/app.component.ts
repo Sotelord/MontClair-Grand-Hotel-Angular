@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
+import { AuthService } from './service/auth.service';
 
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -10,6 +11,7 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
   selector: 'app-root',
   imports: [
     RouterOutlet,
+    RouterLink,
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
@@ -20,8 +22,16 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
 })
 export class AppComponent {
   router = inject(Router);
+  authService = inject(AuthService);
 
   isAdmin(): boolean {
-    return this.router.url.startsWith('/admin');
+    return (
+      this.router.url.startsWith('/admin') ||
+      (this.authService.isAdmin() && this.router.url.startsWith('/profile'))
+    );
+  }
+
+  isLoginPage(): boolean {
+    return this.router.url.startsWith('/login');
   }
 }

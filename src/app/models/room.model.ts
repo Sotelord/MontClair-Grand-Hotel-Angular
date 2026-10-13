@@ -18,6 +18,7 @@ export interface Room {
   headline?: string;
   fullDescription?: string;
   secondaryImageUrl?: string;
+  imageUrl?: string;
   highlights: Highlight[];
   galleryImages: string[];
 }

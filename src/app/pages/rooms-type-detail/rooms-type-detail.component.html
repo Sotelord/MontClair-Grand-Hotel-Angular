@@ -5,7 +5,7 @@
     [description]="roomType.description"
     [backgroundImage]="roomType.imageUrl"
   ></app-page-header>
-  <app-room-list-card [rooms]="rooms"></app-room-list-card>
+  <app-room-list-card [rooms]="rooms" [roomType]="roomType"></app-room-list-card>
 } @else {
   <app-page-header
     superiorText="MONTCLAIR GRAND HOTEL"
