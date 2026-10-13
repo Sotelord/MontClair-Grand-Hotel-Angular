@@ -40,34 +40,20 @@ export class LandingPageComponent implements OnInit {
   roomsArray: Room[] = [];
 
   ngOnInit(): void {
-    // 1. Cargar servicios desde la base de datos
-    this.serviceService.findAll().subscribe({
-      next: (services) => {
-        this.serviceArray = services || [];
-      },
-      error: () => {
-        this.serviceArray = this.serviceService.getServices();
-      },
+    this.serviceService.services$.subscribe((services) => {
+      this.serviceArray = services || [];
     });
 
-    // 2. Cargar tipos de habitación desde la base de datos
-    this.roomTypeService.findAll().subscribe({
-      next: (types) => {
-        this.roomTypesArray = types || [];
-      },
-      error: () => {
-        this.roomTypesArray = this.roomTypeService.getRoomTypes();
-      },
+    this.roomTypeService.roomTypes$.subscribe((types) => {
+      this.roomTypesArray = types || [];
     });
 
-    // 3. Cargar habitaciones desde la base de datos
-    this.roomService.findAll().subscribe({
-      next: (rooms) => {
-        this.roomsArray = rooms || [];
-      },
-      error: () => {
-        this.roomsArray = this.roomService.getRooms();
-      },
+    this.roomService.rooms$.subscribe((rooms) => {
+      this.roomsArray = rooms || [];
     });
+
+    this.serviceService.findAll().subscribe();
+    this.roomTypeService.findAll().subscribe();
+    this.roomService.findAll().subscribe();
   }
 }

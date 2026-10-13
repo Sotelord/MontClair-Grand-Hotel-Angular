@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Service } from '../models/service.model';
 
 @Injectable({
@@ -10,21 +10,27 @@ export class ServicesService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/services';
   private serviceArray: Service[] = [];
+  private readonly serviceArraySubject = new BehaviorSubject<Service[]>([]);
+  readonly services$ = this.serviceArraySubject.asObservable();
 
   constructor() {
     this.loadFromBackend();
   }
 
+  private syncServiceArray(data: Service[]): void {
+    this.serviceArray = [...data];
+    this.serviceArraySubject.next([...this.serviceArray]);
+  }
+
   findAll(): Observable<Service[]> {
     return this.http.get<Service[]>(this.apiUrl).pipe(
       tap((data) => {
-        if (data && data.length > 0) {
-          this.serviceArray = data.map((s) => ({
-            ...s,
-            highlights: s.highlights || [],
-            galleryImages: s.galleryImages || [],
-          }));
-        }
+        const normalized = (data || []).map((s) => ({
+          ...s,
+          highlights: s.highlights || [],
+          galleryImages: s.galleryImages || [],
+        }));
+        this.syncServiceArray(normalized);
       }),
     );
   }
@@ -38,7 +44,7 @@ export class ServicesService {
     return this.http.post<Service>(this.apiUrl, payload).pipe(
       tap((saved) => {
         if (saved) {
-          this.serviceArray.push(saved);
+          this.syncServiceArray([...this.serviceArray, saved]);
         }
       }),
     );
@@ -47,10 +53,17 @@ export class ServicesService {
   update(id: number, service: Service): Observable<Service> {
     return this.http.put<Service>(`${this.apiUrl}/${id}`, service).pipe(
       tap((updated) => {
-        const idx = this.serviceArray.findIndex((s) => s.id === id);
-        if (idx !== -1) {
-          this.serviceArray[idx] = updated;
-        }
+        const nextServices = this.serviceArray.map((s) =>
+          s.id === id
+            ? {
+                ...s,
+                ...updated,
+                highlights: updated.highlights || s.highlights || [],
+                galleryImages: updated.galleryImages || s.galleryImages || [],
+              }
+            : s,
+        );
+        this.syncServiceArray(nextServices);
       }),
     );
   }
@@ -58,7 +71,7 @@ export class ServicesService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
-        this.serviceArray = this.serviceArray.filter((s) => s.id !== id);
+        this.syncServiceArray(this.serviceArray.filter((s) => s.id !== id));
       }),
     );
   }
@@ -71,7 +84,7 @@ export class ServicesService {
   }
 
   getServices(): Service[] {
-    return this.serviceArray;
+    return [...this.serviceArray];
   }
 
   getServiceById(id: number): Service | undefined {

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Room } from '../models/room.model';
 import { RoomTypeService } from './room-type.service';
 
@@ -11,25 +11,31 @@ export class RoomService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/rooms';
   private rooms: Room[] = [];
+  private readonly roomsSubject = new BehaviorSubject<Room[]>([]);
+  readonly rooms$ = this.roomsSubject.asObservable();
 
   constructor(private roomTypeService: RoomTypeService) {
     this.loadFromBackend();
   }
 
+  private syncRooms(data: Room[]): void {
+    this.rooms = [...data];
+    this.roomsSubject.next([...this.rooms]);
+  }
+
   findAll(): Observable<Room[]> {
     return this.http.get<Room[]>(this.apiUrl).pipe(
       tap((data) => {
-        if (data) {
-          this.rooms = data.map((r: any) => ({
-            ...r,
-            roomType:
-              r.roomType ||
-              r.type ||
-              this.roomTypeService.getRoomTypeById(r.typeId || 1)!,
-            highlights: r.highlights || [],
-            galleryImages: r.galleryImages || [],
-          }));
-        }
+        const mapped = (data || []).map((r: any) => ({
+          ...r,
+          roomType:
+            r.roomType ||
+            r.type ||
+            this.roomTypeService.getRoomTypeById(r.typeId || 1)!,
+          highlights: r.highlights || [],
+          galleryImages: r.galleryImages || [],
+        }));
+        this.syncRooms(mapped);
       }),
     );
   }
@@ -56,7 +62,7 @@ export class RoomService {
             highlights: saved.highlights || [],
             galleryImages: saved.galleryImages || [],
           };
-          this.rooms.unshift(mapped);
+          this.syncRooms([mapped, ...this.rooms]);
         }
       }),
     );
@@ -69,18 +75,22 @@ export class RoomService {
     };
     return this.http.put<Room>(`${this.apiUrl}/${id}`, payload).pipe(
       tap((updated: any) => {
-        const idx = this.rooms.findIndex((r) => r.id === id);
-        if (idx !== -1) {
-          this.rooms[idx] = {
-            ...updated,
-            roomType:
-              updated.roomType ||
-              updated.type ||
-              this.roomTypeService.getRoomTypeById(updated.typeId || 1)!,
-            highlights: updated.highlights || [],
-            galleryImages: updated.galleryImages || [],
-          };
-        }
+        const nextRooms = this.rooms.map((r) =>
+          r.id === id
+            ? {
+                ...r,
+                ...updated,
+                roomType:
+                  updated.roomType ||
+                  updated.type ||
+                  this.roomTypeService.getRoomTypeById(updated.typeId || 1) ||
+                  r.roomType,
+                highlights: updated.highlights || r.highlights || [],
+                galleryImages: updated.galleryImages || r.galleryImages || [],
+              }
+            : r,
+        );
+        this.syncRooms(nextRooms);
       }),
     );
   }
@@ -88,7 +98,7 @@ export class RoomService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
-        this.rooms = this.rooms.filter((r) => r.id !== id);
+        this.syncRooms(this.rooms.filter((r) => r.id !== id));
       }),
     );
   }
@@ -101,7 +111,7 @@ export class RoomService {
   }
 
   getRooms(): Room[] {
-    return this.rooms;
+    return [...this.rooms];
   }
 
   getRoomById(id: number): Room | undefined {
