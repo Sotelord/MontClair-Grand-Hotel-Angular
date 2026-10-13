@@ -30,8 +30,12 @@
       </button>
 
       <div class="rooms-grid">
-        @for (roomType of visibleRoomTypes(); track roomType.id) {
-          <app-room-card [roomType]="roomType" [compact]="$index !== 1" />
+        @for (item of visibleItems(); track $index) {
+          <app-room-card
+            [roomType]="getRoomType(item)"
+            [room]="getRepresentativeRoom(item)"
+            [compact]="$index !== 1"
+          />
         }
       </div>
 

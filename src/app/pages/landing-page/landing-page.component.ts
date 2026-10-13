@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { Service } from '../../models/service.model';
+import { RoomType } from '../../models/roomType.model';
+import { Room } from '../../models/room.model';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { BookingBarComponent } from './components/booking-bar/booking-bar.component';
@@ -10,10 +12,11 @@ import { GalleryBannerComponent } from './components/gallery-banner/gallery-bann
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
 import { RoomTypeService } from '../../service/room-type.service';
-import { RoomType } from '../../models/roomType.model';
+import { RoomService } from '../../service/room.service';
 
 @Component({
   selector: 'app-landing-page',
+  standalone: true,
   imports: [
     HeroComponent,
     BookingBarComponent,
@@ -25,21 +28,46 @@ import { RoomType } from '../../models/roomType.model';
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnInit {
   title: string = 'MontClairGrandHotel';
 
   private serviceService = inject(ServicesService);
   private roomTypeService = inject(RoomTypeService);
-
-  currentIndex: number = 0;
-  intervalId: number = 0;
-  intervalMs: number = 5000;
+  private roomService = inject(RoomService);
 
   serviceArray: Service[] = [];
   roomTypesArray: RoomType[] = [];
+  roomsArray: Room[] = [];
 
-  ngOnInit() {
-    this.serviceArray = this.serviceService.getServices();
-    this.roomTypesArray = this.roomTypeService.getRoomTypes();
+  ngOnInit(): void {
+    // 1. Cargar servicios desde la base de datos
+    this.serviceService.findAll().subscribe({
+      next: (services) => {
+        this.serviceArray = services || [];
+      },
+      error: () => {
+        this.serviceArray = this.serviceService.getServices();
+      },
+    });
+
+    // 2. Cargar tipos de habitación desde la base de datos
+    this.roomTypeService.findAll().subscribe({
+      next: (types) => {
+        this.roomTypesArray = types || [];
+      },
+      error: () => {
+        this.roomTypesArray = this.roomTypeService.getRoomTypes();
+      },
+    });
+
+    // 3. Cargar habitaciones desde la base de datos
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.roomsArray = rooms || [];
+      },
+      error: () => {
+        this.roomsArray = this.roomService.getRooms();
+      },
+    });
   }
 }

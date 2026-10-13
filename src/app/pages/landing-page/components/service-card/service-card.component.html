@@ -1,12 +1,24 @@
 <article class="service-card">
-  @if (service().icon) {
-    <div
-      class="service-icon"
-      [style.mask-image]="'url(\'' + service().icon + '\')'"
-      [style.-webkit-mask-image]="'url(\'' + service().icon + '\')'"
-    ></div>
+  @if (getIconUrl()) {
+    <img [src]="getIconUrl()" [alt]="service().name" class="service-icon-img" />
+  } @else if (isGym()) {
+    <div class="service-svg-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12M2 12h4M18 12h4" />
+      </svg>
+    </div>
+  } @else if (isPool()) {
+    <div class="service-svg-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12h20M2 17c3.5 0 3.5 2 7 2s3.5-2 7-2 3.5 2 6 2M2 7c3.5 0 3.5 2 7 2s3.5-2 7-2 3.5 2 6 2" />
+      </svg>
+    </div>
   } @else {
-    <p>No hay icono</p>
+    <div class="service-svg-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+    </div>
   }
   <h3>{{ service().name }}</h3>
   <p>{{ service().description }}</p>

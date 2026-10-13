@@ -32,3 +32,26 @@
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
 }
+
+.service-icon-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+}
+
+.service-svg-wrapper {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: var(--twine);
+
+  svg {
+    width: 36px;
+    height: 36px;
+  }
+}
