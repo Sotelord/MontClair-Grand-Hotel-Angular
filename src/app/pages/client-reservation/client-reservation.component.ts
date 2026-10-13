@@ -171,24 +171,25 @@ export class ClientReservationComponent implements OnInit {
 
     const serviceIds = Array.from(this.selectedServiceIds);
 
-    const result = this.reservationService.addReservation({
+    this.reservationService.add({
       clientId: this.currentUser.id,
       roomId: Number(val.roomId),
       checkInDate: val.checkInDate,
       checkOutDate: val.checkOutDate,
       numberOfPeople: Number(val.numberOfPeople),
       serviceIds,
+    }).subscribe({
+      next: (res) => {
+        this.successMessage = `¡Su reserva #${res.id} ha sido confirmada con éxito! Redirigiendo a su perfil...`;
+        setTimeout(() => {
+          this.router.navigate(['/profile']);
+        }, 1500);
+      },
+      error: () => {
+        this.isSubmitting = false;
+        this.errorMessage = 'Error al procesar la reserva. Por favor intente nuevamente.';
+      },
     });
-
-    if (result.success && result.reservation) {
-      this.successMessage = `¡Su reserva #${result.reservation.id} ha sido confirmada con éxito! Redirigiendo a su perfil...`;
-      setTimeout(() => {
-        this.router.navigate(['/profile']);
-      }, 1500);
-    } else {
-      this.isSubmitting = false;
-      this.errorMessage = result.message || 'Error al procesar la reserva. Por favor intente nuevamente.';
-    }
   }
 
   formatPrice(price: number): string {

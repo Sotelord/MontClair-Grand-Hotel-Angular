@@ -90,16 +90,21 @@ export class ClientsAdminComponent implements OnInit {
       return;
     }
 
-    const result = this.clientService.deleteClient(this.clientToDelete.id);
-    if (result.success) {
-      this.successMessage = `Cliente '${this.clientToDelete.firstName}' eliminado correctamente.`;
-      this.loadClients();
-      setTimeout(() => (this.successMessage = null), 4000);
-    } else {
-      this.errorMessage = result.message || 'Error al eliminar el cliente.';
-      setTimeout(() => (this.errorMessage = null), 6000);
-    }
+    const clientName = this.clientToDelete.firstName;
+    const clientId = this.clientToDelete.id;
     this.clientToDelete = null;
+
+    this.clientService.delete(clientId).subscribe({
+      next: () => {
+        this.successMessage = `Cliente '${clientName}' eliminado correctamente.`;
+        this.loadClients();
+        setTimeout(() => (this.successMessage = null), 4000);
+      },
+      error: () => {
+        this.errorMessage = 'Error al eliminar el cliente.';
+        setTimeout(() => (this.errorMessage = null), 6000);
+      },
+    });
   }
 
   formatId(id: number): string {

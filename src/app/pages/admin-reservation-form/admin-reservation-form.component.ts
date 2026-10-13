@@ -183,35 +183,37 @@ export class AdminReservationFormComponent implements OnInit {
     const serviceIds = Array.from(this.selectedServiceIds);
 
     if (this.isEditMode && this.reservationId) {
-      const result = this.reservationService.updateReservation(this.reservationId, {
+      this.reservationService.update(this.reservationId, {
         clientId: Number(val.clientId),
         roomId: Number(val.roomId),
         checkInDate: val.checkInDate,
         checkOutDate: val.checkOutDate,
         numberOfPeople: Number(val.numberOfPeople),
         serviceIds,
+      }).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/reservations']);
+        },
+        error: () => {
+          this.errorMessage = 'Error al actualizar la reserva en el servidor.';
+        },
       });
-
-      if (result.success) {
-        this.router.navigate(['/admin/reservations']);
-      } else {
-        this.errorMessage = result.message || 'Error al actualizar la reserva.';
-      }
     } else {
-      const result = this.reservationService.addReservation({
+      this.reservationService.add({
         clientId: Number(val.clientId),
         roomId: Number(val.roomId),
         checkInDate: val.checkInDate,
         checkOutDate: val.checkOutDate,
         numberOfPeople: Number(val.numberOfPeople),
         serviceIds,
+      }).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/reservations']);
+        },
+        error: () => {
+          this.errorMessage = 'Error al crear la reserva en el servidor.';
+        },
       });
-
-      if (result.success) {
-        this.router.navigate(['/admin/reservations']);
-      } else {
-        this.errorMessage = result.message || 'Error al crear la reserva.';
-      }
     }
   }
 

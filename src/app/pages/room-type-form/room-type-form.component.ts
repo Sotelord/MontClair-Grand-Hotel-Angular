@@ -64,12 +64,16 @@ export class RoomTypeFormComponent implements OnInit {
       imageUrl: formValue.imageUrl
     };
 
-    if (this.isEditMode) {
-      this.roomTypeService.updateRoomType(roomType);
+    if (this.isEditMode && this.currentRoomTypeId) {
+      this.roomTypeService.update(this.currentRoomTypeId, roomType).subscribe({
+        next: () => this.router.navigate(['/admin/rooms-types']),
+        error: () => {},
+      });
     } else {
-      this.roomTypeService.addRoomType(roomType);
+      this.roomTypeService.add(roomType).subscribe({
+        next: () => this.router.navigate(['/admin/rooms-types']),
+        error: () => {},
+      });
     }
-
-    this.router.navigate(['/admin/rooms-types']);
   }
 }

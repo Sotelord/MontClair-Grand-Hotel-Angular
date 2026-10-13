@@ -91,33 +91,31 @@ export class ClientFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.clientId) {
-      const result = this.clientService.updateClient({
-        ...clientData,
-        id: this.clientId,
+      this.clientService.update(this.clientId, { ...clientData, id: this.clientId }).subscribe({
+        next: (updated) => {
+          if (this.authService.currentUser()?.id === this.clientId) {
+            this.authService.setCurrentUser(updated);
+          }
+          this.router.navigate([this.isAdminView ? '/admin/clients' : '/profile']);
+        },
+        error: () => {
+          this.errorMessage = 'Error al actualizar el cliente en el servidor.';
+        },
       });
-
-      if (result.success) {
-        if (this.authService.currentUser()?.id === this.clientId) {
-          const updated = this.clientService.getClientById(this.clientId);
-          if (updated) this.authService.setCurrentUser(updated);
-        }
-        this.router.navigate([this.isAdminView ? '/admin/clients' : '/profile']);
-      } else {
-        this.errorMessage = result.message || 'Error al actualizar el cliente.';
-      }
     } else {
-      const result = this.clientService.addClient(clientData);
-      if (result.success && result.client) {
-        if (!this.isAdminView) {
-          // If public sign-up, immediately log the user in
-          this.authService.login(result.client.username, result.client.password);
-          this.router.navigate(['/profile']);
-        } else {
-          this.router.navigate(['/admin/clients']);
-        }
-      } else {
-        this.errorMessage = result.message || 'Error al registrar el cliente.';
-      }
+      this.clientService.add(clientData).subscribe({
+        next: (savedClient) => {
+          if (!this.isAdminView) {
+            this.authService.login(savedClient.username, savedClient.password);
+            this.router.navigate(['/profile']);
+          } else {
+            this.router.navigate(['/admin/clients']);
+          }
+        },
+        error: () => {
+          this.errorMessage = 'Error al registrar el cliente. Verifique que el usuario o correo no existan ya.';
+        },
+      });
     }
   }
 

@@ -104,16 +104,21 @@ export class RoomsAdminComponent implements OnInit {
       return;
     }
 
-    const result = this.roomService.deleteRoom(this.roomToDelete.id);
-    if (result.success) {
-      this.successMessage = `Habitación #${this.roomToDelete.number} eliminada con éxito.`;
-      this.loadData();
-      setTimeout(() => (this.successMessage = null), 4000);
-    } else {
-      this.errorMessage = result.message || 'Error al eliminar la habitación.';
-      setTimeout(() => (this.errorMessage = null), 6000);
-    }
+    const roomNumber = this.roomToDelete.number;
+    const roomId = this.roomToDelete.id;
     this.roomToDelete = null;
+
+    this.roomService.delete(roomId).subscribe({
+      next: () => {
+        this.successMessage = `Habitación #${roomNumber} eliminada con éxito.`;
+        this.loadData();
+        setTimeout(() => (this.successMessage = null), 4000);
+      },
+      error: () => {
+        this.errorMessage = 'Error al eliminar la habitación en el servidor.';
+        setTimeout(() => (this.errorMessage = null), 6000);
+      },
+    });
   }
 
   formatPrice(price: number): string {

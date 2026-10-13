@@ -29,16 +29,34 @@ export class RoomTypeService {
     return this.http.get<RoomType>(`${this.apiUrl}/${id}`);
   }
 
-  add(roomType: RoomType): Observable<RoomType> {
-    return this.http.post<RoomType>(this.apiUrl, roomType);
+  add(roomType: RoomType | Omit<RoomType, 'id'>): Observable<RoomType> {
+    const { id, ...payload } = roomType as any;
+    return this.http.post<RoomType>(this.apiUrl, payload).pipe(
+      tap((saved) => {
+        if (saved) {
+          this.roomTypes.push(saved);
+        }
+      })
+    );
   }
 
   update(id: number, roomType: RoomType): Observable<RoomType> {
-    return this.http.put<RoomType>(`${this.apiUrl}/${id}`, roomType);
+    return this.http.put<RoomType>(`${this.apiUrl}/${id}`, roomType).pipe(
+      tap((updated) => {
+        const idx = this.roomTypes.findIndex((t) => t.id === id);
+        if (idx !== -1) {
+          this.roomTypes[idx] = updated;
+        }
+      })
+    );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.roomTypes = this.roomTypes.filter((t) => t.id !== id);
+      })
+    );
   }
 
   private loadFromBackend(): void {
@@ -48,38 +66,12 @@ export class RoomTypeService {
     });
   }
 
-  deleteRoomType(roomType: RoomType): void {
-    const index = this.roomTypes.findIndex((type) => type.id === roomType.id);
-    if (index !== -1) {
-      this.roomTypes.splice(index, 1);
-      this.delete(roomType.id).subscribe({ error: () => {} });
-    }
-  }
-
   getRoomTypes(): RoomType[] {
     return this.roomTypes;
   }
 
   getRoomTypeById(id: number): RoomType | undefined {
     return this.roomTypes.find((roomType) => roomType.id === id);
-  }
-
-  addRoomType(roomType: RoomType): void {
-    const newId = this.roomTypes.length > 0 ? Math.max(...this.roomTypes.map(r => r.id)) + 1 : 1;
-    roomType.id = newId;
-    this.roomTypes.push(roomType);
-    this.add(roomType).subscribe({
-      next: (res) => { if (res?.id) roomType.id = res.id; },
-      error: () => {}
-    });
-  }
-
-  updateRoomType(roomType: RoomType): void {
-    const index = this.roomTypes.findIndex((type) => type.id === roomType.id);
-    if (index !== -1) {
-      this.roomTypes[index] = roomType;
-      this.update(roomType.id, roomType).subscribe({ error: () => {} });
-    }
   }
 
   private roomTypes: RoomType[] = [];

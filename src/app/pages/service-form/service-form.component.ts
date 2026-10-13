@@ -73,12 +73,16 @@ export class ServiceFormComponent implements OnInit {
       hidden: false
     };
 
-    if (this.isEditMode) {
-      this.servicesService.updateService(service);
+    if (this.isEditMode && this.currentServiceId) {
+      this.servicesService.update(this.currentServiceId, service).subscribe({
+        next: () => this.router.navigate(['/admin/services']),
+        error: () => {},
+      });
     } else {
-      this.servicesService.addService(service);
+      this.servicesService.add(service).subscribe({
+        next: () => this.router.navigate(['/admin/services']),
+        error: () => {},
+      });
     }
-
-    this.router.navigate(['/admin/services']);
   }
 }

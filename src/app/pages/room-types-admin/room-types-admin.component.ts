@@ -53,9 +53,16 @@ export class RoomTypesAdminComponent implements OnInit {
       return;
     }
 
-    this.roomTypeService.deleteRoomType(roomType);
-    this.successMessage = `Categoría '${roomType.name}' eliminada correctamente.`;
-    this.loadRoomTypes();
-    setTimeout(() => (this.successMessage = null), 4000);
+    this.roomTypeService.delete(roomType.id).subscribe({
+      next: () => {
+        this.successMessage = `Categoría '${roomType.name}' eliminada correctamente.`;
+        this.loadRoomTypes();
+        setTimeout(() => (this.successMessage = null), 4000);
+      },
+      error: () => {
+        this.errorMessage = 'Error al eliminar la categoría en el servidor.';
+        setTimeout(() => (this.errorMessage = null), 6000);
+      },
+    });
   }
 }

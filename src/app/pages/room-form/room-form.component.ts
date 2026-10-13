@@ -138,23 +138,23 @@ export class RoomFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.roomId) {
-      const result = this.roomService.updateRoom({
-        ...roomData,
-        id: this.roomId,
+      this.roomService.update(this.roomId, { ...roomData, id: this.roomId } as Room).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/rooms']);
+        },
+        error: () => {
+          this.errorMessage = 'Error al actualizar la habitación en el servidor.';
+        },
       });
-
-      if (result.success) {
-        this.router.navigate(['/admin/rooms']);
-      } else {
-        this.errorMessage = result.message || 'Error al actualizar la habitación.';
-      }
     } else {
-      const result = this.roomService.addRoom(roomData as Room);
-      if (result.success) {
-        this.router.navigate(['/admin/rooms']);
-      } else {
-        this.errorMessage = result.message || 'Error al registrar la habitación.';
-      }
+      this.roomService.add(roomData as any).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/rooms']);
+        },
+        error: () => {
+          this.errorMessage = 'Error al registrar la habitación. Verifique que el número no esté duplicado.';
+        },
+      });
     }
   }
 

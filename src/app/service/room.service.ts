@@ -37,11 +37,24 @@ export class RoomService {
   }
 
   add(room: Room | Omit<Room, 'id'>): Observable<Room> {
+    const { id, ...rest } = room as any;
     const payload = {
-      ...room,
+      ...rest,
       typeId: (room as any).roomType?.id || (room as any).typeId,
     };
-    return this.http.post<Room>(this.apiUrl, payload);
+    return this.http.post<Room>(this.apiUrl, payload).pipe(
+      tap((saved: any) => {
+        if (saved) {
+          const mapped: Room = {
+            ...saved,
+            roomType: saved.roomType || saved.type || this.roomTypeService.getRoomTypeById(saved.typeId || 1)!,
+            highlights: saved.highlights || [],
+            galleryImages: saved.galleryImages || [],
+          };
+          this.rooms.unshift(mapped);
+        }
+      })
+    );
   }
 
   update(id: number, room: Room): Observable<Room> {
@@ -49,11 +62,27 @@ export class RoomService {
       ...room,
       typeId: room.roomType?.id || (room as any).typeId,
     };
-    return this.http.put<Room>(`${this.apiUrl}/${id}`, payload);
+    return this.http.put<Room>(`${this.apiUrl}/${id}`, payload).pipe(
+      tap((updated: any) => {
+        const idx = this.rooms.findIndex((r) => r.id === id);
+        if (idx !== -1) {
+          this.rooms[idx] = {
+            ...updated,
+            roomType: updated.roomType || updated.type || this.roomTypeService.getRoomTypeById(updated.typeId || 1)!,
+            highlights: updated.highlights || [],
+            galleryImages: updated.galleryImages || [],
+          };
+        }
+      })
+    );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.rooms = this.rooms.filter((r) => r.id !== id);
+      })
+    );
   }
 
   private loadFromBackend(): void {
@@ -80,54 +109,4 @@ export class RoomService {
     return this.rooms.some((r) => r.number === cleanNum && r.id !== excludeId);
   }
 
-  addRoom(newRoom: Omit<Room, 'id'> | Room): { success: boolean; message?: string; room?: Room } {
-    if (this.isNumberTaken(newRoom.number)) {
-      return { success: false, message: `No se pudo guardar: Ya existe una habitación con el número '${newRoom.number}'.` };
-    }
-
-    const nextId = this.rooms.length > 0 ? Math.max(...this.rooms.map((r) => r.id)) + 1 : 1;
-    const roomToAdd: Room = {
-      ...newRoom,
-      id: nextId,
-      highlights: newRoom.highlights || [],
-      galleryImages: newRoom.galleryImages || [],
-    };
-
-    this.rooms.unshift(roomToAdd);
-    this.add(roomToAdd).subscribe({
-      next: (res) => { if (res?.id) roomToAdd.id = res.id; },
-      error: () => {}
-    });
-    return { success: true, room: roomToAdd };
-  }
-
-  updateRoom(room: Room): { success: boolean; message?: string } {
-    const index = this.rooms.findIndex((r) => r.id === room.id);
-    if (index === -1) {
-      return { success: false, message: 'La habitación no fue encontrada.' };
-    }
-
-    if (this.isNumberTaken(room.number, room.id)) {
-      return { success: false, message: `No se pudo guardar: Ya existe una habitación con el número '${room.number}'.` };
-    }
-
-    this.rooms[index] = {
-      ...this.rooms[index],
-      ...room,
-      highlights: room.highlights || this.rooms[index].highlights || [],
-      galleryImages: room.galleryImages || this.rooms[index].galleryImages || [],
-    };
-    this.update(room.id, room).subscribe({ error: () => {} });
-    return { success: true };
-  }
-
-  deleteRoom(id: number): { success: boolean; message?: string } {
-    const index = this.rooms.findIndex((r) => r.id === id);
-    if (index === -1) {
-      return { success: false, message: 'La habitación no existe.' };
-    }
-    this.rooms.splice(index, 1);
-    this.delete(id).subscribe({ error: () => {} });
-    return { success: true };
-  }
 }

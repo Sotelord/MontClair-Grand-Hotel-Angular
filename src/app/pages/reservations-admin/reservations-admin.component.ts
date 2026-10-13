@@ -93,16 +93,19 @@ export class ReservationsAdminComponent implements OnInit {
     if (!this.reservationToDelete) return;
 
     const resId = this.reservationToDelete.id;
-    const result = this.reservationService.deleteReservation(resId);
-    if (result.success) {
-      this.successMessage = `Reserva #${resId} eliminada correctamente. La habitación asociada ha sido liberada.`;
-      this.loadReservations();
-      setTimeout(() => (this.successMessage = null), 4000);
-    } else {
-      this.errorMessage = result.message || 'Error al eliminar la reserva.';
-      setTimeout(() => (this.errorMessage = null), 6000);
-    }
     this.reservationToDelete = null;
+
+    this.reservationService.delete(resId).subscribe({
+      next: () => {
+        this.successMessage = `Reserva #${resId} eliminada correctamente. La habitación asociada ha sido liberada.`;
+        this.loadReservations();
+        setTimeout(() => (this.successMessage = null), 4000);
+      },
+      error: () => {
+        this.errorMessage = 'Error al eliminar la reserva en el servidor.';
+        setTimeout(() => (this.errorMessage = null), 6000);
+      },
+    });
   }
 
   formatPrice(price: number): string {

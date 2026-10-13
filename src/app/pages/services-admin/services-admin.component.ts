@@ -42,7 +42,9 @@ export class ServicesAdminComponent implements OnInit {
   }
 
   onDelete(service: Service): void {
-    this.servicesService.deleteService(service);
-    this.loadServices();
+    this.servicesService.delete(service.id).subscribe({
+      next: () => this.loadServices(),
+      error: () => {},
+    });
   }
 }

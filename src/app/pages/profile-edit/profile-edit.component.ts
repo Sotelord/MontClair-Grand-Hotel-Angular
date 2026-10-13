@@ -81,17 +81,18 @@ export class ProfileEditComponent implements OnInit {
       password: (val.newPassword && val.newPassword.trim().length > 0) ? val.newPassword.trim() : this.client.password,
     };
 
-    const result = this.clientService.updateClient(updatedClient);
-
-    if (result.success) {
-      this.authService.setCurrentUser(updatedClient);
-      this.successMessage = '¡Perfil actualizado con éxito!';
-      setTimeout(() => {
-        this.router.navigate(['/profile']);
-      }, 1200);
-    } else {
-      this.isSubmitting = false;
-      this.errorMessage = result.message || 'Error al actualizar el perfil.';
-    }
+    this.clientService.update(this.client.id, updatedClient).subscribe({
+      next: (savedClient) => {
+        this.authService.setCurrentUser(savedClient || updatedClient);
+        this.successMessage = '¡Perfil actualizado con éxito!';
+        setTimeout(() => {
+          this.router.navigate(['/profile']);
+        }, 1200);
+      },
+      error: () => {
+        this.isSubmitting = false;
+        this.errorMessage = 'Error al actualizar el perfil.';
+      },
+    });
   }
 }

@@ -30,15 +30,33 @@ export class ClientService {
   }
 
   add(client: Omit<Client, 'id'> | Client): Observable<Client> {
-    return this.http.post<Client>(this.apiUrl, client);
+    const { id, ...payload } = client as any;
+    return this.http.post<Client>(this.apiUrl, payload).pipe(
+      tap((saved) => {
+        if (saved) {
+          this.clients.push(saved);
+        }
+      })
+    );
   }
 
   update(id: number, client: Client): Observable<Client> {
-    return this.http.put<Client>(`${this.apiUrl}/${id}`, client);
+    return this.http.put<Client>(`${this.apiUrl}/${id}`, client).pipe(
+      tap((updated) => {
+        const idx = this.clients.findIndex((c) => c.id === id);
+        if (idx !== -1) {
+          this.clients[idx] = updated;
+        }
+      })
+    );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => {
+        this.clients = this.clients.filter((c) => c.id !== id);
+      })
+    );
   }
 
   private loadFromBackend(): void {
@@ -63,76 +81,7 @@ export class ClientService {
     );
   }
 
-  addClient(newClient: Omit<Client, 'id'> | Client): { success: boolean; message?: string; client?: Client } {
-    const cleanUsername = newClient.username.trim().toLowerCase();
-    const cleanEmail = newClient.email.trim().toLowerCase();
 
-    const existsUsername = this.clients.some((c) => c.username.toLowerCase() === cleanUsername);
-    if (existsUsername) {
-      return { success: false, message: `El nombre de usuario '${newClient.username}' ya está en uso.` };
-    }
-
-    const existsEmail = this.clients.some((c) => c.email.toLowerCase() === cleanEmail);
-    if (existsEmail) {
-      return { success: false, message: `El correo electrónico '${newClient.email}' ya está registrado.` };
-    }
-
-    const nextId = this.clients.length > 0 ? Math.max(...this.clients.map((c) => c.id)) + 1 : 1;
-    const clientToAdd: Client = {
-      ...newClient,
-      id: nextId,
-      avatarUrl: newClient.avatarUrl?.trim() || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-      role: newClient.role || 'CLIENT',
-    };
-
-    this.clients.push(clientToAdd);
-    this.add(clientToAdd).subscribe({
-      next: (res) => { if (res?.id) clientToAdd.id = res.id; },
-      error: () => {}
-    });
-    return { success: true, client: clientToAdd };
-  }
-
-  updateClient(client: Client): { success: boolean; message?: string } {
-    const index = this.clients.findIndex((c) => c.id === client.id);
-    if (index === -1) {
-      return { success: false, message: 'Cliente no encontrado.' };
-    }
-
-    const cleanUsername = client.username.trim().toLowerCase();
-    const cleanEmail = client.email.trim().toLowerCase();
-
-    const usernameConflict = this.clients.some(
-      (c) => c.id !== client.id && c.username.toLowerCase() === cleanUsername
-    );
-    if (usernameConflict) {
-      return { success: false, message: `El nombre de usuario '${client.username}' ya está en uso.` };
-    }
-
-    const emailConflict = this.clients.some(
-      (c) => c.id !== client.id && c.email.toLowerCase() === cleanEmail
-    );
-    if (emailConflict) {
-      return { success: false, message: `El correo electrónico '${client.email}' ya está registrado.` };
-    }
-
-    this.clients[index] = {
-      ...client,
-      avatarUrl: client.avatarUrl?.trim() || this.clients[index].avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-    };
-    this.update(client.id, client).subscribe({ error: () => {} });
-    return { success: true };
-  }
-
-  deleteClient(id: number): { success: boolean; message?: string } {
-    const index = this.clients.findIndex((c) => c.id === id);
-    if (index === -1) {
-      return { success: false, message: 'El cliente no existe.' };
-    }
-    this.clients.splice(index, 1);
-    this.delete(id).subscribe({ error: () => {} });
-    return { success: true };
-  }
 
   private clients: Client[] = [];
 }
