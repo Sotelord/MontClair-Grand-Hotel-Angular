@@ -1,6 +1,10 @@
 <section class="max-w-3xl w-full mx-auto p-6 sm:p-8 lg:p-12">
   <div class="mb-6 flex items-center gap-2 text-xs text-woodsmoke/60">
-    <a routerLink="/profile" class="hover:text-twine transition">Mi Perfil</a>
+    <a
+      [routerLink]="['/profile', authService.currentUser?.id]"
+      class="hover:text-twine transition"
+      >Mi Perfil</a
+    >
     <span>/</span>
     <span class="text-woodsmoke font-semibold">Editar Datos Personales</span>
   </div>
@@ -201,7 +205,7 @@
           class="pt-6 border-t border-[#E8E2DA] flex items-center justify-end gap-4"
         >
           <a
-            routerLink="/profile"
+            [routerLink]="['/profile', authService.currentUser?.id]"
             class="px-6 py-3 border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold rounded-[2px] transition"
           >
             Cancelar

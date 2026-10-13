@@ -13,9 +13,7 @@ export class ServicesService {
   private readonly serviceArraySubject = new BehaviorSubject<Service[]>([]);
   readonly services$ = this.serviceArraySubject.asObservable();
 
-  constructor() {
-    this.loadFromBackend();
-  }
+
 
   private syncServiceArray(data: Service[]): void {
     this.serviceArray = [...data];
@@ -24,6 +22,20 @@ export class ServicesService {
 
   findAll(): Observable<Service[]> {
     return this.http.get<Service[]>(this.apiUrl).pipe(
+      tap((data) => {
+        const normalized = (data || []).map((s) => ({
+          ...s,
+          highlights: s.highlights || [],
+          galleryImages: s.galleryImages || [],
+          hidden: s.hidden === true,
+        }));
+        this.syncServiceArray(normalized);
+      }),
+    );
+  }
+
+  findNotHidden(): Observable<Service[]> {
+    return this.http.get<Service[]>(`${this.apiUrl}/nothidden`).pipe(
       tap((data) => {
         const normalized = (data || []).map((s) => ({
           ...s,
@@ -83,13 +95,6 @@ export class ServicesService {
         this.syncServiceArray(this.serviceArray.filter((s) => s.id !== id));
       }),
     );
-  }
-
-  private loadFromBackend(): void {
-    this.findAll().subscribe({
-      next: () => {},
-      error: () => {},
-    });
   }
 
   getServices(): Service[] {

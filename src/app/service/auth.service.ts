@@ -1,53 +1,55 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Client } from '../models/client.model';
-import { ClientService } from './client.service';
+
+export interface LoginResponse {
+  success: boolean;
+  client?: Client;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private clientService = inject(ClientService);
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/auth';
 
-  currentUser = signal<Client | null>(null);
+  currentUser: Client | null = null;
 
-  login(
-    identifier: string,
-    password: string,
-  ): { success: boolean; message?: string; client?: Client } {
-    const cleanId = identifier.trim().toLowerCase();
-    const cleanPass = password.trim();
-
-    const client = this.clientService.getClients().find((c) => {
-      const matchUser = c.username.toLowerCase() === cleanId;
-      const matchEmail = c.email.toLowerCase() === cleanId;
-      return (matchUser || matchEmail) && c.password === cleanPass;
-    });
-
-    if (client) {
-      this.currentUser.set(client);
-      return { success: true, client };
-    } else {
-      return {
-        success: false,
-        message: 'Usuario o contraseña incorrectos.',
-      };
-    }
+  login(identifier: string, password: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/login`, {
+        identifier: identifier.trim(),
+        password: password.trim(),
+      })
+      .pipe(
+        tap((res) => {
+          if (res.success && res.client) {
+            this.currentUser = res.client;
+          }
+        }),
+      );
   }
 
   logout(): void {
-    this.currentUser.set(null);
+    this.currentUser = null;
   }
 
-  setCurrentUser(client: Client): void {
-    this.currentUser.set(client);
+  setCurrentUser(client: Client | null): void {
+    this.currentUser = client;
   }
 
   isLoggedIn(): boolean {
-    return this.currentUser() !== null;
+    return this.currentUser !== null;
   }
 
   isAdmin(): boolean {
-    const user = this.currentUser();
-    return user !== null && user.role?.toUpperCase() === 'ADMIN';
+    return (
+      this.currentUser !== null &&
+      (this.currentUser.role?.toUpperCase() === 'ADMIN' ||
+        this.currentUser.username?.toLowerCase() === 'admin')
+    );
   }
 }

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
@@ -18,6 +18,7 @@ export class ProfileEditComponent implements OnInit {
   authService = inject(AuthService);
   private clientService = inject(ClientService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   client: Client | null = null;
   profileForm!: FormGroup;
@@ -28,12 +29,32 @@ export class ProfileEditComponent implements OnInit {
   defaultAvatar = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
 
   ngOnInit(): void {
-    this.client = this.authService.currentUser();
-    if (!this.client) {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const clientId = idParam ? Number(idParam) : this.authService.currentUser?.id;
+
+    if (!clientId) {
       this.router.navigate(['/login']);
       return;
     }
 
+    if (this.authService.currentUser && this.authService.currentUser.id === clientId) {
+      this.client = this.authService.currentUser;
+      this.initForm();
+    } else {
+      this.clientService.findById(clientId).subscribe({
+        next: (c) => {
+          this.client = c;
+          this.initForm();
+        },
+        error: () => {
+          this.router.navigate(['/login']);
+        },
+      });
+    }
+  }
+
+  private initForm(): void {
+    if (!this.client) return;
     this.profileForm = this.fb.group({
       firstName: [this.client.firstName, [Validators.required, Validators.minLength(2)]],
       lastName: [this.client.lastName || ''],
@@ -86,7 +107,7 @@ export class ProfileEditComponent implements OnInit {
         this.authService.setCurrentUser(savedClient || updatedClient);
         this.successMessage = '¡Perfil actualizado con éxito!';
         setTimeout(() => {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/profile', (savedClient || updatedClient).id]);
         }, 1200);
       },
       error: () => {

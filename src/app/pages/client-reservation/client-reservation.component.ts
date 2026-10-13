@@ -43,16 +43,16 @@ export class ClientReservationComponent implements OnInit {
   isSubmitting: boolean = false;
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUser();
+    this.currentUser = this.authService.currentUser;
     this.initForm();
 
     const paramRoomId = this.route.snapshot.paramMap.get('roomId');
     const queryRoomId = this.route.snapshot.queryParamMap.get('roomId');
     const targetRoomId = Number(paramRoomId || queryRoomId);
 
-    this.servicesService.findAll().subscribe({
+    this.servicesService.findNotHidden().subscribe({
       next: (svcs) => {
-        this.services = (svcs || []).filter((service) => !service.hidden);
+        this.services = svcs || [];
       },
       error: () => {
         this.services = [];
@@ -217,7 +217,7 @@ export class ClientReservationComponent implements OnInit {
         next: (res) => {
           this.successMessage = `¡Su reserva #${res.id} ha sido confirmada con éxito! Redirigiendo a su perfil...`;
           setTimeout(() => {
-            this.router.navigate(['/profile']);
+            this.router.navigate(['/profile', this.currentUser!.id]);
           }, 1500);
         },
         error: () => {

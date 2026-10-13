@@ -1,9 +1,8 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RoomType } from '../../models/roomType.model';
 import { Room } from '../../models/room.model';
-import { RoomService } from '../../service/room.service';
 
 @Component({
   selector: 'app-room-card',
@@ -13,8 +12,6 @@ import { RoomService } from '../../service/room.service';
   styleUrl: './room-card.component.scss',
 })
 export class RoomCardComponent {
-  private roomService = inject(RoomService);
-
   room = input<Room | undefined>(undefined);
   roomType = input<RoomType | undefined>(undefined);
   compact = input<boolean>(false);
@@ -34,14 +31,7 @@ export class RoomCardComponent {
   }
 
   getDbRoom(): Room | undefined {
-    if (this.room()) return this.room();
-    const rtId = this.roomType()?.id;
-    if (rtId) {
-      return this.roomService.getRooms().find(
-        (r) => r.roomType?.id === rtId || (r as any).typeId === rtId,
-      );
-    }
-    return undefined;
+    return this.room();
   }
 
   getRoomName(): string {

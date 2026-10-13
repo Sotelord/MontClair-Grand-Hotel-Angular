@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 
 import { Service } from '../../models/service.model';
 import { RoomType } from '../../models/roomType.model';
-import { Room } from '../../models/room.model';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { BookingBarComponent } from './components/booking-bar/booking-bar.component';
@@ -12,7 +11,6 @@ import { GalleryBannerComponent } from './components/gallery-banner/gallery-bann
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
 import { RoomTypeService } from '../../service/room-type.service';
-import { RoomService } from '../../service/room.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -33,11 +31,9 @@ export class LandingPageComponent implements OnInit {
 
   private serviceService = inject(ServicesService);
   private roomTypeService = inject(RoomTypeService);
-  private roomService = inject(RoomService);
 
   serviceArray: Service[] = [];
   roomTypesArray: RoomType[] = [];
-  roomsArray: Room[] = [];
 
   ngOnInit(): void {
     this.serviceService.services$.subscribe((services) => {
@@ -48,12 +44,7 @@ export class LandingPageComponent implements OnInit {
       this.roomTypesArray = types || [];
     });
 
-    this.roomService.rooms$.subscribe((rooms) => {
-      this.roomsArray = rooms || [];
-    });
-
-    this.serviceService.findAll().subscribe();
+    this.serviceService.findNotHidden().subscribe();
     this.roomTypeService.findAll().subscribe();
-    this.roomService.findAll().subscribe();
   }
 }

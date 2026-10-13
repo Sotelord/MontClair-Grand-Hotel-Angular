@@ -29,13 +29,13 @@ export class RoomsTypeDetailComponent {
       next: (rt) => (this.roomType = rt),
       error: () => {},
     });
-    this.roomService.findAll().subscribe({
+    this.roomService.findByTypeId(this.roomTypeId).subscribe({
       next: (rooms) => {
-        this.rooms = (rooms || []).filter(
-          (r) => r.roomType?.id === this.roomTypeId || (r as any).typeId === this.roomTypeId
-        );
+        this.rooms = rooms || [];
       },
-      error: () => {},
+      error: () => {
+        this.rooms = [];
+      },
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, input, signal } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,41 +17,45 @@ export class RoomListCardComponent {
   rooms = input.required<Room[]>();
   roomType = input<RoomType | undefined>();
 
-  filterAvailability = signal<'ALL' | 'AVAILABLE' | 'OCCUPIED'>('ALL');
-  filterFloor = signal<number | 'ALL'>('ALL');
-  searchQuery = signal<string>('');
-  sortBy = signal<'number' | 'priceAsc' | 'priceDesc' | 'floor'>('number');
+  filterAvailability: 'ALL' | 'AVAILABLE' | 'OCCUPIED' = 'ALL';
+  filterFloor: number | 'ALL' = 'ALL';
+  searchQuery = '';
+  sortBy: 'number' | 'priceAsc' | 'priceDesc' | 'floor' = 'number';
 
-  totalCount = computed(() => this.rooms().length);
-  availableCount = computed(
-    () => this.rooms().filter((r) => r.status === 'AVAILABLE').length,
-  );
-  occupiedCount = computed(
-    () => this.rooms().filter((r) => r.status === 'OCCUPIED').length,
-  );
+  get totalCount(): number {
+    return this.rooms().length;
+  }
 
-  floors = computed(() => {
+  get availableCount(): number {
+    return this.rooms().filter((r) => r.status === 'AVAILABLE').length;
+  }
+
+  get occupiedCount(): number {
+    return this.rooms().filter((r) => r.status === 'OCCUPIED').length;
+  }
+
+  get floors(): number[] {
     const floorSet = new Set<number>();
     this.rooms().forEach((r) => {
       if (r.floor != null) floorSet.add(r.floor);
     });
     return Array.from(floorSet).sort((a, b) => a - b);
-  });
+  }
 
-  filteredRooms = computed(() => {
+  get filteredRooms(): Room[] {
     let list = [...this.rooms()];
 
-    const avail = this.filterAvailability();
+    const avail = this.filterAvailability;
     if (avail !== 'ALL') {
       list = list.filter((r) => r.status === avail);
     }
 
-    const floor = this.filterFloor();
+    const floor = this.filterFloor;
     if (floor !== 'ALL') {
       list = list.filter((r) => r.floor === floor);
     }
 
-    const q = this.searchQuery().trim().toLowerCase();
+    const q = this.searchQuery.trim().toLowerCase();
     if (q) {
       list = list.filter(
         (r) =>
@@ -61,7 +65,7 @@ export class RoomListCardComponent {
       );
     }
 
-    const sort = this.sortBy();
+    const sort = this.sortBy;
     if (sort === 'number') {
       list.sort((a, b) =>
         (a.number || '').localeCompare(b.number || '', undefined, {
@@ -77,29 +81,29 @@ export class RoomListCardComponent {
     }
 
     return list;
-  });
+  }
 
   setAvailability(status: 'ALL' | 'AVAILABLE' | 'OCCUPIED'): void {
-    this.filterAvailability.set(status);
+    this.filterAvailability = status;
   }
 
   setFloor(floor: number | 'ALL'): void {
-    this.filterFloor.set(floor);
+    this.filterFloor = floor;
   }
 
   setSort(sort: 'number' | 'priceAsc' | 'priceDesc' | 'floor'): void {
-    this.sortBy.set(sort);
+    this.sortBy = sort;
   }
 
   onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchQuery.set(input.value);
+    this.searchQuery = input.value;
   }
 
   resetFilters(): void {
-    this.filterAvailability.set('ALL');
-    this.filterFloor.set('ALL');
-    this.searchQuery.set('');
-    this.sortBy.set('number');
+    this.filterAvailability = 'ALL';
+    this.filterFloor = 'ALL';
+    this.searchQuery = '';
+    this.sortBy = 'number';
   }
 }

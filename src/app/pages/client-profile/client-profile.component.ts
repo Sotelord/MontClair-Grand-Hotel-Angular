@@ -29,7 +29,7 @@ export class ClientProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    const clientId = idParam ? Number(idParam) : this.authService.currentUser()?.id;
+    const clientId = idParam ? Number(idParam) : this.authService.currentUser?.id;
 
     if (!clientId) {
       this.router.navigate(['/login']);
@@ -39,9 +39,10 @@ export class ClientProfileComponent implements OnInit {
     this.clientService.findById(clientId).subscribe({
       next: (c) => {
         this.client = c;
+        this.authService.setCurrentUser(c);
       },
       error: () => {
-        this.client = this.authService.currentUser();
+        this.router.navigate(['/login']);
       },
     });
 
@@ -57,11 +58,11 @@ export class ClientProfileComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   deleteProfile(): void {
-    const currentUser = this.authService.currentUser();
+    const currentUser = this.authService.currentUser;
 
     if (!this.client || !currentUser || this.client.id !== currentUser.id) {
       this.errorMessage = 'No se puede eliminar este perfil.';
@@ -93,7 +94,7 @@ export class ClientProfileComponent implements OnInit {
   }
 
   deleteReservation(reservation: Reservation): void {
-    const currentUser = this.authService.currentUser();
+    const currentUser = this.authService.currentUser;
 
     if (
       !currentUser ||

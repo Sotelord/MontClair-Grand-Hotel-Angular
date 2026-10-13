@@ -36,35 +36,35 @@
           type="button"
           (click)="setAvailability('ALL')"
           class="filter-link"
-          [class.active]="filterAvailability() === 'ALL'"
+          [class.active]="filterAvailability === 'ALL'"
         >
-          Todas ({{ totalCount() }})
+          Todas ({{ totalCount }})
         </button>
         <button
           type="button"
           (click)="setAvailability('AVAILABLE')"
           class="filter-link"
-          [class.active]="filterAvailability() === 'AVAILABLE'"
+          [class.active]="filterAvailability === 'AVAILABLE'"
         >
-          Disponibles ({{ availableCount() }})
+          Disponibles ({{ availableCount }})
         </button>
         <button
           type="button"
           (click)="setAvailability('OCCUPIED')"
           class="filter-link"
-          [class.active]="filterAvailability() === 'OCCUPIED'"
+          [class.active]="filterAvailability === 'OCCUPIED'"
         >
-          Ocupadas ({{ occupiedCount() }})
+          Ocupadas ({{ occupiedCount }})
         </button>
       </div>
 
-      @if (floors().length > 1) {
+      @if (floors.length > 1) {
         <div class="flex items-center gap-2 text-woodsmoke/70">
           <label class="text-[10px] uppercase tracking-[1.5px] font-semibold">
             Planta:
           </label>
           <select
-            [value]="filterFloor()"
+            [value]="filterFloor"
             (change)="
               setFloor(
                 $any($event.target).value === 'ALL'
@@ -75,7 +75,7 @@
             class="bg-transparent border border-silver text-woodsmoke text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-twine font-sans cursor-pointer"
           >
             <option value="ALL">Todas las plantas</option>
-            @for (fl of floors(); track fl) {
+            @for (fl of floors; track fl) {
               <option [value]="fl">Piso {{ fl }}</option>
             }
           </select>
@@ -87,11 +87,11 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
     >
-      @for (room of filteredRooms(); track room.id) {
+      @for (room of filteredRooms; track room.id) {
         <app-room-item-card class="block h-full" [room]="room" />
       }
 
-      @if (filteredRooms().length === 0) {
+      @if (filteredRooms.length === 0) {
         <div class="col-span-full py-16 text-center text-woodsmoke/60">
           <p class="font-serif text-lg mb-2 uppercase tracking-[1px]">
             No hay habitaciones disponibles

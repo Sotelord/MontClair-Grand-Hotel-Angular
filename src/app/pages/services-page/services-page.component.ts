@@ -15,9 +15,9 @@ export class ServicesPageComponent implements OnInit {
   services: Service[] = [];
 
   ngOnInit(): void {
-    this.servicesService.findAll().subscribe({
+    this.servicesService.findNotHidden().subscribe({
       next: (services) => {
-        this.services = (services || []).filter((service) => !service.hidden);
+        this.services = services || [];
       },
       error: () => {
         this.services = [];

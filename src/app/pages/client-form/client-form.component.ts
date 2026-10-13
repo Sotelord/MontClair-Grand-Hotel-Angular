@@ -93,10 +93,14 @@ export class ClientFormComponent implements OnInit {
     if (this.isEditMode && this.clientId) {
       this.clientService.update(this.clientId, { ...clientData, id: this.clientId }).subscribe({
         next: (updated) => {
-          if (this.authService.currentUser()?.id === this.clientId) {
+          if (this.authService.currentUser?.id === this.clientId) {
             this.authService.setCurrentUser(updated);
           }
-          this.router.navigate([this.isAdminView ? '/admin/clients' : '/profile']);
+          this.router.navigate(
+            this.isAdminView
+              ? ['/admin/clients']
+              : ['/profile', updated.id],
+          );
         },
         error: () => {
           this.errorMessage = 'Error al actualizar el cliente en el servidor.';
@@ -106,8 +110,8 @@ export class ClientFormComponent implements OnInit {
       this.clientService.add(clientData).subscribe({
         next: (savedClient) => {
           if (!this.isAdminView) {
-            this.authService.login(savedClient.username, savedClient.password);
-            this.router.navigate(['/profile']);
+            this.authService.setCurrentUser(savedClient);
+            this.router.navigate(['/profile', savedClient.id]);
           } else {
             this.router.navigate(['/admin/clients']);
           }

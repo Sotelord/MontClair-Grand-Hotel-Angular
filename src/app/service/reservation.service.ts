@@ -15,15 +15,8 @@ export class ReservationService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/reservations';
 
-  private clientService = inject(ClientService);
-  private roomService = inject(RoomService);
-  private servicesService = inject(ServicesService);
-
   private reservations: Reservation[] = [];
 
-  constructor() {
-    this.loadFromBackend();
-  }
   findAll(): Observable<Reservation[]> {
     return this.http.get<Reservation[]>(this.apiUrl).pipe(
       tap((data) => {
@@ -69,13 +62,6 @@ export class ReservationService {
         this.reservations = this.reservations.filter((r) => r.id !== id);
       }),
     );
-  }
-
-  private loadFromBackend(): void {
-    this.findAll().subscribe({
-      next: () => {},
-      error: () => {},
-    });
   }
 
   getReservations(): Reservation[] {

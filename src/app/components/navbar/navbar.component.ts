@@ -15,11 +15,15 @@ export class NavbarComponent {
   private router = inject(Router);
 
   get client(): Client | null {
-    return this.authService.currentUser();
+
+    if (!this.router.url.startsWith('/profile')) {
+      return null;
+    }
+    return this.authService.currentUser;
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 }

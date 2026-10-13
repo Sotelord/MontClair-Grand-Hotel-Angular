@@ -10,10 +10,6 @@ export class ClientService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/clients';
 
-  constructor() {
-    this.loadFromBackend();
-  }
-
   findAll(): Observable<Client[]> {
     return this.http.get<Client[]>(this.apiUrl).pipe(
       tap((data) => {
@@ -56,13 +52,6 @@ export class ClientService {
         this.clients = this.clients.filter((c) => c.id !== id);
       }),
     );
-  }
-
-  private loadFromBackend(): void {
-    this.findAll().subscribe({
-      next: () => {},
-      error: () => {},
-    });
   }
 
   getClients(): Client[] {

@@ -36,17 +36,19 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
-    const result = this.authService.login(this.identifier, this.password);
-
-    if (result.success && result.client) {
-      if (result.client.role?.toUpperCase() === 'ADMIN') {
-        this.router.navigate(['/admin/rooms']);
-      } else {
-        this.router.navigate(['/profile']);
-      }
-    } else {
-      this.errorMessage = result.message || 'Usuario o contraseña incorrectos.';
-    }
+    this.authService.login(this.identifier, this.password).subscribe({
+      next: (result) => {
+        if (result.success && result.client) {
+          this.router.navigate(['/profile', result.client.id]);
+        } else {
+          this.errorMessage = result.message || 'Usuario o contraseña incorrectos.';
+        }
+      },
+      error: (err) => {
+        this.errorMessage =
+          err?.error?.message || 'Usuario o contraseña incorrectos.';
+      },
+    });
   }
 
   fillDemo(user: 'admin' | 'demo'): void {

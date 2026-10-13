@@ -14,9 +14,7 @@ export class RoomService {
   private readonly roomsSubject = new BehaviorSubject<Room[]>([]);
   readonly rooms$ = this.roomsSubject.asObservable();
 
-  constructor(private roomTypeService: RoomTypeService) {
-    this.loadFromBackend();
-  }
+  constructor(private roomTypeService: RoomTypeService) {}
 
   private syncRooms(data: Room[]): void {
     this.rooms = [...data];
@@ -42,6 +40,23 @@ export class RoomService {
 
   findById(id: number): Observable<Room> {
     return this.http.get<Room>(`${this.apiUrl}/${id}`);
+  }
+
+  findByTypeId(typeId: number): Observable<Room[]> {
+    return this.http.get<Room[]>(`${this.apiUrl}/type-room/${typeId}`).pipe(
+      tap((data) => {
+        const mapped = (data || []).map((r: any) => ({
+          ...r,
+          roomType:
+            r.roomType ||
+            r.type ||
+            this.roomTypeService.getRoomTypeById(r.typeId || typeId)!,
+          highlights: r.highlights || [],
+          galleryImages: r.galleryImages || [],
+        }));
+        this.syncRooms(mapped);
+      }),
+    );
   }
 
   add(room: Room | Omit<Room, 'id'>): Observable<Room> {
@@ -101,13 +116,6 @@ export class RoomService {
         this.syncRooms(this.rooms.filter((r) => r.id !== id));
       }),
     );
-  }
-
-  private loadFromBackend(): void {
-    this.findAll().subscribe({
-      next: () => {},
-      error: () => {},
-    });
   }
 
   getRooms(): Room[] {

@@ -32,8 +32,7 @@
       <div class="rooms-grid">
         @for (item of visibleItems(); track $index) {
           <app-room-card
-            [roomType]="getRoomType(item)"
-            [room]="getRepresentativeRoom(item)"
+            [roomType]="item"
             [compact]="$index !== 1"
           />
         }

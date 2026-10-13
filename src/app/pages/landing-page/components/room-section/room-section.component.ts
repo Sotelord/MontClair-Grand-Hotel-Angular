@@ -1,7 +1,6 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoomType } from '../../../../models/roomType.model';
-import { Room } from '../../../../models/room.model';
 import { RoomCardComponent } from '../../../../components/room-card/room-card.component';
 
 @Component({
@@ -13,7 +12,6 @@ import { RoomCardComponent } from '../../../../components/room-card/room-card.co
 })
 export class RoomSectionComponent implements OnInit, OnDestroy {
   roomTypesArray = input<RoomType[]>([]);
-  roomsArray = input<Room[]>([]);
 
   currentIndex: number = 0;
   intervalId: number = 0;
@@ -27,19 +25,11 @@ export class RoomSectionComponent implements OnInit, OnDestroy {
     window.clearInterval(this.intervalId);
   }
 
-  getItems(): (RoomType | Room)[] {
-    const rTypes = this.roomTypesArray();
-    if (rTypes && rTypes.length > 0) {
-      return rTypes;
-    }
-    const rooms = this.roomsArray();
-    if (rooms && rooms.length > 0) {
-      return rooms;
-    }
-    return [];
+  getItems(): RoomType[] {
+    return this.roomTypesArray();
   }
 
-  visibleItems(): (RoomType | Room)[] {
+  visibleItems(): RoomType[] {
     const items = this.getItems();
     const total = items.length;
     if (total === 0) return [];
@@ -47,23 +37,6 @@ export class RoomSectionComponent implements OnInit, OnDestroy {
     const previous = (this.currentIndex - 1 + total) % total;
     const next = (this.currentIndex + 1) % total;
     return [items[previous], items[this.currentIndex], items[next]];
-  }
-
-  getRepresentativeRoom(item: RoomType | Room): Room | undefined {
-    if ((item as any).number) {
-      return item as Room;
-    }
-    const rtId = (item as RoomType).id;
-    return this.roomsArray()?.find(
-      (r) => r.roomType?.id === rtId || (r as any).typeId === rtId,
-    );
-  }
-
-  getRoomType(item: RoomType | Room): RoomType | undefined {
-    if ((item as any).number) {
-      return (item as Room).roomType;
-    }
-    return item as RoomType;
   }
 
   next(): void {

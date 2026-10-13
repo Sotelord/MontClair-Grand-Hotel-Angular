@@ -25,7 +25,7 @@
         } @else {
           <div class="relative group">
             <a
-              routerLink="/profile"
+              [routerLink]="['/profile', client.id]"
               class="flex items-center gap-2 px-1 py-1 rounded-full hover:bg-pampas transition cursor-pointer"
             >
               <img
@@ -53,14 +53,14 @@
               }
               <li>
                 <a
-                  routerLink="/profile"
+                  [routerLink]="['/profile', client.id]"
                   class="block px-4 py-2.5 text-xs text-woodsmoke hover:bg-pampas transition"
                   >Mi Perfil</a
                 >
               </li>
               <li>
                 <a
-                  routerLink="/profile"
+                  [routerLink]="['/profile', client.id]"
                   class="block px-4 py-2.5 text-xs text-woodsmoke hover:bg-pampas transition border-t border-[#E8E2DA]"
                   >Mis Reservas</a
                 >

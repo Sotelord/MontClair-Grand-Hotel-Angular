@@ -13,9 +13,7 @@ export class RoomTypeService {
   private readonly roomTypesSubject = new BehaviorSubject<RoomType[]>([]);
   readonly roomTypes$ = this.roomTypesSubject.asObservable();
 
-  constructor() {
-    this.loadFromBackend();
-  }
+
 
   private syncRoomTypes(data: RoomType[]): void {
     this.roomTypes = [...data];
@@ -62,13 +60,6 @@ export class RoomTypeService {
         this.syncRoomTypes(this.roomTypes.filter((t) => t.id !== id));
       }),
     );
-  }
-
-  private loadFromBackend(): void {
-    this.findAll().subscribe({
-      next: () => {},
-      error: () => {},
-    });
   }
 
   getRoomTypes(): RoomType[] {

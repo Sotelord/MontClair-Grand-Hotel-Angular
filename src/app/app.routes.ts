@@ -42,7 +42,12 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    component: ClientProfileComponent,
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
+    path: 'profile/edit/:id',
+    component: ProfileEditComponent,
   },
   {
     path: 'profile/edit',
