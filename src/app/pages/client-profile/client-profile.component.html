@@ -56,6 +56,14 @@
           </button>
         </div>
       </div>
+      @if (errorMessage) {
+        <div
+          class="mt-6 bg-red-50 border border-red-200 text-red-800 p-3 rounded-[3px] text-xs"
+          role="alert"
+        >
+          {{ errorMessage }}
+        </div>
+      }
       <div
         class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E8E2DA] text-xs"
       >
@@ -193,6 +201,22 @@
                   }
                 </div>
               }
+              @if (client.id === authService.currentUser()?.id) {
+                <div class="mt-4 pt-3 border-t border-[#E8E2DA]/60 flex justify-end">
+                  <button
+                    type="button"
+                    (click)="deleteReservation(res)"
+                    [disabled]="deletingReservationIds.has(res.id)"
+                    class="bg-red-50 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed text-red-700 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition cursor-pointer border border-red-200"
+                  >
+                    {{
+                      deletingReservationIds.has(res.id)
+                        ? "Eliminando..."
+                        : "Eliminar Reserva"
+                    }}
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
@@ -203,5 +227,33 @@
         </div>
       }
     </div>
+    @if (client.id === authService.currentUser()?.id) {
+      <div
+        class="bg-white border border-red-200 rounded-[4px] shadow-lg p-6 sm:p-8 mt-8"
+      >
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div>
+            <h2
+              class="font-serif text-lg uppercase tracking-[1px] text-red-800"
+            >
+              Zona de peligro
+            </h2>
+            <p class="text-xs text-woodsmoke/60 mt-1">
+              Eliminar tu perfil borra permanentemente tu cuenta.
+            </p>
+          </div>
+          <button
+            type="button"
+            (click)="deleteProfile()"
+            [disabled]="isDeletingProfile"
+            class="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer"
+          >
+            {{ isDeletingProfile ? "Eliminando..." : "Eliminar Perfil" }}
+          </button>
+        </div>
+      </div>
+    }
   </section>
 }

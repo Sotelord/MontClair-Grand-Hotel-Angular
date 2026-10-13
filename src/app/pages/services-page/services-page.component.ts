@@ -17,7 +17,7 @@ export class ServicesPageComponent implements OnInit {
   ngOnInit(): void {
     this.servicesService.findAll().subscribe({
       next: (services) => {
-        this.services = services || [];
+        this.services = (services || []).filter((service) => !service.hidden);
       },
       error: () => {
         this.services = [];

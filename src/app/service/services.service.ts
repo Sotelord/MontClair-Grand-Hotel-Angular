@@ -23,6 +23,7 @@ export class ServicesService {
             ...s,
             highlights: s.highlights || [],
             galleryImages: s.galleryImages || [],
+            hidden: s.hidden === true,
           }));
         }
       }),
@@ -53,6 +54,13 @@ export class ServicesService {
         }
       }),
     );
+  }
+
+  toggleVisibility(service: Service): Observable<Service> {
+    return this.update(service.id, {
+      ...service,
+      hidden: !service.hidden,
+    });
   }
 
   delete(id: number): Observable<void> {

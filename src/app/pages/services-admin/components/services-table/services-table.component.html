@@ -41,6 +41,27 @@
                 </button>
                 <button
                   type="button"
+                  class="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-50 rounded-[2px] transition cursor-pointer"
+                  [title]="service.hidden ? 'Mostrar Servicio' : 'Ocultar Servicio'"
+                  [attr.aria-label]="service.hidden ? 'Mostrar Servicio' : 'Ocultar Servicio'"
+                  (click)="onToggleVisibility(service)"
+                >
+                  @if (service.hidden) {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2.06 12.35a1 1 0 0 1 0-.7C3.1 8.26 7.1 5 12 5c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7C20.9 15.74 16.9 19 12 19c-4.9 0-8.9-3.26-9.94-6.65Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m3 3 18 18"></path>
+                      <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
+                      <path d="M9.88 4.24A10.9 10.9 0 0 1 12 4c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7 10.9 10.9 0 0 1-4.06 4.83"></path>
+                      <path d="M6.61 6.61A10.9 10.9 0 0 0 2.06 11.65a1 1 0 0 0 0 .7C3.1 15.74 7.1 19 12 19a10.9 10.9 0 0 0 2.12-.24"></path>
+                    </svg>
+                  }
+                </button>
+                <button
+                  type="button"
                   class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
                   title="Eliminar Servicio"
                   aria-label="Eliminar Servicio"
