@@ -15,7 +15,6 @@ export class ServicesService {
     this.loadFromBackend();
   }
 
-  // REST API Observable Methods (Consumo Spring Boot)
   findAll(): Observable<Service[]> {
     return this.http.get<Service[]>(this.apiUrl).pipe(
       tap((data) => {
@@ -26,7 +25,7 @@ export class ServicesService {
             galleryImages: s.galleryImages || [],
           }));
         }
-      })
+      }),
     );
   }
 
@@ -41,7 +40,7 @@ export class ServicesService {
         if (saved) {
           this.serviceArray.push(saved);
         }
-      })
+      }),
     );
   }
 
@@ -52,7 +51,7 @@ export class ServicesService {
         if (idx !== -1) {
           this.serviceArray[idx] = updated;
         }
-      })
+      }),
     );
   }
 
@@ -60,7 +59,7 @@ export class ServicesService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.serviceArray = this.serviceArray.filter((s) => s.id !== id);
-      })
+      }),
     );
   }
 

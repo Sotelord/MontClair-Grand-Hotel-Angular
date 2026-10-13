@@ -1,6 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
@@ -26,6 +31,7 @@ export class RoomFormComponent implements OnInit {
   roomId?: number;
   roomTypes: RoomType[] = [];
   errorMessage: string | null = null;
+  private currentRoom?: Room;
 
   ngOnInit(): void {
     this.initForm();
@@ -53,6 +59,7 @@ export class RoomFormComponent implements OnInit {
       this.roomService.findById(this.roomId).subscribe({
         next: (existing) => {
           if (existing) {
+            this.currentRoom = existing;
             this.roomForm.patchValue({
               name: existing.name,
               number: existing.number,
@@ -80,7 +87,10 @@ export class RoomFormComponent implements OnInit {
   private initForm(): void {
     this.roomForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      number: ['', [Validators.required, Validators.pattern(/^[0-9A-Za-z-]+$/)]],
+      number: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9A-Za-z-]+$/)],
+      ],
       typeId: [this.roomTypes[0]?.id || 1, [Validators.required]],
       floor: [1, [Validators.required, Validators.min(1)]],
       status: ['AVAILABLE', [Validators.required]],
@@ -92,15 +102,23 @@ export class RoomFormComponent implements OnInit {
       heroDescription: [''],
     });
 
-    // Auto-update price when room type changes if adding
     this.roomForm.get('typeId')?.valueChanges.subscribe((typeId) => {
       if (!this.isEditMode) {
-        const selectedType = this.roomTypes.find((t) => t.id === Number(typeId));
+        const selectedType = this.roomTypes.find(
+          (t) => t.id === Number(typeId),
+        );
         if (selectedType) {
-          if (!this.roomForm.get('name')?.value || this.roomTypes.some(t => t.name === this.roomForm.get('name')?.value)) {
+          if (
+            !this.roomForm.get('name')?.value ||
+            this.roomTypes.some(
+              (t) => t.name === this.roomForm.get('name')?.value,
+            )
+          ) {
             this.roomForm.patchValue({ name: selectedType.name });
           }
-          this.roomForm.patchValue({ pricePerNight: selectedType.pricePerNight });
+          this.roomForm.patchValue({
+            pricePerNight: selectedType.pricePerNight,
+          });
         }
       }
     });
@@ -109,19 +127,28 @@ export class RoomFormComponent implements OnInit {
   onSubmit(): void {
     if (this.roomForm.invalid) {
       this.roomForm.markAllAsTouched();
-      this.errorMessage = 'Por favor, completa correctamente todos los campos obligatorios.';
+      this.errorMessage =
+        'Por favor, completa correctamente todos los campos obligatorios.';
       return;
     }
 
     const val = this.roomForm.value;
-    const selectedType = this.roomTypeService.getRoomTypeById(Number(val.typeId));
+    // Usamos la lista que el componente ya cargó, no la caché del servicio
+    const selectedType = this.roomTypes.find(
+      (t) => t.id === Number(val.typeId),
+    );
 
     if (!selectedType) {
       this.errorMessage = 'Por favor selecciona una categoría válida.';
       return;
     }
+    const { type, imageUrl, description, priceLabel, typeId, ...base } = (this
+      .currentRoom ?? {}) as any;
 
     const roomData: Omit<Room, 'id'> & { id?: number } = {
+      highlights: [],
+      galleryImages: [],
+      ...base,
       name: val.name,
       number: val.number.trim(),
       roomType: selectedType,
@@ -133,31 +160,29 @@ export class RoomFormComponent implements OnInit {
       area: Number(val.area),
       secondaryImageUrl: val.secondaryImageUrl?.trim() || selectedType.imageUrl,
       heroDescription: val.heroDescription || selectedType.description,
-      highlights: [],
-      galleryImages: [],
     };
 
+    this.errorMessage = null;
+
     if (this.isEditMode && this.roomId) {
-      this.roomService.update(this.roomId, { ...roomData, id: this.roomId } as Room).subscribe({
-        next: () => {
-          this.router.navigate(['/admin/rooms']);
-        },
-        error: () => {
-          this.errorMessage = 'Error al actualizar la habitación en el servidor.';
-        },
-      });
+      this.roomService
+        .update(this.roomId, { ...roomData, id: this.roomId } as Room)
+        .subscribe({
+          next: () => this.router.navigate(['/admin/rooms']),
+          error: (err) =>
+            (this.errorMessage =
+              err.error?.mensaje ??
+              'Error al actualizar la habitación en el servidor.'),
+        });
     } else {
       this.roomService.add(roomData as any).subscribe({
-        next: () => {
-          this.router.navigate(['/admin/rooms']);
-        },
-        error: () => {
-          this.errorMessage = 'Error al registrar la habitación. Verifique que el número no esté duplicado.';
-        },
+        next: () => this.router.navigate(['/admin/rooms']),
+        error: (err) =>
+          (this.errorMessage =
+            err.error?.mensaje ?? 'Error al registrar la habitación.'),
       });
     }
   }
-
   isFieldInvalid(fieldName: string): boolean {
     const field = this.roomForm.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));

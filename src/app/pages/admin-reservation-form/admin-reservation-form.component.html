@@ -1,14 +1,21 @@
 <div class="flex items-center justify-center p-6 py-12">
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden">
-    <!-- Barra decorativa dorada -->
-    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+    ></div>
 
     <div class="text-center mb-8">
-      <span class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-2">
+      <span
+        class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-2"
+      >
         GESTIÓN DE RESERVACIONES
       </span>
-      <h1 class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase">
-        {{ isEditMode ? 'Modificar Reserva' : 'Nueva Reserva de Estancia' }}
+      <h1
+        class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase"
+      >
+        {{ isEditMode ? "Modificar Reserva" : "Nueva Reserva de Estancia" }}
       </h1>
       <div class="flex items-center justify-center gap-3 mt-3">
         <div class="h-[1px] w-8 bg-twine/40"></div>
@@ -16,29 +23,46 @@
         <div class="h-[1px] w-8 bg-twine/40"></div>
       </div>
       <p class="text-xs text-woodsmoke/60 mt-3 max-w-md mx-auto">
-        Asigna habitación disponible, huéspedes, fechas y servicios contratados en la cuenta.
+        Asigna habitación disponible, huéspedes, fechas y servicios contratados
+        en la cuenta.
       </p>
     </div>
-
-    <!-- Alertas -->
     @if (errorMessage) {
-      <div class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between">
+      <div
+        class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between"
+      >
         <div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            class="w-4 h-4 text-red-600 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
           <span>{{ errorMessage }}</span>
         </div>
-        <button type="button" (click)="errorMessage = null" class="text-red-500 hover:text-red-700">✕</button>
+        <button
+          type="button"
+          (click)="errorMessage = null"
+          class="text-red-500 hover:text-red-700"
+        >
+          ✕
+        </button>
       </div>
     }
 
-    <form [formGroup]="reservationForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <!-- Selección de Cliente -->
+    <form
+      [formGroup]="reservationForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >
           Cliente Huésped *
         </label>
         <select
@@ -47,16 +71,16 @@
         >
           @for (c of clients; track c.id) {
             <option [value]="c.id">
-              {{ c.firstName }} {{ c.lastName || '' }} ({{ c.email }})
+              {{ c.firstName }} {{ c.lastName || "" }} ({{ c.email }})
             </option>
           }
         </select>
       </div>
-
-      <!-- Fechas de Entrada y Salida -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Fecha de Entrada (Check-In) *
           </label>
           <input
@@ -67,7 +91,9 @@
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Fecha de Salida (Check-Out) *
           </label>
           <input
@@ -77,10 +103,10 @@
           />
         </div>
       </div>
-
-      <!-- Cantidad de Huéspedes -->
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >
           Cantidad de Personas *
         </label>
         <input
@@ -91,24 +117,32 @@
           class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
         />
       </div>
-
-      <!-- Habitación Asignada -->
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2"
+        >
           Habitación Asignada (Disponibles) *
         </label>
-        <div class="space-y-1 max-h-52 overflow-y-auto border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20">
+        <div
+          class="space-y-1 max-h-52 overflow-y-auto border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20"
+        >
           @for (room of availableRooms; track room.id) {
-            <label class="flex items-center gap-3 p-2 rounded-[2px] hover:bg-white transition cursor-pointer">
+            <label
+              class="flex items-center gap-3 p-2 rounded-[2px] hover:bg-white transition cursor-pointer"
+            >
               <input
                 type="radio"
                 formControlName="roomId"
                 [value]="room.id"
                 class="accent-twine"
               />
-              <span class="text-xs text-woodsmoke flex-1 flex justify-between items-center">
+              <span
+                class="text-xs text-woodsmoke flex-1 flex justify-between items-center"
+              >
                 <span>
-                  <strong>Hab. #{{ room.number }}</strong> • {{ room.name }} ({{ room.roomType.name }})
+                  <strong>Hab. #{{ room.number }}</strong> • {{ room.name }} ({{
+                    room.roomType.name
+                  }})
                 </span>
                 <span class="font-mono text-twine-dark font-semibold">
                   {{ formatPrice(room.pricePerNight) }}/noche
@@ -122,15 +156,19 @@
           }
         </div>
       </div>
-
-      <!-- Servicios Adicionales (Cuenta) -->
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2"
+        >
           Servicios Adicionales (Cargo a la Cuenta)
         </label>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20"
+        >
           @for (svc of services; track svc.id) {
-            <label class="flex items-center gap-3 p-2 rounded-[2px] hover:bg-white transition cursor-pointer">
+            <label
+              class="flex items-center gap-3 p-2 rounded-[2px] hover:bg-white transition cursor-pointer"
+            >
               <input
                 type="checkbox"
                 [checked]="isServiceSelected(svc.id)"
@@ -139,39 +177,57 @@
               />
               <span class="text-xs text-woodsmoke flex-1 flex justify-between">
                 <span>{{ svc.name }}</span>
-                <span class="text-twine-dark font-mono font-medium">+{{ formatPrice(svc.price) }}</span>
+                <span class="text-twine-dark font-mono font-medium"
+                  >+{{ formatPrice(svc.price) }}</span
+                >
               </span>
             </label>
           }
         </div>
       </div>
-
-      <!-- Resumen en Vivo de la Cuenta de Operario -->
-      <div class="bg-mirage text-white p-5 rounded-[3px] space-y-2 border border-white/10 shadow-sm">
-        <span class="text-[9px] uppercase tracking-[2px] font-sans font-bold text-twine block">
+      <div
+        class="bg-mirage text-white p-5 rounded-[3px] space-y-2 border border-white/10 shadow-sm"
+      >
+        <span
+          class="text-[9px] uppercase tracking-[2px] font-sans font-bold text-twine block"
+        >
           DESGLOSE DE CUENTA DE ESTANCIA
         </span>
         <div class="flex justify-between text-xs text-white/80">
-          <span>Estancia ({{ nightsCount }} noches × {{ formatPrice(selectedRoomPrice) }}):</span>
+          <span
+            >Estancia ({{ nightsCount }} noches ×
+            {{ formatPrice(selectedRoomPrice) }}):</span
+          >
           <span class="font-mono">{{ formatPrice(estimatedRoomTotal) }}</span>
         </div>
         <div class="flex justify-between text-xs text-white/80">
-          <span>Servicios Adicionales ({{ selectedServiceIds.size }} seleccionados):</span>
-          <span class="font-mono">{{ formatPrice(estimatedServicesTotal) }}</span>
+          <span
+            >Servicios Adicionales ({{
+              selectedServiceIds.size
+            }}
+            seleccionados):</span
+          >
+          <span class="font-mono">{{
+            formatPrice(estimatedServicesTotal)
+          }}</span>
         </div>
-        <div class="flex justify-between text-sm font-bold border-t border-white/10 pt-2 text-twine">
+        <div
+          class="flex justify-between text-sm font-bold border-t border-white/10 pt-2 text-twine"
+        >
           <span>TOTAL ESTIMADO EN CUENTA:</span>
           <span class="font-mono">{{ formatPrice(estimatedGrandTotal) }}</span>
         </div>
       </div>
-
-      <!-- Botones de Acción -->
       <div class="pt-4 flex flex-col sm:flex-row gap-3">
         <button
           type="submit"
           class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
         >
-          {{ isEditMode ? 'Guardar Cambios en Reserva' : 'Confirmar y Crear Reserva' }}
+          {{
+            isEditMode
+              ? "Guardar Cambios en Reserva"
+              : "Confirmar y Crear Reserva"
+          }}
         </button>
 
         <a

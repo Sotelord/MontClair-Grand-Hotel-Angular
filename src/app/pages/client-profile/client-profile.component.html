@@ -1,22 +1,38 @@
 @if (client) {
   <section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-    <!-- Header -->
-    <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8 mb-8 relative overflow-hidden">
-      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8 mb-8 relative overflow-hidden"
+    >
+      <div
+        class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+      ></div>
 
-      <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
+      <div
+        class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6"
+      >
         <div class="flex flex-col sm:flex-row items-center gap-6">
           <img
-            [src]="client.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'"
+            [src]="
+              client.avatarUrl ||
+              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
+            "
             [alt]="client.firstName"
             class="w-24 h-24 rounded-full object-cover border-3 border-twine shadow-md"
           />
           <div class="text-center sm:text-left">
-            <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">
-              {{ client.role === 'ADMIN' ? 'ADMINISTRADOR DEL HOTEL' : 'HUÉSPED DISTINGUIDO' }}
+            <span
+              class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+            >
+              {{
+                client.role === "ADMIN"
+                  ? "ADMINISTRADOR DEL HOTEL"
+                  : "HUÉSPED DISTINGUIDO"
+              }}
             </span>
-            <h1 class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[1px] uppercase">
-              {{ client.firstName }} {{ client.lastName || '' }}
+            <h1
+              class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[1px] uppercase"
+            >
+              {{ client.firstName }} {{ client.lastName || "" }}
             </h1>
             <p class="text-xs text-woodsmoke/60 mt-1 font-mono">
               &#64;{{ client.username }} • {{ client.email }}
@@ -40,30 +56,50 @@
           </button>
         </div>
       </div>
-
-      <!-- Quick info grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E8E2DA] text-xs">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E8E2DA] text-xs"
+      >
         <div>
-          <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Teléfono</span>
-          <span class="font-semibold text-woodsmoke font-mono">{{ client.phone || 'No registrado' }}</span>
+          <span
+            class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+            >Teléfono</span
+          >
+          <span class="font-semibold text-woodsmoke font-mono">{{
+            client.phone || "No registrado"
+          }}</span>
         </div>
         <div>
-          <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Rol en Plataforma</span>
+          <span
+            class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+            >Rol en Plataforma</span
+          >
           <span class="font-semibold text-woodsmoke">{{ client.role }}</span>
         </div>
         <div>
-          <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Reservas Registradas</span>
-          <span class="font-semibold text-twine-dark font-mono">{{ reservations.length }}</span>
+          <span
+            class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+            >Reservas Registradas</span
+          >
+          <span class="font-semibold text-twine-dark font-mono">{{
+            reservations.length
+          }}</span>
         </div>
       </div>
     </div>
-
-    <!-- Active Reservations Section -->
-    <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8">
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8"
+    >
       <div class="flex items-center justify-between mb-6">
         <div>
-          <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">HISTORIAL DE ESTANCIAS</span>
-          <h2 class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke">Mis Reservas</h2>
+          <span
+            class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+            >HISTORIAL DE ESTANCIAS</span
+          >
+          <h2
+            class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke"
+          >
+            Mis Reservas
+          </h2>
         </div>
         <a
           routerLink="/reservations/book"
@@ -76,44 +112,82 @@
       @if (reservations.length > 0) {
         <div class="space-y-4">
           @for (res of reservations; track res.id) {
-            <div class="border border-[#E8E2DA] rounded-[2px] p-5 hover:border-twine transition bg-pampas/20">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]">
+            <div
+              class="border border-[#E8E2DA] rounded-[2px] p-5 hover:border-twine transition bg-pampas/20"
+            >
+              <div
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]"
+              >
                 <div>
-                  <span class="font-mono text-twine-dark font-semibold text-xs">#{{ res.id }}</span>
-                  <h3 class="font-serif text-base font-semibold text-woodsmoke uppercase mt-0.5">
-                    {{ res.reservationRooms?.[0]?.room?.name || 'Habitación Reservada' }}
+                  <span class="font-mono text-twine-dark font-semibold text-xs"
+                    >#{{ res.id }}</span
+                  >
+                  <h3
+                    class="font-serif text-base font-semibold text-woodsmoke uppercase mt-0.5"
+                  >
+                    {{
+                      res.reservationRooms?.[0]?.room?.name ||
+                        "Habitación Reservada"
+                    }}
                     (Hab. {{ res.reservationRooms?.[0]?.room?.number }})
                   </h3>
                 </div>
-                <span class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <span
+                  class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+                >
                   {{ res.status }}
                 </span>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 text-xs">
                 <div>
-                  <span class="text-woodsmoke/50 text-[10px] uppercase block">Fechas</span>
-                  <span class="font-mono text-woodsmoke">{{ res.checkInDate }} → {{ res.checkOutDate }}</span>
+                  <span class="text-woodsmoke/50 text-[10px] uppercase block"
+                    >Fechas</span
+                  >
+                  <span class="font-mono text-woodsmoke"
+                    >{{ res.checkInDate }} → {{ res.checkOutDate }}</span
+                  >
                 </div>
                 <div>
-                  <span class="text-woodsmoke/50 text-[10px] uppercase block">Huéspedes</span>
-                  <span class="text-woodsmoke">{{ res.numberOfPeople }} Personas</span>
+                  <span class="text-woodsmoke/50 text-[10px] uppercase block"
+                    >Huéspedes</span
+                  >
+                  <span class="text-woodsmoke"
+                    >{{ res.numberOfPeople }} Personas</span
+                  >
                 </div>
                 <div>
-                  <span class="text-woodsmoke/50 text-[10px] uppercase block">Tarifa Base</span>
+                  <span class="text-woodsmoke/50 text-[10px] uppercase block"
+                    >Tarifa Base</span
+                  >
                   <span class="font-semibold text-twine-dark">
-                    {{ formatPrice(res.reservationRooms?.[0]?.pricePerNight || 0) }} / noche
+                    {{
+                      formatPrice(res.reservationRooms?.[0]?.pricePerNight || 0)
+                    }}
+                    / noche
                   </span>
                 </div>
               </div>
-
-              <!-- Extra services if any -->
-              @if (res.reservationRooms?.[0]?.acquiredServices && (res.reservationRooms?.[0]?.acquiredServices)!.length > 0) {
-                <div class="mt-3 pt-2 border-t border-[#E8E2DA]/60 text-[11px] text-woodsmoke/70">
-                  <span class="font-semibold text-woodsmoke/80">Servicios Incluidos: </span>
-                  @for (svc of res.reservationRooms?.[0]?.acquiredServices; track svc.id) {
-                    <span class="inline-block bg-pampas border border-[#E8E2DA] px-2 py-0.5 rounded-[2px] mr-2 mt-1">
-                      {{ svc.quantity }}x {{ svc.service.name }} (€{{ svc.unitPrice }})
+              @if (
+                res.reservationRooms?.[0]?.acquiredServices &&
+                (res.reservationRooms?.[0]?.acquiredServices)!.length > 0
+              ) {
+                <div
+                  class="mt-3 pt-2 border-t border-[#E8E2DA]/60 text-[11px] text-woodsmoke/70"
+                >
+                  <span class="font-semibold text-woodsmoke/80"
+                    >Servicios Incluidos:
+                  </span>
+                  @for (
+                    svc of res.reservationRooms?.[0]?.acquiredServices;
+                    track svc.id
+                  ) {
+                    <span
+                      class="inline-block bg-pampas border border-[#E8E2DA] px-2 py-0.5 rounded-[2px] mr-2 mt-1"
+                    >
+                      {{ svc.quantity }}x {{ svc.service.name }} (€{{
+                        svc.unitPrice
+                      }})
                     </span>
                   }
                 </div>
@@ -123,7 +197,8 @@
         </div>
       } @else {
         <div class="py-12 text-center text-woodsmoke/50 italic text-xs">
-          Aún no tienes reservaciones activas. Explora nuestras suites de lujo y planifica tu estancia.
+          Aún no tienes reservaciones activas. Explora nuestras suites de lujo y
+          planifica tu estancia.
         </div>
       }
     </div>

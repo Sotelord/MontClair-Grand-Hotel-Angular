@@ -14,14 +14,13 @@ export class RoomTypeService {
     this.loadFromBackend();
   }
 
-  // REST API Observable Methods (Consumo Spring Boot)
   findAll(): Observable<RoomType[]> {
     return this.http.get<RoomType[]>(this.apiUrl).pipe(
       tap((data) => {
         if (data) {
           this.roomTypes = data;
         }
-      })
+      }),
     );
   }
 
@@ -36,7 +35,7 @@ export class RoomTypeService {
         if (saved) {
           this.roomTypes.push(saved);
         }
-      })
+      }),
     );
   }
 
@@ -47,7 +46,7 @@ export class RoomTypeService {
         if (idx !== -1) {
           this.roomTypes[idx] = updated;
         }
-      })
+      }),
     );
   }
 
@@ -55,7 +54,7 @@ export class RoomTypeService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.roomTypes = this.roomTypes.filter((t) => t.id !== id);
-      })
+      }),
     );
   }
 

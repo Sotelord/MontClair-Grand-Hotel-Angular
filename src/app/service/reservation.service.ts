@@ -24,15 +24,13 @@ export class ReservationService {
   constructor() {
     this.loadFromBackend();
   }
-
-  // REST API Observable Methods (Consumo Spring Boot)
   findAll(): Observable<Reservation[]> {
     return this.http.get<Reservation[]>(this.apiUrl).pipe(
       tap((data) => {
         if (data) {
           this.reservations = data;
         }
-      })
+      }),
     );
   }
 
@@ -50,7 +48,7 @@ export class ReservationService {
         if (saved) {
           this.reservations.unshift(saved);
         }
-      })
+      }),
     );
   }
 
@@ -61,7 +59,7 @@ export class ReservationService {
         if (idx !== -1) {
           this.reservations[idx] = updated;
         }
-      })
+      }),
     );
   }
 
@@ -69,7 +67,7 @@ export class ReservationService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.reservations = this.reservations.filter((r) => r.id !== id);
-      })
+      }),
     );
   }
 
@@ -105,26 +103,34 @@ export class ReservationService {
 
   calculateRoomSubtotal(res: Reservation): number {
     const nights = this.calculateNights(res.checkInDate, res.checkOutDate);
-    const roomPrice = res.reservationRooms?.[0]?.pricePerNight || res.reservationRooms?.[0]?.room?.pricePerNight || 0;
+    const roomPrice =
+      res.reservationRooms?.[0]?.pricePerNight ||
+      res.reservationRooms?.[0]?.room?.pricePerNight ||
+      0;
     return nights * roomPrice;
   }
 
   calculateServicesSubtotal(res: Reservation): number {
     const services = res.reservationRooms?.[0]?.acquiredServices || [];
-    return services.reduce((acc, curr) => acc + (curr.quantity * curr.unitPrice), 0);
+    return services.reduce(
+      (acc, curr) => acc + curr.quantity * curr.unitPrice,
+      0,
+    );
   }
 
   calculateGrandTotal(res: Reservation): number {
-    return this.calculateRoomSubtotal(res) + this.calculateServicesSubtotal(res);
+    return (
+      this.calculateRoomSubtotal(res) + this.calculateServicesSubtotal(res)
+    );
   }
-
-
 
   hasClientReservations(clientId: number): boolean {
     return this.reservations.some((r) => r.client?.id === clientId);
   }
 
   hasRoomReservations(roomId: number): boolean {
-    return this.reservations.some((r) => r.reservationRooms?.some((rr) => rr.room?.id === roomId));
+    return this.reservations.some((r) =>
+      r.reservationRooms?.some((rr) => rr.room?.id === roomId),
+    );
   }
 }

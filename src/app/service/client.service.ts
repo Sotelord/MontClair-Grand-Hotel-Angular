@@ -14,14 +14,13 @@ export class ClientService {
     this.loadFromBackend();
   }
 
-  // REST API Observable Methods (Consumo Spring Boot)
   findAll(): Observable<Client[]> {
     return this.http.get<Client[]>(this.apiUrl).pipe(
       tap((data) => {
         if (data) {
           this.clients = data;
         }
-      })
+      }),
     );
   }
 
@@ -36,7 +35,7 @@ export class ClientService {
         if (saved) {
           this.clients.push(saved);
         }
-      })
+      }),
     );
   }
 
@@ -47,7 +46,7 @@ export class ClientService {
         if (idx !== -1) {
           this.clients[idx] = updated;
         }
-      })
+      }),
     );
   }
 
@@ -55,7 +54,7 @@ export class ClientService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.clients = this.clients.filter((c) => c.id !== id);
-      })
+      }),
     );
   }
 
@@ -77,11 +76,10 @@ export class ClientService {
   getClientByUsernameOrEmail(identifier: string): Client | undefined {
     const clean = identifier.trim().toLowerCase();
     return this.clients.find(
-      (c) => c.username.toLowerCase() === clean || c.email.toLowerCase() === clean
+      (c) =>
+        c.username.toLowerCase() === clean || c.email.toLowerCase() === clean,
     );
   }
-
-
 
   private clients: Client[] = [];
 }

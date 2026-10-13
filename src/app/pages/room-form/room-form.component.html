@@ -1,14 +1,21 @@
 <div class="flex items-center justify-center p-6 py-12">
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden">
-    <!-- Barra decorativa superior -->
-    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+    ></div>
 
     <div class="text-center mb-8">
-      <span class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-1">
+      <span
+        class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-1"
+      >
         GESTIÓN DE ESTANCIAS
       </span>
-      <h1 class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase">
-        {{ isEditMode ? 'Modificar Habitación' : 'Nueva Habitación' }}
+      <h1
+        class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase"
+      >
+        {{ isEditMode ? "Modificar Habitación" : "Nueva Habitación" }}
       </h1>
       <div class="flex items-center justify-center gap-3 mt-3">
         <div class="h-[1px] w-8 bg-twine/40"></div>
@@ -16,29 +23,43 @@
         <div class="h-[1px] w-8 bg-twine/40"></div>
       </div>
       <p class="text-xs text-woodsmoke/60 mt-2">
-        Completa la información, categoría y especificaciones para esta estancia.
+        Completa la información, categoría y especificaciones para esta
+        estancia.
       </p>
     </div>
-
-    <!-- Alerta de Error -->
     @if (errorMessage) {
-      <div class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between">
+      <div
+        class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between"
+      >
         <div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            class="w-4 h-4 text-red-600 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
           <span>{{ errorMessage }}</span>
         </div>
-        <button type="button" (click)="errorMessage = null" class="text-red-500 hover:text-red-700">✕</button>
+        <button
+          type="button"
+          (click)="errorMessage = null"
+          class="text-red-500 hover:text-red-700"
+        >
+          ✕
+        </button>
       </div>
     }
 
     <form [formGroup]="roomForm" (ngSubmit)="onSubmit()" class="space-y-5">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Nombre / Título Comercial *
           </label>
           <input
@@ -48,13 +69,17 @@
             class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
             [class.border-red-400]="isFieldInvalid('name')"
           />
-          @if (isFieldInvalid('name')) {
-            <span class="text-[10px] text-red-500 mt-1 block">El nombre es requerido.</span>
+          @if (isFieldInvalid("name")) {
+            <span class="text-[10px] text-red-500 mt-1 block"
+              >El nombre es requerido.</span
+            >
           }
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Número de Habitación *
           </label>
           <input
@@ -64,15 +89,19 @@
             class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
             [class.border-red-400]="isFieldInvalid('number')"
           />
-          @if (isFieldInvalid('number')) {
-            <span class="text-[10px] text-red-500 mt-1 block">El número de habitación es requerido.</span>
+          @if (isFieldInvalid("number")) {
+            <span class="text-[10px] text-red-500 mt-1 block"
+              >El número de habitación es requerido.</span
+            >
           }
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Tipo de Habitación *
           </label>
           <select
@@ -80,13 +109,17 @@
             class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer"
           >
             @for (type of roomTypes; track type.id) {
-              <option [value]="type.id">{{ type.name }} (€{{ type.pricePerNight }})</option>
+              <option [value]="type.id">
+                {{ type.name }} (€{{ type.pricePerNight }})
+              </option>
             }
           </select>
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Piso *
           </label>
           <input
@@ -99,7 +132,9 @@
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Estado *
           </label>
           <select
@@ -114,7 +149,9 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Tarifa (€ / Noche) *
           </label>
           <input
@@ -127,7 +164,9 @@
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Capacidad (Huéspedes)
           </label>
           <input
@@ -140,7 +179,9 @@
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Tipo de Cama
           </label>
           <input
@@ -152,7 +193,9 @@
         </div>
 
         <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+          <label
+            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+          >
             Área (m²)
           </label>
           <input
@@ -166,7 +209,9 @@
       </div>
 
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >
           URL de Imagen Principal (Opcional)
         </label>
         <input
@@ -176,12 +221,15 @@
           class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
         />
         <p class="text-[10px] text-woodsmoke/50 mt-1">
-          Si se deja vacío, se heredará la imagen del tipo de habitación seleccionado.
+          Si se deja vacío, se heredará la imagen del tipo de habitación
+          seleccionado.
         </p>
       </div>
 
       <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
+        <label
+          class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >
           Descripción de la Estancia (Opcional)
         </label>
         <textarea
@@ -197,7 +245,11 @@
           type="submit"
           class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
         >
-          {{ isEditMode ? 'Actualizar Habitación' : 'Guardar y Publicar Habitación' }}
+          {{
+            isEditMode
+              ? "Actualizar Habitación"
+              : "Guardar y Publicar Habitación"
+          }}
         </button>
 
         <a

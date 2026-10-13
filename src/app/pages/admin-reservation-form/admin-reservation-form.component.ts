@@ -1,6 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
 import { ClientService } from '../../service/client.service';
@@ -43,7 +48,10 @@ export class AdminReservationFormComponent implements OnInit {
     this.clientService.findAll().subscribe({
       next: (clients) => {
         this.clients = clients || [];
-        if (this.clients.length > 0 && !this.reservationForm.get('clientId')?.value) {
+        if (
+          this.clients.length > 0 &&
+          !this.reservationForm.get('clientId')?.value
+        ) {
           this.reservationForm.patchValue({ clientId: this.clients[0].id });
         }
       },
@@ -72,7 +80,9 @@ export class AdminReservationFormComponent implements OnInit {
             this.roomService.findAll().subscribe({
               next: (rooms) => {
                 this.availableRooms = (rooms || []).filter(
-                  (r) => r.status === 'AVAILABLE' || (currentRoom && r.id === currentRoom.id)
+                  (r) =>
+                    r.status === 'AVAILABLE' ||
+                    (currentRoom && r.id === currentRoom.id),
                 );
               },
             });
@@ -97,9 +107,13 @@ export class AdminReservationFormComponent implements OnInit {
     } else {
       this.roomService.findAll().subscribe({
         next: (rooms) => {
-          this.availableRooms = (rooms || []).filter((r) => r.status === 'AVAILABLE');
+          this.availableRooms = (rooms || []).filter(
+            (r) => r.status === 'AVAILABLE',
+          );
           if (this.availableRooms.length > 0) {
-            this.reservationForm.patchValue({ roomId: this.availableRooms[0].id });
+            this.reservationForm.patchValue({
+              roomId: this.availableRooms[0].id,
+            });
           }
         },
         error: () => {
@@ -111,7 +125,9 @@ export class AdminReservationFormComponent implements OnInit {
 
   private initForm(): void {
     const today = new Date().toISOString().split('T')[0];
-    const defaultOut = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const defaultOut = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split('T')[0];
 
     this.reservationForm = this.fb.group({
       clientId: [this.clients[0]?.id || 1, [Validators.required]],
@@ -133,8 +149,6 @@ export class AdminReservationFormComponent implements OnInit {
   isServiceSelected(serviceId: number): boolean {
     return this.selectedServiceIds.has(serviceId);
   }
-
-  // Live bill preview calculations
   get nightsCount(): number {
     const checkIn = this.reservationForm?.get('checkInDate')?.value;
     const checkOut = this.reservationForm?.get('checkOutDate')?.value;
@@ -176,44 +190,50 @@ export class AdminReservationFormComponent implements OnInit {
 
     const val = this.reservationForm.value;
     if (new Date(val.checkOutDate) <= new Date(val.checkInDate)) {
-      this.errorMessage = 'La fecha de salida debe ser posterior a la de entrada.';
+      this.errorMessage =
+        'La fecha de salida debe ser posterior a la de entrada.';
       return;
     }
 
     const serviceIds = Array.from(this.selectedServiceIds);
 
     if (this.isEditMode && this.reservationId) {
-      this.reservationService.update(this.reservationId, {
-        clientId: Number(val.clientId),
-        roomId: Number(val.roomId),
-        checkInDate: val.checkInDate,
-        checkOutDate: val.checkOutDate,
-        numberOfPeople: Number(val.numberOfPeople),
-        serviceIds,
-      }).subscribe({
-        next: () => {
-          this.router.navigate(['/admin/reservations']);
-        },
-        error: () => {
-          this.errorMessage = 'Error al actualizar la reserva en el servidor.';
-        },
-      });
+      this.reservationService
+        .update(this.reservationId, {
+          clientId: Number(val.clientId),
+          roomId: Number(val.roomId),
+          checkInDate: val.checkInDate,
+          checkOutDate: val.checkOutDate,
+          numberOfPeople: Number(val.numberOfPeople),
+          serviceIds,
+        })
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/admin/reservations']);
+          },
+          error: () => {
+            this.errorMessage =
+              'Error al actualizar la reserva en el servidor.';
+          },
+        });
     } else {
-      this.reservationService.add({
-        clientId: Number(val.clientId),
-        roomId: Number(val.roomId),
-        checkInDate: val.checkInDate,
-        checkOutDate: val.checkOutDate,
-        numberOfPeople: Number(val.numberOfPeople),
-        serviceIds,
-      }).subscribe({
-        next: () => {
-          this.router.navigate(['/admin/reservations']);
-        },
-        error: () => {
-          this.errorMessage = 'Error al crear la reserva en el servidor.';
-        },
-      });
+      this.reservationService
+        .add({
+          clientId: Number(val.clientId),
+          roomId: Number(val.roomId),
+          checkInDate: val.checkInDate,
+          checkOutDate: val.checkOutDate,
+          numberOfPeople: Number(val.numberOfPeople),
+          serviceIds,
+        })
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/admin/reservations']);
+          },
+          error: () => {
+            this.errorMessage = 'Error al crear la reserva en el servidor.';
+          },
+        });
     }
   }
 

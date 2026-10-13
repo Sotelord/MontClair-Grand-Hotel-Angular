@@ -6,43 +6,77 @@
     buttonText="Nueva Reserva"
     (buttonClick)="onAddReservation()"
   />
-
-  <!-- Alertas -->
   @if (successMessage) {
-    <div class="mb-6 p-4 rounded-[4px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
+    <div
+      class="mb-6 p-4 rounded-[4px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between"
+    >
       <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          class="w-4 h-4 text-emerald-600 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
         <span>{{ successMessage }}</span>
       </div>
-      <button (click)="successMessage = null" class="text-emerald-600 hover:text-emerald-800 text-sm">✕</button>
+      <button
+        (click)="successMessage = null"
+        class="text-emerald-600 hover:text-emerald-800 text-sm"
+      >
+        ✕
+      </button>
     </div>
   }
 
   @if (errorMessage) {
-    <div class="mb-6 p-4 rounded-[4px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between">
+    <div
+      class="mb-6 p-4 rounded-[4px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between"
+    >
       <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg
+          class="w-4 h-4 text-red-600 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
         <span>{{ errorMessage }}</span>
       </div>
-      <button (click)="errorMessage = null" class="text-red-600 hover:text-red-800 text-sm">✕</button>
+      <button
+        (click)="errorMessage = null"
+        class="text-red-600 hover:text-red-800 text-sm"
+      >
+        ✕
+      </button>
     </div>
   }
-
-  <!-- KPI Cards del Operario -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between">
+    <div
+      class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between"
+    >
       <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1">Total Reservas</span>
-        <span class="font-serif text-2xl text-woodsmoke font-semibold">{{ reservations.length }}</span>
+        <span
+          class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1"
+          >Total Reservas</span
+        >
+        <span class="font-serif text-2xl text-woodsmoke font-semibold">{{
+          reservations.length
+        }}</span>
       </div>
-      <div class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="16" y1="2" x2="16" y2="6"></line>
           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -51,13 +85,27 @@
       </div>
     </div>
 
-    <div class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between">
+    <div
+      class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between"
+    >
       <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1">Huéspedes Hospedados</span>
-        <span class="font-serif text-2xl text-woodsmoke font-semibold">{{ totalGuests }}</span>
+        <span
+          class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1"
+          >Huéspedes Hospedados</span
+        >
+        <span class="font-serif text-2xl text-woodsmoke font-semibold">{{
+          totalGuests
+        }}</span>
       </div>
-      <div class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -66,22 +114,36 @@
       </div>
     </div>
 
-    <div class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between">
+    <div
+      class="bg-white border border-[#E8E2DA] p-5 rounded-[4px] shadow-xs flex items-center justify-between"
+    >
       <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1">Facturación Total (Cuentas)</span>
-        <span class="font-serif text-2xl text-twine-dark font-semibold">{{ formatPrice(totalRevenue) }}</span>
+        <span
+          class="text-[10px] uppercase tracking-wider text-woodsmoke/50 font-bold block mb-1"
+          >Facturación Total (Cuentas)</span
+        >
+        <span class="font-serif text-2xl text-twine-dark font-semibold">{{
+          formatPrice(totalRevenue)
+        }}</span>
       </div>
-      <div class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        class="w-10 h-10 rounded-full bg-pampas flex items-center justify-center text-twine-dark"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
           <line x1="12" y1="1" x2="12" y2="23"></line>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
         </svg>
       </div>
     </div>
   </div>
-
-  <!-- Barra de Filtros -->
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between"
+  >
     <div class="flex-1 relative">
       <input
         type="text"
@@ -89,7 +151,12 @@
         placeholder="Buscar por cliente, correo o habitación..."
         class="w-full pl-9 pr-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none transition"
       />
-      <svg class="w-4 h-4 text-woodsmoke/40 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg
+        class="w-4 h-4 text-woodsmoke/40 absolute left-3 top-3"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
@@ -104,23 +171,29 @@
         <option value="CONFIRMED">Confirmada</option>
       </select>
 
-      <span class="text-[11px] font-mono text-twine-dark font-semibold whitespace-nowrap bg-pampas px-3 py-2 rounded-[2px] border border-[#E8E2DA]">
+      <span
+        class="text-[11px] font-mono text-twine-dark font-semibold whitespace-nowrap bg-pampas px-3 py-2 rounded-[2px] border border-[#E8E2DA]"
+      >
         Total: {{ filteredReservations.length }}
       </span>
     </div>
   </div>
-
-  <!-- Tabla de Reservas del Panel de Operario -->
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden">
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden"
+  >
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
-          <tr class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10">
+          <tr
+            class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10"
+          >
             <th class="py-4 px-5 font-semibold">ID</th>
             <th class="py-4 px-5 font-semibold">Cliente</th>
             <th class="py-4 px-5 font-semibold">Habitación Asignada</th>
             <th class="py-4 px-5 font-semibold">Fechas & Estancia</th>
-            <th class="py-4 px-5 font-semibold">Servicios Contratados (Cuenta)</th>
+            <th class="py-4 px-5 font-semibold">
+              Servicios Contratados (Cuenta)
+            </th>
             <th class="py-4 px-5 font-semibold">Estado</th>
             <th class="py-4 px-5 font-semibold text-right">Acciones</th>
           </tr>
@@ -128,72 +201,101 @@
         <tbody class="divide-y divide-[#E8E2DA]">
           @for (res of filteredReservations; track res.id) {
             <tr class="hover:bg-pampas/60 transition group">
-              <!-- ID -->
-              <td class="py-4 px-5 font-mono text-twine-dark font-semibold text-[11px]">
+              <td
+                class="py-4 px-5 font-mono text-twine-dark font-semibold text-[11px]"
+              >
                 {{ formatId(res.id) }}
               </td>
-
-              <!-- Cliente -->
               <td class="py-4 px-5">
                 <div class="flex flex-col">
                   <span class="font-semibold text-woodsmoke text-[13px]">
-                    {{ res.client.firstName }} {{ res.client.lastName || '' }}
+                    {{ res.client.firstName }} {{ res.client.lastName || "" }}
                   </span>
                   <span class="text-[11px] text-woodsmoke/60">
                     {{ res.client.email }}
                   </span>
                   <span class="text-[11px] text-woodsmoke/60 font-mono">
-                    {{ res.client.phone || 'Sin teléfono' }}
+                    {{ res.client.phone || "Sin teléfono" }}
                   </span>
                 </div>
               </td>
-
-              <!-- Habitación Asignada -->
               <td class="py-4 px-5">
                 @if (res.reservationRooms && res.reservationRooms[0]) {
                   <div class="flex flex-col">
-                    <span class="font-serif font-semibold text-woodsmoke text-[12px]">
+                    <span
+                      class="font-serif font-semibold text-woodsmoke text-[12px]"
+                    >
                       {{ res.reservationRooms[0].room.name }}
                     </span>
-                    <span class="text-[11px] text-twine-dark font-mono font-medium">
-                      Hab. #{{ res.reservationRooms[0].room.number }} ({{ res.reservationRooms[0].room.roomType.name || 'Habitación' }})
+                    <span
+                      class="text-[11px] text-twine-dark font-mono font-medium"
+                    >
+                      Hab. #{{ res.reservationRooms[0].room.number }} ({{
+                        res.reservationRooms[0].room.roomType.name ||
+                          "Habitación"
+                      }})
                     </span>
                     <span class="text-[10px] text-woodsmoke/50">
-                      {{ formatPrice(res.reservationRooms[0].pricePerNight) }} / noche
+                      {{ formatPrice(res.reservationRooms[0].pricePerNight) }} /
+                      noche
                     </span>
                   </div>
                 } @else {
-                  <span class="text-woodsmoke/50 italic">Sin habitación asignada</span>
+                  <span class="text-woodsmoke/50 italic"
+                    >Sin habitación asignada</span
+                  >
                 }
               </td>
 
-              <!-- Fechas -->
               <td class="py-4 px-5">
-                <div class="flex flex-col text-[11px] text-woodsmoke/80 space-y-0.5 font-mono">
+                <div
+                  class="flex flex-col text-[11px] text-woodsmoke/80 space-y-0.5 font-mono"
+                >
                   <span>
-                    <strong class="text-twine-dark font-sans text-[9px] uppercase tracking-wider">IN:</strong>
+                    <strong
+                      class="text-twine-dark font-sans text-[9px] uppercase tracking-wider"
+                      >IN:</strong
+                    >
                     {{ res.checkInDate }}
                   </span>
                   <span>
-                    <strong class="text-twine-dark font-sans text-[9px] uppercase tracking-wider">OUT:</strong>
+                    <strong
+                      class="text-twine-dark font-sans text-[9px] uppercase tracking-wider"
+                      >OUT:</strong
+                    >
                     {{ res.checkOutDate }}
                   </span>
                   <span class="text-[10px] text-woodsmoke/60 font-sans pt-0.5">
-                    {{ reservationService.calculateNights(res.checkInDate, res.checkOutDate) }} Noche(s) • {{ res.numberOfPeople }} Huéspedes
+                    {{
+                      reservationService.calculateNights(
+                        res.checkInDate,
+                        res.checkOutDate
+                      )
+                    }}
+                    Noche(s) • {{ res.numberOfPeople }} Huéspedes
                   </span>
                 </div>
               </td>
 
-              <!-- Servicios Contratados & Cuenta -->
               <td class="py-4 px-5 min-w-[240px]">
                 <div class="space-y-1.5">
-                  <!-- Lista de servicios si existen -->
-                  @if (res.reservationRooms?.[0]?.acquiredServices && (res.reservationRooms?.[0]?.acquiredServices)!.length > 0) {
+                  @if (
+                    res.reservationRooms?.[0]?.acquiredServices &&
+                    (res.reservationRooms?.[0]?.acquiredServices)!.length > 0
+                  ) {
                     <ul class="space-y-1 border-b border-[#E8E2DA] pb-2">
-                      @for (acq of res.reservationRooms?.[0]?.acquiredServices; track acq.id) {
-                        <li class="flex justify-between items-center text-[11px] text-woodsmoke/80">
+                      @for (
+                        acq of res.reservationRooms?.[0]?.acquiredServices;
+                        track acq.id
+                      ) {
+                        <li
+                          class="flex justify-between items-center text-[11px] text-woodsmoke/80"
+                        >
                           <span>
-                            <span class="font-semibold text-twine-dark">{{ acq.quantity }}x</span> {{ acq.service.name }}
+                            <span class="font-semibold text-twine-dark"
+                              >{{ acq.quantity }}x</span
+                            >
+                            {{ acq.service.name }}
                           </span>
                           <span class="font-mono text-woodsmoke/70">
                             {{ formatPrice(acq.quantity * acq.unitPrice) }}
@@ -202,38 +304,53 @@
                       }
                     </ul>
                   } @else {
-                    <p class="text-[10px] text-woodsmoke/50 italic mb-1">Sin servicios extra contratados</p>
+                    <p class="text-[10px] text-woodsmoke/50 italic mb-1">
+                      Sin servicios extra contratados
+                    </p>
                   }
 
-                  <!-- Desglose de Cuenta Total -->
                   <div class="pt-1 flex flex-col space-y-0.5 text-[11px]">
                     <div class="flex justify-between text-woodsmoke/60">
                       <span>Estancia:</span>
-                      <span class="font-mono">{{ formatPrice(reservationService.calculateRoomSubtotal(res)) }}</span>
+                      <span class="font-mono">{{
+                        formatPrice(
+                          reservationService.calculateRoomSubtotal(res)
+                        )
+                      }}</span>
                     </div>
-                    @if (reservationService.calculateServicesSubtotal(res) > 0) {
+                    @if (
+                      reservationService.calculateServicesSubtotal(res) > 0
+                    ) {
                       <div class="flex justify-between text-woodsmoke/60">
                         <span>Servicios:</span>
-                        <span class="font-mono">{{ formatPrice(reservationService.calculateServicesSubtotal(res)) }}</span>
+                        <span class="font-mono">{{
+                          formatPrice(
+                            reservationService.calculateServicesSubtotal(res)
+                          )
+                        }}</span>
                       </div>
                     }
-                    <div class="flex justify-between font-bold text-twine-dark border-t border-[#E8E2DA]/80 pt-1 text-xs">
+                    <div
+                      class="flex justify-between font-bold text-twine-dark border-t border-[#E8E2DA]/80 pt-1 text-xs"
+                    >
                       <span>TOTAL CUENTA:</span>
-                      <span class="font-mono">{{ formatPrice(reservationService.calculateGrandTotal(res)) }}</span>
+                      <span class="font-mono">{{
+                        formatPrice(reservationService.calculateGrandTotal(res))
+                      }}</span>
                     </div>
                   </div>
                 </div>
               </td>
 
-              <!-- Estado -->
               <td class="py-4 px-5">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                <span
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"
+                >
                   <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
                   {{ res.status }}
                 </span>
               </td>
 
-              <!-- Acciones -->
               <td class="py-4 px-5 text-right">
                 <div class="inline-flex items-center gap-2">
                   <button
@@ -242,9 +359,21 @@
                     class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
                     title="Editar Reserva"
                   >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    <svg
+                      class="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                      ></path>
+                      <path
+                        d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                      ></path>
                     </svg>
                   </button>
 
@@ -254,9 +383,19 @@
                     class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
                     title="Eliminar Reserva"
                   >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      class="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
                       <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <path
+                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                      ></path>
                     </svg>
                   </button>
                 </div>
@@ -264,7 +403,10 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="7" class="py-12 text-center text-woodsmoke/50 italic text-sm">
+              <td
+                colspan="7"
+                class="py-12 text-center text-woodsmoke/50 italic text-sm"
+              >
                 No se encontraron reservas registradas actualmente.
               </td>
             </tr>
@@ -274,15 +416,25 @@
     </div>
   </div>
 
-  <!-- Modal de Confirmación de Eliminación -->
   @if (reservationToDelete) {
-    <div class="fixed inset-0 bg-mirage/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-      <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-2xl max-w-md w-full p-6 relative">
-        <h3 class="font-serif text-lg text-woodsmoke uppercase tracking-wider mb-2">Confirmar Cancelación de Reserva</h3>
+    <div
+      class="fixed inset-0 bg-mirage/60 backdrop-blur-xs flex items-center justify-center p-4 z-50"
+    >
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-2xl max-w-md w-full p-6 relative"
+      >
+        <h3
+          class="font-serif text-lg text-woodsmoke uppercase tracking-wider mb-2"
+        >
+          Confirmar Cancelación de Reserva
+        </h3>
         <p class="text-xs text-woodsmoke/70 mb-6 leading-relaxed">
           ¿Estás seguro de que deseas eliminar permanentemente la reserva
-          <strong class="text-woodsmoke">#{{ reservationToDelete.id }} de {{ reservationToDelete.client.firstName }}</strong>?
-          La habitación asociada volverá a estar disponible para el inventario.
+          <strong class="text-woodsmoke"
+            >#{{ reservationToDelete.id }} de
+            {{ reservationToDelete.client.firstName }}</strong
+          >? La habitación asociada volverá a estar disponible para el
+          inventario.
         </p>
 
         <div class="flex justify-end gap-3">

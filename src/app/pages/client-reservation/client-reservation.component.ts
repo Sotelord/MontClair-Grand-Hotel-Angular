@@ -1,6 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ReservationService } from '../../service/reservation.service';
@@ -56,7 +61,9 @@ export class ClientReservationComponent implements OnInit {
 
     this.roomService.findAll().subscribe({
       next: (rooms) => {
-        this.availableRooms = (rooms || []).filter((r) => r.status === 'AVAILABLE');
+        this.availableRooms = (rooms || []).filter(
+          (r) => r.status === 'AVAILABLE',
+        );
         if (targetRoomId) {
           const room = (rooms || []).find((r) => r.id === targetRoomId);
           if (room) {
@@ -76,14 +83,17 @@ export class ClientReservationComponent implements OnInit {
       },
     });
 
-    // Listen to room change
     this.bookingForm.get('roomId')?.valueChanges.subscribe((id) => {
       const numericId = Number(id);
-      this.selectedRoom = this.availableRooms.find((r) => r.id === numericId) || null;
+      this.selectedRoom =
+        this.availableRooms.find((r) => r.id === numericId) || null;
       if (this.selectedRoom) {
-        const currentGuests = this.bookingForm.get('numberOfPeople')?.value || 1;
+        const currentGuests =
+          this.bookingForm.get('numberOfPeople')?.value || 1;
         if (currentGuests > this.selectedRoom.capacity) {
-          this.bookingForm.patchValue({ numberOfPeople: this.selectedRoom.capacity });
+          this.bookingForm.patchValue({
+            numberOfPeople: this.selectedRoom.capacity,
+          });
         }
       }
     });
@@ -151,17 +161,22 @@ export class ClientReservationComponent implements OnInit {
 
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched();
-      this.errorMessage = 'Por favor complete todos los datos requeridos para la reserva.';
+      this.errorMessage =
+        'Por favor complete todos los datos requeridos para la reserva.';
       return;
     }
 
     const val = this.bookingForm.value;
     if (new Date(val.checkOutDate) <= new Date(val.checkInDate)) {
-      this.errorMessage = 'La fecha de salida debe ser posterior a la fecha de llegada.';
+      this.errorMessage =
+        'La fecha de salida debe ser posterior a la fecha de llegada.';
       return;
     }
 
-    if (this.selectedRoom && Number(val.numberOfPeople) > this.selectedRoom.capacity) {
+    if (
+      this.selectedRoom &&
+      Number(val.numberOfPeople) > this.selectedRoom.capacity
+    ) {
       this.errorMessage = `La habitación seleccionada tiene una capacidad máxima de ${this.selectedRoom.capacity} huéspedes.`;
       return;
     }
@@ -171,25 +186,28 @@ export class ClientReservationComponent implements OnInit {
 
     const serviceIds = Array.from(this.selectedServiceIds);
 
-    this.reservationService.add({
-      clientId: this.currentUser.id,
-      roomId: Number(val.roomId),
-      checkInDate: val.checkInDate,
-      checkOutDate: val.checkOutDate,
-      numberOfPeople: Number(val.numberOfPeople),
-      serviceIds,
-    }).subscribe({
-      next: (res) => {
-        this.successMessage = `¡Su reserva #${res.id} ha sido confirmada con éxito! Redirigiendo a su perfil...`;
-        setTimeout(() => {
-          this.router.navigate(['/profile']);
-        }, 1500);
-      },
-      error: () => {
-        this.isSubmitting = false;
-        this.errorMessage = 'Error al procesar la reserva. Por favor intente nuevamente.';
-      },
-    });
+    this.reservationService
+      .add({
+        clientId: this.currentUser.id,
+        roomId: Number(val.roomId),
+        checkInDate: val.checkInDate,
+        checkOutDate: val.checkOutDate,
+        numberOfPeople: Number(val.numberOfPeople),
+        serviceIds,
+      })
+      .subscribe({
+        next: (res) => {
+          this.successMessage = `¡Su reserva #${res.id} ha sido confirmada con éxito! Redirigiendo a su perfil...`;
+          setTimeout(() => {
+            this.router.navigate(['/profile']);
+          }, 1500);
+        },
+        error: () => {
+          this.isSubmitting = false;
+          this.errorMessage =
+            'Error al procesar la reserva. Por favor intente nuevamente.';
+        },
+      });
   }
 
   formatPrice(price: number): string {

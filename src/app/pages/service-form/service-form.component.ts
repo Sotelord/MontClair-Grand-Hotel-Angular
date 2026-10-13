@@ -1,5 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ServicesService } from '../../service/services.service';
 import { Service } from '../../models/service.model';
@@ -9,7 +14,7 @@ import { Service } from '../../models/service.model';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './service-form.component.html',
-  styleUrl: './service-form.component.scss'
+  styleUrl: './service-form.component.scss',
 })
 export class ServiceFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -20,6 +25,7 @@ export class ServiceFormComponent implements OnInit {
   serviceForm: FormGroup;
   isEditMode: boolean = false;
   currentServiceId?: number;
+  private currentService?: Service;
 
   constructor() {
     this.serviceForm = this.fb.group({
@@ -28,7 +34,7 @@ export class ServiceFormComponent implements OnInit {
       price: [0, [Validators.required, Validators.min(0)]],
       imageUrl: ['', Validators.required],
       tag: ['', Validators.required],
-      schedule: ['', Validators.required]
+      schedule: ['', Validators.required],
     });
   }
 
@@ -40,6 +46,7 @@ export class ServiceFormComponent implements OnInit {
       this.servicesService.findById(this.currentServiceId).subscribe({
         next: (service) => {
           if (service) {
+            this.currentService = service;
             this.serviceForm.patchValue(service);
           } else {
             this.router.navigate(['/admin/services']);
@@ -60,17 +67,18 @@ export class ServiceFormComponent implements OnInit {
 
     const formValue = this.serviceForm.value;
     const service: Service = {
-      id: this.currentServiceId || 0,
+      id: 0,
+      icon: '',
+      highlights: [],
+      galleryImages: [],
+      hidden: false,
+      ...this.currentService,
       name: formValue.name,
       description: formValue.description,
       price: Number(formValue.price),
       imageUrl: formValue.imageUrl,
-      icon: '',
       tag: formValue.tag,
       schedule: formValue.schedule,
-      highlights: [],
-      galleryImages: [],
-      hidden: false
     };
 
     if (this.isEditMode && this.currentServiceId) {
@@ -84,5 +92,22 @@ export class ServiceFormComponent implements OnInit {
         error: () => {},
       });
     }
+  }
+
+  getError(campo: string): string | null {
+    const control = this.serviceForm.get(campo);
+    if (!control || !control.touched || !control.errors) {
+      return null;
+    }
+    if (control.errors['required']) {
+      return 'Este campo es obligatorio.';
+    }
+    if (control.errors['minlength']) {
+      return `Debe tener al menos ${control.errors['minlength'].requiredLength} caracteres.`;
+    }
+    if (control.errors['min']) {
+      return `El valor mínimo es ${control.errors['min'].min}.`;
+    }
+    return 'Valor no válido.';
   }
 }

@@ -16,19 +16,21 @@ export class RoomService {
     this.loadFromBackend();
   }
 
-  // REST API Observable Methods (Consumo Spring Boot)
   findAll(): Observable<Room[]> {
     return this.http.get<Room[]>(this.apiUrl).pipe(
       tap((data) => {
         if (data) {
           this.rooms = data.map((r: any) => ({
             ...r,
-            roomType: r.roomType || r.type || this.roomTypeService.getRoomTypeById(r.typeId || 1)!,
+            roomType:
+              r.roomType ||
+              r.type ||
+              this.roomTypeService.getRoomTypeById(r.typeId || 1)!,
             highlights: r.highlights || [],
             galleryImages: r.galleryImages || [],
           }));
         }
-      })
+      }),
     );
   }
 
@@ -47,13 +49,16 @@ export class RoomService {
         if (saved) {
           const mapped: Room = {
             ...saved,
-            roomType: saved.roomType || saved.type || this.roomTypeService.getRoomTypeById(saved.typeId || 1)!,
+            roomType:
+              saved.roomType ||
+              saved.type ||
+              this.roomTypeService.getRoomTypeById(saved.typeId || 1)!,
             highlights: saved.highlights || [],
             galleryImages: saved.galleryImages || [],
           };
           this.rooms.unshift(mapped);
         }
-      })
+      }),
     );
   }
 
@@ -68,12 +73,15 @@ export class RoomService {
         if (idx !== -1) {
           this.rooms[idx] = {
             ...updated,
-            roomType: updated.roomType || updated.type || this.roomTypeService.getRoomTypeById(updated.typeId || 1)!,
+            roomType:
+              updated.roomType ||
+              updated.type ||
+              this.roomTypeService.getRoomTypeById(updated.typeId || 1)!,
             highlights: updated.highlights || [],
             galleryImages: updated.galleryImages || [],
           };
         }
-      })
+      }),
     );
   }
 
@@ -81,7 +89,7 @@ export class RoomService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.rooms = this.rooms.filter((r) => r.id !== id);
-      })
+      }),
     );
   }
 
@@ -108,5 +116,4 @@ export class RoomService {
     const cleanNum = num.trim();
     return this.rooms.some((r) => r.number === cleanNum && r.id !== excludeId);
   }
-
 }

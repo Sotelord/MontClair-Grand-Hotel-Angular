@@ -12,48 +12,49 @@ export class AuthService {
   private clientService = inject(ClientService);
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  // Signal storing current user, initialized with demo user if available or null
   currentUser = signal<Client | null>(this.getInitialUser());
 
-  // REST API Observable para login en Spring Boot
-  loginApi(identifier: string, password: string): Observable<{ success: boolean; client?: Client; message?: string }> {
-    return this.http.post<{ success: boolean; client?: Client; message?: string }>(`${this.apiUrl}/login`, {
-      identifier,
-      password,
-    }).pipe(
-      tap((res) => {
-        if (res.success && res.client) {
-          this.setCurrentUser(res.client);
-        }
-      })
-    );
+  loginApi(
+    identifier: string,
+    password: string,
+  ): Observable<{ success: boolean; client?: Client; message?: string }> {
+    return this.http
+      .post<{ success: boolean; client?: Client; message?: string }>(
+        `${this.apiUrl}/login`,
+        {
+          identifier,
+          password,
+        },
+      )
+      .pipe(
+        tap((res) => {
+          if (res.success && res.client) {
+            this.setCurrentUser(res.client);
+          }
+        }),
+      );
   }
 
   private getInitialUser(): Client | null {
-    // Check localStorage if available, or default to demo user for a smooth experience
     if (typeof window !== 'undefined' && window.localStorage) {
       const stored = localStorage.getItem('montclair_current_user');
       if (stored) {
         try {
           return JSON.parse(stored);
-        } catch {
-          // fallback
-        }
+        } catch {}
       }
     }
-    // Default to admin or demo user initially so existing views work out of the box
     return this.clientService.getClientById(1) || null;
   }
 
-  /**
-   * Login manejado mediante verificación 'if':
-   * Si username/email y password coinciden exactamente con un cliente registrado, entra.
-   */
-  login(identifier: string, password: string): { success: boolean; message?: string; client?: Client } {
+  login(
+    identifier: string,
+    password: string,
+  ): { success: boolean; message?: string; client?: Client } {
     const cleanId = identifier.trim().toLowerCase();
     const cleanPass = password.trim();
 
-    const client = this.clientService.getClients().find(c => {
+    const client = this.clientService.getClients().find((c) => {
       const matchUser = c.username.toLowerCase() === cleanId;
       const matchEmail = c.email.toLowerCase() === cleanId;
       return (matchUser || matchEmail) && c.password === cleanPass;

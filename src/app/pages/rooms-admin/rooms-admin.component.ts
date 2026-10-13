@@ -25,16 +25,13 @@ export class RoomsAdminComponent implements OnInit {
   rooms: Room[] = [];
   roomTypes: RoomType[] = [];
 
-  // Filter & Search
   searchTerm: string = '';
   selectedTypeId: string = 'ALL';
   selectedStatus: string = 'ALL';
 
-  // Alerts
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  // Delete modal state
   roomToDelete: Room | null = null;
 
   ngOnInit(): void {
@@ -65,7 +62,8 @@ export class RoomsAdminComponent implements OnInit {
       const matchSearch =
         !this.searchTerm ||
         room.number.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (room.name && room.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+        (room.name &&
+          room.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
 
       const matchType =
         this.selectedTypeId === 'ALL' ||

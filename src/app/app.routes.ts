@@ -20,7 +20,6 @@ import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 
 export const routes: Routes = [
-  // Inicio y vistas públicas
   {
     path: '',
     component: LandingPageComponent,
@@ -37,8 +36,6 @@ export const routes: Routes = [
     path: 'rooms/:id',
     component: RoomDetailComponent,
   },
-
-  // Autenticación y perfil
   {
     path: 'login',
     component: LoginPageComponent,
@@ -55,8 +52,6 @@ export const routes: Routes = [
     path: 'profile/:id',
     component: ClientProfileComponent,
   },
-
-  // Clientes
   {
     path: 'clients',
     component: ClientsAdminComponent,
@@ -69,8 +64,6 @@ export const routes: Routes = [
     path: 'clients/edit/:id',
     component: ClientFormComponent,
   },
-
-  // Panel Administrativo - Habitaciones
   {
     path: 'admin/rooms',
     component: RoomsAdminComponent,
@@ -83,8 +76,6 @@ export const routes: Routes = [
     path: 'admin/rooms/edit/:id',
     component: RoomFormComponent,
   },
-
-  // Panel Administrativo - Tipos de Habitación
   {
     path: 'admin/rooms-types',
     component: RoomTypesAdminComponent,
@@ -102,8 +93,6 @@ export const routes: Routes = [
     path: 'admin/room-types/edit/:id',
     component: RoomTypeFormComponent,
   },
-
-  // Panel Administrativo - Clientes
   {
     path: 'admin/clients',
     component: ClientsAdminComponent,
@@ -116,8 +105,6 @@ export const routes: Routes = [
     path: 'admin/clients/edit/:id',
     component: ClientFormComponent,
   },
-
-  // Panel de Operario - Reservas
   {
     path: 'admin/reservations',
     component: ReservationsAdminComponent,
@@ -130,45 +117,41 @@ export const routes: Routes = [
     path: 'admin/reservations/edit/:id',
     component: AdminReservationFormComponent,
   },
-
-  // Servicios
   {
     path: 'services',
     loadComponent: () =>
       import('./pages/services-page/services-page.component').then(
-        (m) => m.ServicesPageComponent
+        (m) => m.ServicesPageComponent,
       ),
   },
   {
     path: 'services/:id',
     loadComponent: () =>
       import('./pages/service-detail/service-detail.component').then(
-        (m) => m.ServiceDetailComponent
+        (m) => m.ServiceDetailComponent,
       ),
   },
   {
     path: 'admin/services',
     loadComponent: () =>
       import('./pages/services-admin/services-admin.component').then(
-        (m) => m.ServicesAdminComponent
+        (m) => m.ServicesAdminComponent,
       ),
   },
   {
     path: 'admin/services/add',
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
-        (m) => m.ServiceFormComponent
+        (m) => m.ServiceFormComponent,
       ),
   },
   {
     path: 'admin/services/edit/:id',
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
-        (m) => m.ServiceFormComponent
+        (m) => m.ServiceFormComponent,
       ),
   },
-
-  // Reservas para Huéspedes / Clientes
   {
     path: 'reservations/book',
     component: ClientReservationComponent,
@@ -187,8 +170,6 @@ export const routes: Routes = [
     redirectTo: 'reservations/book/:roomId',
     pathMatch: 'full',
   },
-
-  // Galería y Ubicación
   {
     path: 'gallery',
     component: GalleryComponent,
@@ -197,8 +178,6 @@ export const routes: Routes = [
     path: 'location',
     component: LocationComponent,
   },
-
-  // Manejo de Errores y Not Found
   {
     path: 'error',
     component: ErrorPageComponent,

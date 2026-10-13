@@ -1,28 +1,35 @@
 <section class="max-w-3xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-  <!-- Breadcrumb -->
   <div class="mb-6 flex items-center gap-2 text-xs text-woodsmoke/60">
     <a routerLink="/profile" class="hover:text-twine transition">Mi Perfil</a>
     <span>/</span>
     <span class="text-woodsmoke font-semibold">Editar Datos Personales</span>
   </div>
 
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative">
-    <div class="h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative"
+  >
+    <div
+      class="h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+    ></div>
 
     <div class="p-6 sm:p-10">
-      <!-- Title -->
-      <div class="mb-8 pb-6 border-b border-[#E8E2DA] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div
+        class="mb-8 pb-6 border-b border-[#E8E2DA] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
         <div>
-          <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">CUENTA DE HUÉSPED</span>
-          <h1 class="font-serif text-2xl sm:text-3xl uppercase tracking-[1px] text-woodsmoke">
+          <span
+            class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+            >CUENTA DE HUÉSPED</span
+          >
+          <h1
+            class="font-serif text-2xl sm:text-3xl uppercase tracking-[1px] text-woodsmoke"
+          >
             Actualizar Mi Perfil
           </h1>
           <p class="text-xs text-woodsmoke/60 font-light mt-1">
             Modifique sus datos personales y preferencias de contacto.
           </p>
         </div>
-
-        <!-- Live Avatar Preview -->
         <div class="flex items-center gap-3">
           <img
             [src]="avatarPreview"
@@ -31,28 +38,29 @@
           />
         </div>
       </div>
-
-      <!-- Feedback Alerts -->
       @if (errorMessage) {
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-[2px] text-xs text-red-800 flex items-center gap-2">
+        <div
+          class="mb-6 p-4 bg-red-50 border border-red-200 rounded-[2px] text-xs text-red-800 flex items-center gap-2"
+        >
           <span>⚠️</span>
           <span>{{ errorMessage }}</span>
         </div>
       }
 
       @if (successMessage) {
-        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-[2px] text-xs text-emerald-800 flex items-center gap-2 animate-fade-in">
+        <div
+          class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-[2px] text-xs text-emerald-800 flex items-center gap-2 animate-fade-in"
+        >
           <span>✓</span>
           <span>{{ successMessage }} Redirigiendo a tu perfil...</span>
         </div>
       }
-
-      <!-- Form -->
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <!-- Name fields -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+            <label
+              class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+            >
               Nombre <span class="text-red-500">*</span>
             </label>
             <input
@@ -61,13 +69,20 @@
               class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke"
               placeholder="Ej. Carlos"
             />
-            @if (profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid) {
-              <p class="text-[10px] text-red-600 mt-1">El nombre es obligatorio (mínimo 2 letras).</p>
+            @if (
+              profileForm.get("firstName")?.touched &&
+              profileForm.get("firstName")?.invalid
+            ) {
+              <p class="text-[10px] text-red-600 mt-1">
+                El nombre es obligatorio (mínimo 2 letras).
+              </p>
             }
           </div>
 
           <div>
-            <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+            <label
+              class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+            >
               Apellidos
             </label>
             <input
@@ -78,11 +93,11 @@
             />
           </div>
         </div>
-
-        <!-- Contact info -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+            <label
+              class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+            >
               Correo Electrónico <span class="text-red-500">*</span>
             </label>
             <input
@@ -91,13 +106,20 @@
               class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke"
               placeholder="correo@ejemplo.com"
             />
-            @if (profileForm.get('email')?.touched && profileForm.get('email')?.invalid) {
-              <p class="text-[10px] text-red-600 mt-1">Ingrese un correo electrónico válido.</p>
+            @if (
+              profileForm.get("email")?.touched &&
+              profileForm.get("email")?.invalid
+            ) {
+              <p class="text-[10px] text-red-600 mt-1">
+                Ingrese un correo electrónico válido.
+              </p>
             }
           </div>
 
           <div>
-            <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+            <label
+              class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+            >
               Teléfono de Contacto
             </label>
             <input
@@ -106,15 +128,20 @@
               class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke font-mono"
               placeholder="+34 600 000 000"
             />
-            @if (profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid) {
-              <p class="text-[10px] text-red-600 mt-1">Formato de teléfono no válido.</p>
+            @if (
+              profileForm.get("phone")?.touched &&
+              profileForm.get("phone")?.invalid
+            ) {
+              <p class="text-[10px] text-red-600 mt-1">
+                Formato de teléfono no válido.
+              </p>
             }
           </div>
         </div>
-
-        <!-- Avatar URL -->
         <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+          <label
+            class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+          >
             URL de Fotografía de Perfil (Avatar)
           </label>
           <input
@@ -123,19 +150,28 @@
             class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke font-mono"
             placeholder="https://..."
           />
-          <p class="text-[10px] text-woodsmoke/50 mt-1">Pegue el enlace a su fotografía (Unsplash, Cloudinary, etc.)</p>
+          <p class="text-[10px] text-woodsmoke/50 mt-1">
+            Pegue el enlace a su fotografía (Unsplash, Cloudinary, etc.)
+          </p>
         </div>
-
-        <!-- Password Change Section -->
         <div class="pt-6 border-t border-[#E8E2DA] space-y-4">
           <div>
-            <h3 class="font-serif text-base uppercase text-woodsmoke tracking-wide">Seguridad de la Cuenta</h3>
-            <p class="text-[11px] text-woodsmoke/60">Deje estos campos en blanco si no desea modificar su contraseña actual.</p>
+            <h3
+              class="font-serif text-base uppercase text-woodsmoke tracking-wide"
+            >
+              Seguridad de la Cuenta
+            </h3>
+            <p class="text-[11px] text-woodsmoke/60">
+              Deje estos campos en blanco si no desea modificar su contraseña
+              actual.
+            </p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+              <label
+                class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+              >
                 Nueva Contraseña
               </label>
               <input
@@ -147,7 +183,9 @@
             </div>
 
             <div>
-              <label class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2">
+              <label
+                class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+              >
                 Confirmar Nueva Contraseña
               </label>
               <input
@@ -159,9 +197,9 @@
             </div>
           </div>
         </div>
-
-        <!-- Actions -->
-        <div class="pt-6 border-t border-[#E8E2DA] flex items-center justify-end gap-4">
+        <div
+          class="pt-6 border-t border-[#E8E2DA] flex items-center justify-end gap-4"
+        >
           <a
             routerLink="/profile"
             class="px-6 py-3 border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold rounded-[2px] transition"
@@ -173,7 +211,7 @@
             [disabled]="isSubmitting"
             class="px-8 py-3 bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold rounded-[2px] transition shadow-sm cursor-pointer disabled:opacity-50"
           >
-            {{ isSubmitting ? 'Guardando...' : 'Guardar Cambios' }}
+            {{ isSubmitting ? "Guardando..." : "Guardar Cambios" }}
           </button>
         </div>
       </form>

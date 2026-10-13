@@ -22,12 +22,8 @@ export class ClientsAdminComponent implements OnInit {
   clients: Client[] = [];
   searchTerm: string = '';
   selectedRole: string = 'ALL';
-
-  // Alerts
   successMessage: string | null = null;
   errorMessage: string | null = null;
-
-  // Delete modal state
   clientToDelete: Client | null = null;
 
   ngOnInit(): void {
@@ -81,8 +77,6 @@ export class ClientsAdminComponent implements OnInit {
 
   executeDelete(): void {
     if (!this.clientToDelete) return;
-
-    // Check foreign key constraint / associated reservations
     if (this.reservationService.hasClientReservations(this.clientToDelete.id)) {
       this.errorMessage = `No se puede eliminar el cliente '${this.clientToDelete.firstName} ${this.clientToDelete.lastName || ''}' porque tiene reservaciones registradas en el sistema.`;
       this.clientToDelete = null;
