@@ -10,9 +10,13 @@ import { RoomFormComponent } from './pages/room-form/room-form.component';
 import { ClientsAdminComponent } from './pages/clients-admin/clients-admin.component';
 import { ClientFormComponent } from './pages/client-form/client-form.component';
 import { ClientProfileComponent } from './pages/client-profile/client-profile.component';
+import { ProfileEditComponent } from './pages/profile-edit/profile-edit.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ReservationsAdminComponent } from './pages/reservations-admin/reservations-admin.component';
 import { AdminReservationFormComponent } from './pages/admin-reservation-form/admin-reservation-form.component';
+import { ClientReservationComponent } from './pages/client-reservation/client-reservation.component';
+import { GalleryComponent } from './pages/gallery/gallery.component';
+import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 
 export const routes: Routes = [
@@ -42,6 +46,10 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ClientProfileComponent,
+  },
+  {
+    path: 'profile/edit',
+    component: ProfileEditComponent,
   },
   {
     path: 'profile/:id',
@@ -158,6 +166,36 @@ export const routes: Routes = [
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent
       ),
+  },
+
+  // Reservas para Huéspedes / Clientes
+  {
+    path: 'reservations/book',
+    component: ClientReservationComponent,
+  },
+  {
+    path: 'reservations/book/:roomId',
+    component: ClientReservationComponent,
+  },
+  {
+    path: 'book',
+    redirectTo: 'reservations/book',
+    pathMatch: 'full',
+  },
+  {
+    path: 'book/:roomId',
+    redirectTo: 'reservations/book/:roomId',
+    pathMatch: 'full',
+  },
+
+  // Galería y Ubicación
+  {
+    path: 'gallery',
+    component: GalleryComponent,
+  },
+  {
+    path: 'location',
+    component: LocationComponent,
   },
 
   // Manejo de Errores y Not Found

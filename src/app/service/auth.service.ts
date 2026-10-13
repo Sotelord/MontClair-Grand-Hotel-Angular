@@ -1,4 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Client } from '../models/client.model';
 import { ClientService } from './client.service';
 
@@ -6,10 +8,26 @@ import { ClientService } from './client.service';
   providedIn: 'root',
 })
 export class AuthService {
+  private http = inject(HttpClient);
   private clientService = inject(ClientService);
+  private apiUrl = 'http://localhost:8080/api/auth';
 
   // Signal storing current user, initialized with demo user if available or null
   currentUser = signal<Client | null>(this.getInitialUser());
+
+  // REST API Observable para login en Spring Boot
+  loginApi(identifier: string, password: string): Observable<{ success: boolean; client?: Client; message?: string }> {
+    return this.http.post<{ success: boolean; client?: Client; message?: string }>(`${this.apiUrl}/login`, {
+      identifier,
+      password,
+    }).pipe(
+      tap((res) => {
+        if (res.success && res.client) {
+          this.setCurrentUser(res.client);
+        }
+      })
+    );
+  }
 
   private getInitialUser(): Client | null {
     // Check localStorage if available, or default to demo user for a smooth experience

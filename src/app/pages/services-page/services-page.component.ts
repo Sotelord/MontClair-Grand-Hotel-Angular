@@ -15,6 +15,13 @@ export class ServicesPageComponent implements OnInit {
   services: Service[] = [];
 
   ngOnInit(): void {
-    this.services = this.servicesService.getServices();
+    this.servicesService.findAll().subscribe({
+      next: (services) => {
+        this.services = services || [];
+      },
+      error: () => {
+        this.services = [];
+      },
+    });
   }
 }

@@ -25,8 +25,15 @@ export class RoomsCardsComponent {
 
   roomTypesArray: RoomType[] = [];
 
-  ngOnInit() {
-    this.roomTypesArray = this.roomTypeService.getRoomTypes();
+  ngOnInit(): void {
+    this.roomTypeService.findAll().subscribe({
+      next: (types) => {
+        this.roomTypesArray = types || [];
+      },
+      error: () => {
+        this.roomTypesArray = [];
+      },
+    });
   }
 
   verDetalleRoomType(roomType: RoomType): void {

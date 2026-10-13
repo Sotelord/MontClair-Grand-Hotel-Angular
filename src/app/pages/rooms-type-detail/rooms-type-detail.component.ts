@@ -23,9 +23,19 @@ export class RoomsTypeDetailComponent {
   roomType: RoomType | undefined;
   rooms: Room[] = [];
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.roomTypeId = Number(this.route.snapshot.params['id']);
-    this.roomType = this.roomTypeService.getRoomTypeById(this.roomTypeId);
-    this.rooms = this.roomService.getRoomsByTypeId(this.roomTypeId);
+    this.roomTypeService.findById(this.roomTypeId).subscribe({
+      next: (rt) => (this.roomType = rt),
+      error: () => {},
+    });
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.rooms = (rooms || []).filter(
+          (r) => r.roomType?.id === this.roomTypeId || (r as any).typeId === this.roomTypeId
+        );
+      },
+      error: () => {},
+    });
   }
 }

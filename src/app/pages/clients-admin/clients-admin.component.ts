@@ -35,7 +35,14 @@ export class ClientsAdminComponent implements OnInit {
   }
 
   loadClients(): void {
-    this.clients = this.clientService.getClients();
+    this.clientService.findAll().subscribe({
+      next: (data) => {
+        this.clients = data || [];
+      },
+      error: () => {
+        this.clients = [];
+      },
+    });
   }
 
   get filteredClients(): Client[] {

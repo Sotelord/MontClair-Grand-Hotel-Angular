@@ -38,45 +38,74 @@ export class AdminReservationFormComponent implements OnInit {
   errorMessage: string | null = null;
 
   ngOnInit(): void {
-    this.clients = this.clientService.getClients();
-    this.services = this.servicesService.getServices();
     this.initForm();
+
+    this.clientService.findAll().subscribe({
+      next: (clients) => {
+        this.clients = clients || [];
+        if (this.clients.length > 0 && !this.reservationForm.get('clientId')?.value) {
+          this.reservationForm.patchValue({ clientId: this.clients[0].id });
+        }
+      },
+      error: () => {
+        this.clients = [];
+      },
+    });
+
+    this.servicesService.findAll().subscribe({
+      next: (services) => {
+        this.services = services || [];
+      },
+      error: () => {
+        this.services = [];
+      },
+    });
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;
       this.reservationId = Number(idParam);
-      const existing = this.reservationService.getReservationById(this.reservationId);
-      if (existing) {
-        // In edit mode, allow keeping current room even if marked OCCUPIED
-        const currentRoom = existing.reservationRooms?.[0]?.room;
-        this.availableRooms = this.roomService
-          .getRooms()
-          .filter((r) => r.status === 'AVAILABLE' || (currentRoom && r.id === currentRoom.id));
+      this.reservationService.findById(this.reservationId).subscribe({
+        next: (existing) => {
+          if (existing) {
+            const currentRoom = existing.reservationRooms?.[0]?.room;
+            this.roomService.findAll().subscribe({
+              next: (rooms) => {
+                this.availableRooms = (rooms || []).filter(
+                  (r) => r.status === 'AVAILABLE' || (currentRoom && r.id === currentRoom.id)
+                );
+              },
+            });
 
-        existing.reservationRooms?.[0]?.acquiredServices?.forEach((as) => {
-          if (as.service?.id) this.selectedServiceIds.add(as.service.id);
-        });
+            existing.reservationRooms?.[0]?.acquiredServices?.forEach((as) => {
+              if (as.service?.id) this.selectedServiceIds.add(as.service.id);
+            });
 
-        this.reservationForm.patchValue({
-          clientId: existing.client.id,
-          roomId: currentRoom?.id,
-          checkInDate: existing.checkInDate,
-          checkOutDate: existing.checkOutDate,
-          numberOfPeople: existing.numberOfPeople,
-        });
-      } else {
-        this.router.navigate(['/admin/reservations']);
-      }
+            this.reservationForm.patchValue({
+              clientId: existing.client.id,
+              roomId: currentRoom?.id,
+              checkInDate: existing.checkInDate,
+              checkOutDate: existing.checkOutDate,
+              numberOfPeople: existing.numberOfPeople,
+            });
+          }
+        },
+        error: () => {
+          this.router.navigate(['/admin/reservations']);
+        },
+      });
     } else {
-      // In add mode, only available rooms
-      this.availableRooms = this.roomService
-        .getRooms()
-        .filter((r) => r.status === 'AVAILABLE');
-
-      if (this.availableRooms.length > 0) {
-        this.reservationForm.patchValue({ roomId: this.availableRooms[0].id });
-      }
+      this.roomService.findAll().subscribe({
+        next: (rooms) => {
+          this.availableRooms = (rooms || []).filter((r) => r.status === 'AVAILABLE');
+          if (this.availableRooms.length > 0) {
+            this.reservationForm.patchValue({ roomId: this.availableRooms[0].id });
+          }
+        },
+        error: () => {
+          this.availableRooms = [];
+        },
+      });
     }
   }
 

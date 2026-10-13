@@ -1,4 +1,6 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Reservation } from '../models/reservation.model';
 import { ReservationRoom } from '../models/reservationRoom.model';
 import { AcquiredService } from '../models/adquiredService.model';
@@ -10,6 +12,9 @@ import { ServicesService } from './services.service';
   providedIn: 'root',
 })
 export class ReservationService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/reservations';
+
   private clientService = inject(ClientService);
   private roomService = inject(RoomService);
   private servicesService = inject(ServicesService);
@@ -17,7 +22,41 @@ export class ReservationService {
   private reservations: Reservation[] = [];
 
   constructor() {
-    this.initReservations();
+    this.loadFromBackend();
+  }
+
+  // REST API Observable Methods (Consumo Spring Boot)
+  findAll(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(this.apiUrl).pipe(
+      tap((data) => {
+        if (data) {
+          this.reservations = data;
+        }
+      })
+    );
+  }
+
+  findById(id: number): Observable<Reservation> {
+    return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
+  }
+
+  findByClientId(clientId: number): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(`${this.apiUrl}/client/${clientId}`);
+  }
+
+  add(data: any): Observable<Reservation> {
+    return this.http.post<Reservation>(this.apiUrl, data);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private loadFromBackend(): void {
+    this.findAll().subscribe({
+      next: () => {},
+      error: () => {},
+    });
   }
 
   getReservations(): Reservation[] {
@@ -123,6 +162,17 @@ export class ReservationService {
     });
 
     this.reservations.unshift(newReservation);
+    this.add({
+      clientId: data.clientId,
+      roomId: data.roomId,
+      checkInDate: data.checkInDate,
+      checkOutDate: data.checkOutDate,
+      numberOfPeople: data.numberOfPeople,
+      serviceIds: data.serviceIds,
+    }).subscribe({
+      next: (res) => { if (res?.id) newReservation.id = res.id; },
+      error: () => {}
+    });
     return { success: true, reservation: newReservation };
   }
 
@@ -219,6 +269,7 @@ export class ReservationService {
     }
 
     this.reservations.splice(index, 1);
+    this.delete(id).subscribe({ error: () => {} });
     return { success: true };
   }
 
@@ -228,94 +279,5 @@ export class ReservationService {
 
   hasRoomReservations(roomId: number): boolean {
     return this.reservations.some((r) => r.reservationRooms?.some((rr) => rr.room?.id === roomId));
-  }
-
-  private initReservations(): void {
-    const clients = this.clientService.getClients();
-    const rooms = this.roomService.getRooms();
-    const services = this.servicesService.getServices();
-
-    if (clients.length === 0 || rooms.length === 0) return;
-
-    const baseReservations = [
-      {
-        id: 1,
-        client: clients[0] || this.clientService.getClientById(1)!,
-        room: rooms[0],
-        checkInDate: '2026-10-15',
-        checkOutDate: '2026-10-18',
-        numberOfPeople: 2,
-        status: 'CONFIRMED',
-        services: [services[0], services[1]].filter(Boolean),
-      },
-      {
-        id: 2,
-        client: clients[1] || this.clientService.getClientById(2)!,
-        room: rooms[1],
-        checkInDate: '2026-10-16',
-        checkOutDate: '2026-10-20',
-        numberOfPeople: 2,
-        status: 'CONFIRMED',
-        services: [services[1]].filter(Boolean),
-      },
-      {
-        id: 3,
-        client: clients[2] || this.clientService.getClientById(3)!,
-        room: rooms[2],
-        checkInDate: '2026-10-18',
-        checkOutDate: '2026-10-22',
-        numberOfPeople: 3,
-        status: 'CONFIRMED',
-        services: [services[2]].filter(Boolean),
-      },
-      {
-        id: 4,
-        client: clients[3] || this.clientService.getClientById(4)!,
-        room: rooms[3],
-        checkInDate: '2026-10-20',
-        checkOutDate: '2026-10-25',
-        numberOfPeople: 2,
-        status: 'CONFIRMED',
-        services: [services[3], services[4]].filter(Boolean),
-      },
-      {
-        id: 5,
-        client: clients[4] || this.clientService.getClientById(5)!,
-        room: rooms[4],
-        checkInDate: '2026-10-22',
-        checkOutDate: '2026-10-26',
-        numberOfPeople: 4,
-        status: 'CONFIRMED',
-        services: [services[0]].filter(Boolean),
-      },
-    ];
-
-    this.reservations = baseReservations.map((b) => {
-      const acqServices: AcquiredService[] = b.services.map((s, idx) => ({
-        id: b.id * 10 + idx + 1,
-        reservationRoom: null as any,
-        service: s,
-        date: b.checkInDate,
-        quantity: idx === 0 ? 2 : 1,
-        unitPrice: s.price || 40.0,
-      }));
-
-      const resRoom: ReservationRoom = {
-        id: b.id,
-        room: b.room,
-        pricePerNight: b.room.pricePerNight,
-        acquiredServices: acqServices,
-      };
-
-      return {
-        id: b.id,
-        client: b.client,
-        checkInDate: b.checkInDate,
-        checkOutDate: b.checkOutDate,
-        numberOfPeople: b.numberOfPeople,
-        status: b.status,
-        reservationRooms: [resRoom],
-      };
-    });
   }
 }

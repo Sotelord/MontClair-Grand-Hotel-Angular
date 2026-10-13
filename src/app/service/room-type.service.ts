@@ -1,16 +1,58 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { RoomType } from '../models/roomType.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomTypeService {
-  constructor() {}
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/room-types';
+
+  constructor() {
+    this.loadFromBackend();
+  }
+
+  // REST API Observable Methods (Consumo Spring Boot)
+  findAll(): Observable<RoomType[]> {
+    return this.http.get<RoomType[]>(this.apiUrl).pipe(
+      tap((data) => {
+        if (data) {
+          this.roomTypes = data;
+        }
+      })
+    );
+  }
+
+  findById(id: number): Observable<RoomType> {
+    return this.http.get<RoomType>(`${this.apiUrl}/${id}`);
+  }
+
+  add(roomType: RoomType): Observable<RoomType> {
+    return this.http.post<RoomType>(this.apiUrl, roomType);
+  }
+
+  update(id: number, roomType: RoomType): Observable<RoomType> {
+    return this.http.put<RoomType>(`${this.apiUrl}/${id}`, roomType);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private loadFromBackend(): void {
+    this.findAll().subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
 
   deleteRoomType(roomType: RoomType): void {
     const index = this.roomTypes.findIndex((type) => type.id === roomType.id);
     if (index !== -1) {
       this.roomTypes.splice(index, 1);
+      this.delete(roomType.id).subscribe({ error: () => {} });
     }
   }
 
@@ -26,55 +68,19 @@ export class RoomTypeService {
     const newId = this.roomTypes.length > 0 ? Math.max(...this.roomTypes.map(r => r.id)) + 1 : 1;
     roomType.id = newId;
     this.roomTypes.push(roomType);
+    this.add(roomType).subscribe({
+      next: (res) => { if (res?.id) roomType.id = res.id; },
+      error: () => {}
+    });
   }
 
   updateRoomType(roomType: RoomType): void {
     const index = this.roomTypes.findIndex((type) => type.id === roomType.id);
     if (index !== -1) {
       this.roomTypes[index] = roomType;
+      this.update(roomType.id, roomType).subscribe({ error: () => {} });
     }
   }
 
-  private roomTypes: RoomType[] = [
-    {
-      id: 1,
-      name: 'Simple',
-      description: 'Habitación estándar',
-      pricePerNight: 80.0,
-      imageUrl:
-        'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 2,
-      name: 'Deluxe',
-      description: 'Habitación amplia con servicios premium',
-      pricePerNight: 116.52,
-      imageUrl:
-        'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 3,
-      name: 'Suite',
-      description: 'Habitación de lujo con sala privada',
-      pricePerNight: 200.0,
-      imageUrl:
-        'https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 4,
-      name: 'Premium Suite',
-      description: 'Suite exclusiva con balcón privado',
-      pricePerNight: 280.0,
-      imageUrl:
-        'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80',
-    },
-    {
-      id: 5,
-      name: 'Suite Royale',
-      description: 'La experiencia más exclusiva del hotel',
-      pricePerNight: 350.0,
-      imageUrl:
-        'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80',
-    },
-  ];
+  private roomTypes: RoomType[] = [];
 }

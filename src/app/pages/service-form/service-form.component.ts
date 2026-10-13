@@ -37,13 +37,18 @@ export class ServiceFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.currentServiceId = Number(idParam);
-      const service = this.servicesService.getServiceById(this.currentServiceId);
-      
-      if (service) {
-        this.serviceForm.patchValue(service);
-      } else {
-        this.router.navigate(['/admin/services']);
-      }
+      this.servicesService.findById(this.currentServiceId).subscribe({
+        next: (service) => {
+          if (service) {
+            this.serviceForm.patchValue(service);
+          } else {
+            this.router.navigate(['/admin/services']);
+          }
+        },
+        error: () => {
+          this.router.navigate(['/admin/services']);
+        },
+      });
     }
   }
 

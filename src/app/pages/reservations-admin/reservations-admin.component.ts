@@ -31,7 +31,14 @@ export class ReservationsAdminComponent implements OnInit {
   }
 
   loadReservations(): void {
-    this.reservations = this.reservationService.getReservations();
+    this.reservationService.findAll().subscribe({
+      next: (res) => {
+        this.reservations = res || [];
+      },
+      error: () => {
+        this.reservations = [];
+      },
+    });
   }
 
   get filteredReservations(): Reservation[] {

@@ -34,13 +34,18 @@ export class RoomTypeFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.currentRoomTypeId = Number(idParam);
-      const roomType = this.roomTypeService.getRoomTypeById(this.currentRoomTypeId);
-      
-      if (roomType) {
-        this.roomTypeForm.patchValue(roomType);
-      } else {
-        this.router.navigate(['/admin/rooms-types']);
-      }
+      this.roomTypeService.findById(this.currentRoomTypeId).subscribe({
+        next: (roomType) => {
+          if (roomType) {
+            this.roomTypeForm.patchValue(roomType);
+          } else {
+            this.router.navigate(['/admin/rooms-types']);
+          }
+        },
+        error: () => {
+          this.router.navigate(['/admin/rooms-types']);
+        },
+      });
     }
   }
 

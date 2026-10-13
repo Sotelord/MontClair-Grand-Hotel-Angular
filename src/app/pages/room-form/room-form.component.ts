@@ -28,31 +28,52 @@ export class RoomFormComponent implements OnInit {
   errorMessage: string | null = null;
 
   ngOnInit(): void {
-    this.roomTypes = this.roomTypeService.getRoomTypes();
     this.initForm();
+
+    this.roomTypeService.findAll().subscribe({
+      next: (types) => {
+        this.roomTypes = types || [];
+        if (this.roomTypes.length > 0 && !this.isEditMode) {
+          this.roomForm.patchValue({
+            typeId: this.roomTypes[0].id,
+            pricePerNight: this.roomTypes[0].pricePerNight,
+            name: this.roomTypes[0].name,
+          });
+        }
+      },
+      error: () => {
+        this.roomTypes = [];
+      },
+    });
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;
       this.roomId = Number(idParam);
-      const existing = this.roomService.getRoomById(this.roomId);
-      if (existing) {
-        this.roomForm.patchValue({
-          name: existing.name,
-          number: existing.number,
-          typeId: existing.roomType?.id || (this.roomTypes[0]?.id ?? 1),
-          floor: existing.floor,
-          status: existing.status,
-          pricePerNight: existing.pricePerNight,
-          capacity: existing.capacity,
-          bedType: existing.bedType || 'King Size',
-          area: existing.area || 30,
-          secondaryImageUrl: existing.secondaryImageUrl || '',
-          heroDescription: existing.heroDescription || '',
-        });
-      } else {
-        this.router.navigate(['/admin/rooms']);
-      }
+      this.roomService.findById(this.roomId).subscribe({
+        next: (existing) => {
+          if (existing) {
+            this.roomForm.patchValue({
+              name: existing.name,
+              number: existing.number,
+              typeId: existing.roomType?.id || (existing as any).typeId,
+              floor: existing.floor,
+              status: existing.status,
+              pricePerNight: existing.pricePerNight,
+              capacity: existing.capacity,
+              bedType: existing.bedType || 'King Size',
+              area: existing.area || 30,
+              secondaryImageUrl: existing.secondaryImageUrl || '',
+              heroDescription: existing.heroDescription || '',
+            });
+          } else {
+            this.router.navigate(['/admin/rooms']);
+          }
+        },
+        error: () => {
+          this.router.navigate(['/admin/rooms']);
+        },
+      });
     }
   }
 

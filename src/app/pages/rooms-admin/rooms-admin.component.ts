@@ -42,8 +42,22 @@ export class RoomsAdminComponent implements OnInit {
   }
 
   loadData(): void {
-    this.rooms = this.roomService.getRooms();
-    this.roomTypes = this.roomTypeService.getRoomTypes();
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.rooms = rooms || [];
+      },
+      error: () => {
+        this.rooms = [];
+      },
+    });
+    this.roomTypeService.findAll().subscribe({
+      next: (types) => {
+        this.roomTypes = types || [];
+      },
+      error: () => {
+        this.roomTypes = [];
+      },
+    });
   }
 
   get filteredRooms(): Room[] {

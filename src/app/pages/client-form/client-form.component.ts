@@ -34,21 +34,27 @@ export class ClientFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.clientId = Number(idParam);
-      const existing = this.clientService.getClientById(this.clientId);
-      if (existing) {
-        this.clientForm.patchValue({
-          firstName: existing.firstName,
-          lastName: existing.lastName || '',
-          username: existing.username,
-          email: existing.email,
-          password: existing.password,
-          phone: existing.phone || '',
-          avatarUrl: existing.avatarUrl || '',
-          role: existing.role || 'CLIENT',
-        });
-      } else {
-        this.router.navigate([this.isAdminView ? '/admin/clients' : '/login']);
-      }
+      this.clientService.findById(this.clientId).subscribe({
+        next: (existing) => {
+          if (existing) {
+            this.clientForm.patchValue({
+              firstName: existing.firstName,
+              lastName: existing.lastName || '',
+              username: existing.username,
+              email: existing.email,
+              password: existing.password,
+              phone: existing.phone || '',
+              avatarUrl: existing.avatarUrl || '',
+              role: existing.role || 'CLIENT',
+            });
+          } else {
+            this.router.navigate([this.isAdminView ? '/admin/clients' : '/login']);
+          }
+        },
+        error: () => {
+          this.router.navigate([this.isAdminView ? '/admin/clients' : '/login']);
+        },
+      });
     }
   }
 

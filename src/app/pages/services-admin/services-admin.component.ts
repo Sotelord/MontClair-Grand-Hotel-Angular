@@ -19,7 +19,18 @@ export class ServicesAdminComponent implements OnInit {
   services: Service[] = [];
 
   ngOnInit(): void {
-    this.services = this.servicesService.getServices();
+    this.loadServices();
+  }
+
+  loadServices(): void {
+    this.servicesService.findAll().subscribe({
+      next: (services) => {
+        this.services = services || [];
+      },
+      error: () => {
+        this.services = [];
+      },
+    });
   }
 
   onAdd(): void {
@@ -32,5 +43,6 @@ export class ServicesAdminComponent implements OnInit {
 
   onDelete(service: Service): void {
     this.servicesService.deleteService(service);
+    this.loadServices();
   }
 }

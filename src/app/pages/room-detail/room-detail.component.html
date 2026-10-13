@@ -91,7 +91,7 @@
 
           <div class="space-y-3">
             <a
-              routerLink="/admin/reservations/new"
+              [routerLink]="['/reservations/book', room.id]"
               class="w-full text-center block bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] transition duration-300 shadow-sm"
             >
               Reservar Habitación

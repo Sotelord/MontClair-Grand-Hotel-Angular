@@ -26,18 +26,30 @@ export class ClientProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.client = this.clientService.getClientById(Number(idParam)) || null;
-    } else {
-      this.client = this.authService.currentUser();
-    }
+    const clientId = idParam ? Number(idParam) : this.authService.currentUser()?.id;
 
-    if (!this.client) {
+    if (!clientId) {
       this.router.navigate(['/login']);
       return;
     }
 
-    this.reservations = this.reservationService.getReservationsByClientId(this.client.id);
+    this.clientService.findById(clientId).subscribe({
+      next: (c) => {
+        this.client = c;
+      },
+      error: () => {
+        this.client = this.authService.currentUser();
+      },
+    });
+
+    this.reservationService.findByClientId(clientId).subscribe({
+      next: (res) => {
+        this.reservations = res || [];
+      },
+      error: () => {
+        this.reservations = [];
+      },
+    });
   }
 
   logout(): void {

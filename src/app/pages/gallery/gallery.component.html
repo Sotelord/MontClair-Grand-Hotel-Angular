@@ -1,0 +1,152 @@
+<!-- Hero Header -->
+<section class="bg-mirage text-white text-center px-6 pt-20 pb-16 relative overflow-hidden">
+  <div class="absolute inset-0 bg-radial-gradient from-twine/5 to-transparent pointer-events-none"></div>
+
+  <div class="max-w-[900px] mx-auto relative z-10">
+    <span class="block mb-4 font-sans text-[9px] tracking-[4px] uppercase font-bold text-twine">
+      MONTCLAIR GRAND HOTEL
+    </span>
+
+    <h1 class="font-serif font-normal text-white text-4xl sm:text-5xl md:text-[54px] tracking-[2px] leading-tight mb-5 uppercase">
+      Galería
+    </h1>
+
+    <p class="font-sans text-xs md:text-[13px] text-[#C2C9D1] font-light leading-relaxed max-w-[670px] mx-auto mb-8">
+      Una mirada a la elegancia, el confort y la exclusividad que te esperan en Montclair Grand Hotel. Cada rincón refleja nuestro compromiso con la distinción y la hospitalidad de lujo.
+    </p>
+
+    <div class="flex items-center justify-center gap-3">
+      <div class="h-px w-14 bg-twine/40"></div>
+      <div class="w-2 h-2 rotate-45 border border-twine"></div>
+      <div class="h-px w-14 bg-twine/40"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Filter Navigation -->
+<section class="bg-white border-b border-[#E8E2DA] sticky top-16 z-30 shadow-xs">
+  <div class="max-w-6xl mx-auto px-6 py-4">
+    <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+      @for (cat of categories; track cat.id) {
+        <button
+          type="button"
+          (click)="setCategory(cat.id)"
+          class="px-4 py-2 text-xs uppercase tracking-widest font-semibold transition-all duration-300 rounded-[2px] cursor-pointer"
+          [ngClass]="selectedCategory === cat.id ? 'bg-mirage text-white shadow-sm' : 'text-woodsmoke hover:bg-pampas hover:text-twine'"
+        >
+          {{ cat.label }}
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Grid -->
+<main class="bg-pampas/40 py-16 px-6 min-h-[500px]">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (item of filteredItems; track item.id) {
+        <div
+          class="relative group cursor-pointer rounded-[3px] overflow-hidden shadow-sm bg-white border border-[#E8E2DA] transition-all duration-500 hover:shadow-xl hover:border-twine"
+          [class.md:col-span-2]="item.isWide"
+          [class.h-96]="item.isWide"
+          [class.h-80]="!item.isWide"
+          (click)="openLightbox(item)"
+        >
+          <img
+            [src]="item.imageUrl"
+            [alt]="item.title"
+            class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            loading="lazy"
+          />
+
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-mirage/85 via-mirage/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+            <span class="text-[9px] uppercase tracking-[3px] font-bold text-twine mb-1">
+              {{ item.categoryLabel }}
+            </span>
+            <h3 class="font-serif text-lg sm:text-xl text-white uppercase tracking-[1px] mb-1">
+              {{ item.title }}
+            </h3>
+            <p class="text-xs text-white/80 font-light line-clamp-2">
+              {{ item.description }}
+            </p>
+            <div class="mt-3 flex items-center text-twine-light text-[10px] tracking-wider uppercase font-semibold">
+              Ampliar Fotografía <span class="ml-1 text-sm">→</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Booking CTA banner -->
+    <div class="mt-16 bg-mirage text-white p-8 sm:p-12 rounded-[3px] text-center relative overflow-hidden border border-twine/20">
+      <div class="max-w-2xl mx-auto relative z-10">
+        <span class="text-[9px] uppercase tracking-[4px] font-bold text-twine block mb-2">VIVE LA EXPERIENCIA</span>
+        <h2 class="font-serif text-2xl sm:text-3xl uppercase tracking-[2px] mb-4">Descubre Nuestras Suites en Persona</h2>
+        <p class="text-xs text-silver font-light leading-relaxed mb-6">
+          Reserva tu estancia con beneficios exclusivos, acceso a spa de cortesía y atención de conserjería personalizada.
+        </p>
+        <a
+          routerLink="/rooms/cards"
+          class="inline-block bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold py-3.5 px-8 rounded-[2px] transition shadow-md"
+        >
+          Explorar Habitaciones
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Lightbox Modal -->
+@if (selectedImage) {
+  <div
+    class="fixed inset-0 z-50 bg-mirage/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-fade-in"
+    (click)="closeLightbox()"
+  >
+    <div
+      class="relative max-w-4xl w-full bg-woodsmoke border border-twine/40 rounded-[3px] overflow-hidden shadow-2xl"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Close Button -->
+      <button
+        type="button"
+        (click)="closeLightbox()"
+        class="absolute top-4 right-4 z-20 text-white/70 hover:text-white bg-mirage/70 hover:bg-mirage rounded-full w-10 h-10 flex items-center justify-center transition border border-white/20 cursor-pointer"
+        aria-label="Cerrar modal"
+      >
+        <span class="text-xl font-mono leading-none">&times;</span>
+      </button>
+
+      <div class="max-h-[75vh] overflow-hidden bg-black flex items-center justify-center">
+        <img
+          [src]="selectedImage.imageUrl"
+          [alt]="selectedImage.title"
+          class="max-h-[75vh] w-auto max-w-full object-contain"
+        />
+      </div>
+
+      <div class="p-6 bg-mirage text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <span class="text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1">
+            {{ selectedImage.categoryLabel }}
+          </span>
+          <h3 class="font-serif text-xl uppercase tracking-[1px] text-white">
+            {{ selectedImage.title }}
+          </h3>
+          <p class="text-xs text-silver font-light mt-1 max-w-2xl">
+            {{ selectedImage.description }}
+          </p>
+        </div>
+
+        <a
+          routerLink="/rooms/cards"
+          (click)="closeLightbox()"
+          class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-widest font-bold py-2.5 px-5 rounded-[2px] transition whitespace-nowrap"
+        >
+          Reservar
+        </a>
+      </div>
+    </div>
+  </div>
+}

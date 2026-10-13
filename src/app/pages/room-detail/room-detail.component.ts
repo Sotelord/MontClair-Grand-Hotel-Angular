@@ -20,10 +20,18 @@ export class RoomDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.room = this.roomService.getRoomById(id);
-    if (!this.room) {
-      this.router.navigate(['/rooms/cards']);
-    }
+    this.roomService.findById(id).subscribe({
+      next: (room) => {
+        if (room) {
+          this.room = room;
+        } else {
+          this.router.navigate(['/rooms/cards']);
+        }
+      },
+      error: () => {
+        this.router.navigate(['/rooms/cards']);
+      },
+    });
   }
 
   formatPrice(price: number): string {

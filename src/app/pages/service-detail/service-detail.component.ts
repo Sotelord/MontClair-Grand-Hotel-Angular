@@ -21,11 +21,18 @@ export class ServiceDetailComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
-      this.service = this.servicesService.getServiceById(id);
-      
-      if (!this.service) {
-        this.router.navigate(['/services']);
-      }
+      this.servicesService.findById(id).subscribe({
+        next: (svc) => {
+          if (svc) {
+            this.service = svc;
+          } else {
+            this.router.navigate(['/services']);
+          }
+        },
+        error: () => {
+          this.router.navigate(['/services']);
+        },
+      });
     } else {
       this.router.navigate(['/services']);
     }

@@ -26,7 +26,7 @@
 
         <div class="flex items-center gap-3">
           <a
-            [routerLink]="['/admin/clients/edit', client.id]"
+            routerLink="/profile/edit"
             class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer"
           >
             Editar Perfil
@@ -66,7 +66,7 @@
           <h2 class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke">Mis Reservas</h2>
         </div>
         <a
-          routerLink="/rooms/cards"
+          routerLink="/reservations/book"
           class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-2.5 px-4 rounded-[2px] transition shadow-xs"
         >
           Nueva Reserva
