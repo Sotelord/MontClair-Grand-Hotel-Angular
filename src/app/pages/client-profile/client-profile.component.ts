@@ -23,6 +23,9 @@ export class ClientProfileComponent implements OnInit {
 
   client: Client | null = null;
   reservations: Reservation[] = [];
+  isDeletingProfile = false;
+  deletingReservationIds = new Set<number>();
+  errorMessage: string | null = null;
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -55,6 +58,77 @@ export class ClientProfileComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  deleteProfile(): void {
+    const currentUser = this.authService.currentUser();
+
+    if (!this.client || !currentUser || this.client.id !== currentUser.id) {
+      this.errorMessage = 'No se puede eliminar este perfil.';
+      return;
+    }
+
+    if (
+      !confirm(
+        '¿Estás seguro de que deseas eliminar permanentemente tu perfil? Esta acción no se puede deshacer.',
+      )
+    ) {
+      return;
+    }
+
+    this.isDeletingProfile = true;
+    this.errorMessage = null;
+
+    this.clientService.delete(currentUser.id).subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.isDeletingProfile = false;
+        this.errorMessage =
+          'No se pudo eliminar el perfil. Verifica que no tenga reservaciones asociadas.';
+      },
+    });
+  }
+
+  deleteReservation(reservation: Reservation): void {
+    const currentUser = this.authService.currentUser();
+
+    if (
+      !currentUser ||
+      !this.client ||
+      this.client.id !== currentUser.id ||
+      (reservation.client && reservation.client.id !== currentUser.id)
+    ) {
+      this.errorMessage = 'No se puede eliminar esta reservación.';
+      return;
+    }
+
+    if (
+      !confirm(
+        `¿Estás seguro de que deseas eliminar la reservación #${reservation.id}? Esta acción no se puede deshacer.`,
+      )
+    ) {
+      return;
+    }
+
+    this.deletingReservationIds.add(reservation.id);
+    this.errorMessage = null;
+
+    this.reservationService.delete(reservation.id).subscribe({
+      next: () => {
+        this.reservations = this.reservations.filter(
+          (item) => item.id !== reservation.id,
+        );
+        this.deletingReservationIds.delete(reservation.id);
+      },
+      error: () => {
+        this.deletingReservationIds.delete(reservation.id);
+        this.errorMessage =
+          'No se pudo eliminar la reservación. Intenta nuevamente.';
+      },
+    });
   }
 
   formatPrice(price: number): string {

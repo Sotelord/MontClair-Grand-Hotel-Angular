@@ -52,7 +52,7 @@ export class ClientReservationComponent implements OnInit {
 
     this.servicesService.findAll().subscribe({
       next: (svcs) => {
-        this.services = svcs || [];
+        this.services = (svcs || []).filter((service) => !service.hidden);
       },
       error: () => {
         this.services = [];

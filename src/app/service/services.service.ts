@@ -29,6 +29,7 @@ export class ServicesService {
           ...s,
           highlights: s.highlights || [],
           galleryImages: s.galleryImages || [],
+          hidden: s.hidden === true,
         }));
         this.syncServiceArray(normalized);
       }),
@@ -60,12 +61,20 @@ export class ServicesService {
                 ...updated,
                 highlights: updated.highlights || s.highlights || [],
                 galleryImages: updated.galleryImages || s.galleryImages || [],
+                hidden: updated.hidden === true,
               }
             : s,
         );
         this.syncServiceArray(nextServices);
       }),
     );
+  }
+
+  toggleVisibility(service: Service): Observable<Service> {
+    return this.update(service.id, {
+      ...service,
+      hidden: !service.hidden,
+    });
   }
 
   delete(id: number): Observable<void> {

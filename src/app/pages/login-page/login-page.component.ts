@@ -36,8 +36,6 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
-    // Login simple con if según el requerimiento:
-    // "if username es este y password es este, entonces entrar. Nada de HTTPSession/"
     const result = this.authService.login(this.identifier, this.password);
 
     if (result.success && result.client) {

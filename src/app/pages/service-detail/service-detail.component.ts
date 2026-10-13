@@ -23,7 +23,7 @@ export class ServiceDetailComponent implements OnInit {
       const id = Number(idParam);
       this.servicesService.findById(id).subscribe({
         next: (svc) => {
-          if (svc) {
+          if (svc && !svc.hidden) {
             this.service = svc;
           } else {
             this.router.navigate(['/services']);

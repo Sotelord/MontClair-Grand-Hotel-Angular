@@ -13,6 +13,7 @@ export class ServicesTableComponent {
 
   edit = output<Service>();
   delete = output<Service>();
+  toggleVisibility = output<Service>();
 
   formatId(id: number): string {
     return '#' + String(id).padStart(3, '0');
@@ -30,6 +31,17 @@ export class ServicesTableComponent {
   onDelete(service: Service): void {
     if (confirm(`¿Estás seguro de que quieres eliminar el servicio "${service.name}"?`)) {
       this.delete.emit(service);
+    }
+  }
+
+  onToggleVisibility(service: Service): void {
+    const action = service.hidden ? 'mostrar' : 'ocultar';
+    if (
+      confirm(
+        `¿Estás seguro de que quieres ${action} el servicio "${service.name}"?`,
+      )
+    ) {
+      this.toggleVisibility.emit(service);
     }
   }
 }
