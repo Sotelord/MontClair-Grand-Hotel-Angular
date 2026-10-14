@@ -1,9 +1,14 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ClientService } from '../../service/client.service';
-import { AuthService } from '../../service/auth.service';
 import { Client } from '../../models/client.model';
 
 @Component({
@@ -16,7 +21,6 @@ import { Client } from '../../models/client.model';
 export class ClientFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private clientService = inject(ClientService);
-  private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -31,9 +35,11 @@ export class ClientFormComponent implements OnInit {
     this.initForm();
 
     const idParam = this.route.snapshot.paramMap.get('id');
+
     if (idParam) {
       this.isEditMode = true;
       this.clientId = Number(idParam);
+
       this.clientService.findById(this.clientId).subscribe({
         next: (existing) => {
           if (existing) {
@@ -48,11 +54,15 @@ export class ClientFormComponent implements OnInit {
               role: existing.role || 'CLIENT',
             });
           } else {
-            this.router.navigate([this.isAdminView ? '/admin/clients' : '/login']);
+            this.router.navigate([
+              this.isAdminView ? '/admin/clients' : '/login',
+            ]);
           }
         },
         error: () => {
-          this.router.navigate([this.isAdminView ? '/admin/clients' : '/login']);
+          this.router.navigate([
+            this.isAdminView ? '/admin/clients' : '/login',
+          ]);
         },
       });
     }
@@ -60,11 +70,26 @@ export class ClientFormComponent implements OnInit {
 
   private initForm(): void {
     this.clientForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(3)]],
+      firstName: [
+        '',
+        [Validators.required, Validators.minLength(2)],
+      ],
+      lastName: [
+        '',
+        [Validators.required, Validators.minLength(2)],
+      ],
+      username: [
+        '',
+        [Validators.required, Validators.minLength(3)],
+      ],
+      email: [
+        '',
+        [Validators.required, Validators.email],
+      ],
+      password: [
+        '',
+        [Validators.required, Validators.minLength(3)],
+      ],
       phone: [''],
       avatarUrl: [''],
       role: ['CLIENT', [Validators.required]],
@@ -74,11 +99,13 @@ export class ClientFormComponent implements OnInit {
   onSubmit(): void {
     if (this.clientForm.invalid) {
       this.clientForm.markAllAsTouched();
-      this.errorMessage = 'Por favor completa todos los campos requeridos correctamente.';
+      this.errorMessage =
+        'Por favor completa todos los campos requeridos correctamente.';
       return;
     }
 
     const val = this.clientForm.value;
+
     const clientData: Omit<Client, 'id'> = {
       firstName: val.firstName.trim(),
       lastName: val.lastName.trim(),
@@ -91,33 +118,36 @@ export class ClientFormComponent implements OnInit {
     };
 
     if (this.isEditMode && this.clientId) {
-      this.clientService.update(this.clientId, { ...clientData, id: this.clientId }).subscribe({
-        next: (updated) => {
-          if (this.authService.currentUser?.id === this.clientId) {
-            this.authService.setCurrentUser(updated);
-          }
-          this.router.navigate(
-            this.isAdminView
-              ? ['/admin/clients']
-              : ['/profile', updated.id],
-          );
-        },
-        error: () => {
-          this.errorMessage = 'Error al actualizar el cliente en el servidor.';
-        },
-      });
+      this.clientService
+        .update(this.clientId, {
+          ...clientData,
+          id: this.clientId,
+        })
+        .subscribe({
+          next: (updated) => {
+            this.router.navigate(
+              this.isAdminView
+                ? ['/admin/clients']
+                : ['/profile', updated.id],
+            );
+          },
+          error: () => {
+            this.errorMessage =
+              'Error al actualizar el cliente en el servidor.';
+          },
+        });
     } else {
       this.clientService.add(clientData).subscribe({
         next: (savedClient) => {
-          if (!this.isAdminView) {
-            this.authService.setCurrentUser(savedClient);
-            this.router.navigate(['/profile', savedClient.id]);
-          } else {
+          if (this.isAdminView) {
             this.router.navigate(['/admin/clients']);
+          } else {
+            this.router.navigate(['/profile', savedClient.id]);
           }
         },
         error: () => {
-          this.errorMessage = 'Error al registrar el cliente. Verifique que el usuario o correo no existan ya.';
+          this.errorMessage =
+            'Error al registrar el cliente. Verifique que el usuario o correo no existan ya.';
         },
       });
     }
@@ -125,6 +155,11 @@ export class ClientFormComponent implements OnInit {
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.clientForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+
+    return !!(
+      field &&
+      field.invalid &&
+      (field.dirty || field.touched)
+    );
   }
 }

@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../service/auth.service';
-import { Client } from '../../models/client.model';
+
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -11,19 +10,4 @@ import { Client } from '../../models/client.model';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  authService = inject(AuthService);
-  private router = inject(Router);
-
-  get client(): Client | null {
-
-    if (!this.router.url.startsWith('/profile')) {
-      return null;
-    }
-    return this.authService.currentUser;
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
 }

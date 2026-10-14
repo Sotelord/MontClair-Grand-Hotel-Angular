@@ -1,9 +1,10 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
-import { Reservation } from '../../models/reservation.model';
+import { ReservationDTO } from '../../models/reservation.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
 
 @Component({
@@ -14,49 +15,50 @@ import { AdminPageHeaderComponent } from '../../components/admin-page-header/adm
   styleUrl: './reservations-admin.component.scss',
 })
 export class ReservationsAdminComponent implements OnInit {
-  reservationService = inject(ReservationService);
+  private reservationService = inject(ReservationService);
   private router = inject(Router);
 
-  reservations: Reservation[] = [];
+  reservations: ReservationDTO[] = [];
   searchTerm: string = '';
   selectedStatus: string = 'ALL';
 
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  reservationToDelete: Reservation | null = null;
+  reservationToDelete: ReservationDTO | null = null;
 
   ngOnInit(): void {
     this.loadReservations();
   }
 
   loadReservations(): void {
-    this.reservationService.findAll().subscribe({
+    this.reservationService.findSummary().subscribe({
       next: (res) => {
         this.reservations = res || [];
       },
       error: () => {
         this.reservations = [];
+        this.errorMessage =
+          'No se pudieron cargar las reservas.';
       },
     });
   }
 
-  get filteredReservations(): Reservation[] {
+  get filteredReservations(): ReservationDTO[] {
+    const query = this.searchTerm.trim().toLowerCase();
+
     return this.reservations.filter((res) => {
-      const query = this.searchTerm.toLowerCase();
       const matchSearch =
-        !this.searchTerm ||
-        res.client.firstName.toLowerCase().includes(query) ||
-        (res.client.lastName && res.client.lastName.toLowerCase().includes(query)) ||
-        res.client.email.toLowerCase().includes(query) ||
-        res.reservationRooms?.some(
-          (rr) =>
-            rr.room.number.includes(query) ||
-            (rr.room.name && rr.room.name.toLowerCase().includes(query))
-        );
+        !query ||
+        (res.clientFirstName || '').toLowerCase().includes(query) ||
+        (res.clientLastName || '').toLowerCase().includes(query) ||
+        (res.clientEmail || '').toLowerCase().includes(query) ||
+        (res.roomNumber || '').toLowerCase().includes(query) ||
+        (res.roomName || '').toLowerCase().includes(query);
 
       const matchStatus =
-        this.selectedStatus === 'ALL' || res.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' ||
+        res.status === this.selectedStatus;
 
       return matchSearch && matchStatus;
     });
@@ -64,13 +66,16 @@ export class ReservationsAdminComponent implements OnInit {
 
   get totalRevenue(): number {
     return this.reservations.reduce(
-      (acc, res) => acc + this.reservationService.calculateGrandTotal(res),
-      0
+      (acc, res) => acc + res.totalPrice,
+      0,
     );
   }
 
   get totalGuests(): number {
-    return this.reservations.reduce((acc, res) => acc + res.numberOfPeople, 0);
+    return this.reservations.reduce(
+      (acc, res) => acc + res.numberOfPeople,
+      0,
+    );
   }
 
   onAddReservation(): void {
@@ -81,7 +86,7 @@ export class ReservationsAdminComponent implements OnInit {
     this.router.navigate(['/admin/reservations/edit', id]);
   }
 
-  confirmDelete(res: Reservation): void {
+  confirmDelete(res: ReservationDTO): void {
     this.reservationToDelete = res;
   }
 
@@ -97,13 +102,23 @@ export class ReservationsAdminComponent implements OnInit {
 
     this.reservationService.delete(resId).subscribe({
       next: () => {
-        this.successMessage = `Reserva #${resId} eliminada correctamente. La habitación asociada ha sido liberada.`;
+        this.successMessage =
+          `Reserva #${resId} eliminada correctamente. ` +
+          'La habitación asociada ha sido liberada.';
+
         this.loadReservations();
-        setTimeout(() => (this.successMessage = null), 4000);
+
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 4000);
       },
       error: () => {
-        this.errorMessage = 'Error al eliminar la reserva en el servidor.';
-        setTimeout(() => (this.errorMessage = null), 6000);
+        this.errorMessage =
+          'Error al eliminar la reserva en el servidor.';
+
+        setTimeout(() => {
+          this.errorMessage = null;
+        }, 6000);
       },
     });
   }

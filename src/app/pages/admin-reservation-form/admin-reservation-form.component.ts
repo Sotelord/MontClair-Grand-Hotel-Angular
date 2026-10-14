@@ -1,3 +1,4 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -48,11 +49,14 @@ export class AdminReservationFormComponent implements OnInit {
     this.clientService.findAll().subscribe({
       next: (clients) => {
         this.clients = clients || [];
+
         if (
           this.clients.length > 0 &&
           !this.reservationForm.get('clientId')?.value
         ) {
-          this.reservationForm.patchValue({ clientId: this.clients[0].id });
+          this.reservationForm.patchValue({
+            clientId: this.clients[0].id,
+          });
         }
       },
       error: () => {
@@ -60,9 +64,9 @@ export class AdminReservationFormComponent implements OnInit {
       },
     });
 
-    this.servicesService.findAll().subscribe({
+    this.servicesService.findNotHidden().subscribe({
       next: (services) => {
-        this.services = (services || []).filter((service) => !service.hidden);
+        this.services = services || [];
       },
       error: () => {
         this.services = [];
@@ -70,46 +74,60 @@ export class AdminReservationFormComponent implements OnInit {
     });
 
     const idParam = this.route.snapshot.paramMap.get('id');
+
     if (idParam) {
       this.isEditMode = true;
       this.reservationId = Number(idParam);
+
       this.reservationService.findById(this.reservationId).subscribe({
         next: (existing) => {
-          if (existing) {
-            const currentRoom = existing.reservationRooms?.[0]?.room;
-            this.roomService.findAll().subscribe({
-              next: (rooms) => {
-                this.availableRooms = (rooms || []).filter(
-                  (r) =>
-                    r.status === 'AVAILABLE' ||
-                    (currentRoom && r.id === currentRoom.id),
-                );
-              },
-            });
+          const currentRoom = existing.reservationRooms?.[0]?.room;
 
-            existing.reservationRooms?.[0]?.acquiredServices?.forEach((as) => {
-              if (as.service?.id) this.selectedServiceIds.add(as.service.id);
-            });
+          existing.reservationRooms?.[0]?.acquiredServices?.forEach(
+            (acquired) => {
+              if (acquired.service?.id) {
+                this.selectedServiceIds.add(acquired.service.id);
+              }
+            },
+          );
 
-            this.reservationForm.patchValue({
-              clientId: existing.client.id,
-              roomId: currentRoom?.id,
-              checkInDate: existing.checkInDate,
-              checkOutDate: existing.checkOutDate,
-              numberOfPeople: existing.numberOfPeople,
-            });
-          }
+          this.reservationForm.patchValue({
+            clientId: existing.client.id,
+            roomId: currentRoom?.id,
+            checkInDate: existing.checkInDate,
+            checkOutDate: existing.checkOutDate,
+            numberOfPeople: existing.numberOfPeople,
+          });
+
+          this.roomService.findAvailable().subscribe({
+            next: (rooms) => {
+              this.availableRooms = rooms || [];
+
+              if (
+                currentRoom &&
+                !this.availableRooms.some(
+                  (room) => room.id === currentRoom.id,
+                )
+              ) {
+                this.availableRooms.unshift(currentRoom);
+              }
+            },
+            error: () => {
+              this.availableRooms = currentRoom
+                ? [currentRoom]
+                : [];
+            },
+          });
         },
         error: () => {
           this.router.navigate(['/admin/reservations']);
         },
       });
     } else {
-      this.roomService.findAll().subscribe({
+      this.roomService.findAvailable().subscribe({
         next: (rooms) => {
-          this.availableRooms = (rooms || []).filter(
-            (r) => r.status === 'AVAILABLE',
-          );
+          this.availableRooms = rooms || [];
+
           if (this.availableRooms.length > 0) {
             this.reservationForm.patchValue({
               roomId: this.availableRooms[0].id,
@@ -125,16 +143,22 @@ export class AdminReservationFormComponent implements OnInit {
 
   private initForm(): void {
     const today = new Date().toISOString().split('T')[0];
-    const defaultOut = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+
+    const defaultOut = new Date(
+      Date.now() + 3 * 24 * 60 * 60 * 1000,
+    )
       .toISOString()
       .split('T')[0];
 
     this.reservationForm = this.fb.group({
-      clientId: [this.clients[0]?.id || 1, [Validators.required]],
+      clientId: [null, [Validators.required]],
       roomId: [null, [Validators.required]],
       checkInDate: [today, [Validators.required]],
       checkOutDate: [defaultOut, [Validators.required]],
-      numberOfPeople: [2, [Validators.required, Validators.min(1)]],
+      numberOfPeople: [
+        2,
+        [Validators.required, Validators.min(1)],
+      ],
     });
   }
 
@@ -149,16 +173,28 @@ export class AdminReservationFormComponent implements OnInit {
   isServiceSelected(serviceId: number): boolean {
     return this.selectedServiceIds.has(serviceId);
   }
+
   get nightsCount(): number {
     const checkIn = this.reservationForm?.get('checkInDate')?.value;
     const checkOut = this.reservationForm?.get('checkOutDate')?.value;
+
     if (!checkIn || !checkOut) return 1;
-    return this.reservationService.calculateNights(checkIn, checkOut);
+
+    return this.reservationService.calculateNights(
+      checkIn,
+      checkOut,
+    );
   }
 
   get selectedRoomPrice(): number {
-    const roomId = Number(this.reservationForm?.get('roomId')?.value);
-    const room = this.availableRooms.find((r) => r.id === roomId);
+    const roomId = Number(
+      this.reservationForm?.get('roomId')?.value,
+    );
+
+    const room = this.availableRooms.find(
+      (item) => item.id === roomId,
+    );
+
     return room?.pricePerNight || 0;
   }
 
@@ -168,27 +204,37 @@ export class AdminReservationFormComponent implements OnInit {
 
   get estimatedServicesTotal(): number {
     let total = 0;
+
     this.selectedServiceIds.forEach((id) => {
-      const svc = this.services.find((s) => s.id === id);
-      if (svc && svc.price) {
-        total += svc.price;
+      const service = this.services.find(
+        (item) => item.id === id,
+      );
+
+      if (service?.price) {
+        total += service.price;
       }
     });
+
     return total;
   }
 
   get estimatedGrandTotal(): number {
-    return this.estimatedRoomTotal + this.estimatedServicesTotal;
+    return (
+      this.estimatedRoomTotal +
+      this.estimatedServicesTotal
+    );
   }
 
   onSubmit(): void {
     if (this.reservationForm.invalid) {
       this.reservationForm.markAllAsTouched();
-      this.errorMessage = 'Por favor completa todos los campos requeridos.';
+      this.errorMessage =
+        'Por favor completa todos los campos requeridos.';
       return;
     }
 
     const val = this.reservationForm.value;
+
     if (new Date(val.checkOutDate) <= new Date(val.checkInDate)) {
       this.errorMessage =
         'La fecha de salida debe ser posterior a la de entrada.';
@@ -197,16 +243,18 @@ export class AdminReservationFormComponent implements OnInit {
 
     const serviceIds = Array.from(this.selectedServiceIds);
 
+    const reservationData = {
+      clientId: Number(val.clientId),
+      roomId: Number(val.roomId),
+      checkInDate: val.checkInDate,
+      checkOutDate: val.checkOutDate,
+      numberOfPeople: Number(val.numberOfPeople),
+      serviceIds,
+    };
+
     if (this.isEditMode && this.reservationId) {
       this.reservationService
-        .update(this.reservationId, {
-          clientId: Number(val.clientId),
-          roomId: Number(val.roomId),
-          checkInDate: val.checkInDate,
-          checkOutDate: val.checkOutDate,
-          numberOfPeople: Number(val.numberOfPeople),
-          serviceIds,
-        })
+        .update(this.reservationId, reservationData)
         .subscribe({
           next: () => {
             this.router.navigate(['/admin/reservations']);
@@ -217,23 +265,15 @@ export class AdminReservationFormComponent implements OnInit {
           },
         });
     } else {
-      this.reservationService
-        .add({
-          clientId: Number(val.clientId),
-          roomId: Number(val.roomId),
-          checkInDate: val.checkInDate,
-          checkOutDate: val.checkOutDate,
-          numberOfPeople: Number(val.numberOfPeople),
-          serviceIds,
-        })
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/admin/reservations']);
-          },
-          error: () => {
-            this.errorMessage = 'Error al crear la reserva en el servidor.';
-          },
-        });
+      this.reservationService.add(reservationData).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/reservations']);
+        },
+        error: () => {
+          this.errorMessage =
+            'Error al crear la reserva en el servidor.';
+        },
+      });
     }
   }
 

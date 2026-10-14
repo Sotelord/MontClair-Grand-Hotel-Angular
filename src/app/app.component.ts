@@ -1,6 +1,6 @@
+
 import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet, RouterLink } from '@angular/router';
-import { AuthService } from './service/auth.service';
 
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -9,6 +9,7 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [
     RouterOutlet,
     RouterLink,
@@ -22,13 +23,9 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
 })
 export class AppComponent {
   router = inject(Router);
-  authService = inject(AuthService);
 
   isAdmin(): boolean {
-    return (
-      this.router.url.startsWith('/admin') ||
-      (this.authService.isAdmin() && this.router.url.startsWith('/profile'))
-    );
+    return this.router.url.startsWith('/admin');
   }
 
   isLoginPage(): boolean {

@@ -1,3 +1,4 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,7 +25,8 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.route.snapshot.queryParamMap.get('registered')) {
-      this.successMessage = '¡Registro completado! Ya puedes iniciar sesión con tus credenciales.';
+      this.successMessage =
+        '¡Registro completado! Ya puedes iniciar sesión con tus credenciales.';
     }
   }
 
@@ -41,7 +43,8 @@ export class LoginPageComponent implements OnInit {
         if (result.success && result.client) {
           this.router.navigate(['/profile', result.client.id]);
         } else {
-          this.errorMessage = result.message || 'Usuario o contraseña incorrectos.';
+          this.errorMessage =
+            result.message || 'Usuario o contraseña incorrectos.';
         }
       },
       error: (err) => {
@@ -59,6 +62,7 @@ export class LoginPageComponent implements OnInit {
       this.identifier = 'demo';
       this.password = 'demo';
     }
+
     this.onLogin();
   }
 }

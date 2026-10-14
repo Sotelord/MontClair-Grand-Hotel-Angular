@@ -1,5 +1,6 @@
+
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Room } from '../models/room.model';
 
@@ -14,24 +15,49 @@ export class RoomService {
     return this.http.get<Room[]>(this.apiUrl);
   }
 
+  findAvailable(): Observable<Room[]> {
+    const params = new HttpParams().set(
+      'status',
+      'AVAILABLE',
+    );
+
+    return this.http.get<Room[]>(
+      this.apiUrl,
+      { params },
+    );
+  }
+
   findById(id: number): Observable<Room> {
-    return this.http.get<Room>(`${this.apiUrl}/${id}`);
+    return this.http.get<Room>(
+      `${this.apiUrl}/${id}`,
+    );
   }
 
   findByTypeId(typeId: number): Observable<Room[]> {
-    return this.http.get<Room[]>(`${this.apiUrl}/type/${typeId}`);
+    return this.http.get<Room[]>(
+      `${this.apiUrl}/type/${typeId}`,
+    );
   }
 
   add(room: Room | Omit<Room, 'id'>): Observable<Room> {
     const { id, ...payload } = room as any;
-    return this.http.post<Room>(this.apiUrl, payload);
+
+    return this.http.post<Room>(
+      this.apiUrl,
+      payload,
+    );
   }
 
   update(id: number, room: Room): Observable<Room> {
-    return this.http.put<Room>(`${this.apiUrl}/${id}`, room);
+    return this.http.put<Room>(
+      `${this.apiUrl}/${id}`,
+      room,
+    );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(
+      `${this.apiUrl}/${id}`,
+    );
   }
 }

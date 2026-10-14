@@ -1,7 +1,7 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
 import { Client } from '../../models/client.model';
@@ -15,7 +15,6 @@ import { Reservation } from '../../models/reservation.model';
   styleUrl: './client-profile.component.scss',
 })
 export class ClientProfileComponent implements OnInit {
-  authService = inject(AuthService);
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
   private router = inject(Router);
@@ -29,7 +28,7 @@ export class ClientProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    const clientId = idParam ? Number(idParam) : this.authService.currentUser?.id;
+    const clientId = idParam ? Number(idParam) : null;
 
     if (!clientId) {
       this.router.navigate(['/login']);
@@ -37,9 +36,8 @@ export class ClientProfileComponent implements OnInit {
     }
 
     this.clientService.findById(clientId).subscribe({
-      next: (c) => {
-        this.client = c;
-        this.authService.setCurrentUser(c);
+      next: (client) => {
+        this.client = client;
       },
       error: () => {
         this.router.navigate(['/login']);
@@ -47,8 +45,8 @@ export class ClientProfileComponent implements OnInit {
     });
 
     this.reservationService.findByClientId(clientId).subscribe({
-      next: (res) => {
-        this.reservations = res || [];
+      next: (reservations) => {
+        this.reservations = reservations || [];
       },
       error: () => {
         this.reservations = [];
@@ -57,14 +55,11 @@ export class ClientProfileComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
     this.router.navigate(['/login']);
   }
 
   deleteProfile(): void {
-    const currentUser = this.authService.currentUser;
-
-    if (!this.client || !currentUser || this.client.id !== currentUser.id) {
+    if (!this.client) {
       this.errorMessage = 'No se puede eliminar este perfil.';
       return;
     }
@@ -80,9 +75,8 @@ export class ClientProfileComponent implements OnInit {
     this.isDeletingProfile = true;
     this.errorMessage = null;
 
-    this.clientService.delete(currentUser.id).subscribe({
+    this.clientService.delete(this.client.id).subscribe({
       next: () => {
-        this.authService.logout();
         this.router.navigate(['/']);
       },
       error: () => {
@@ -94,13 +88,10 @@ export class ClientProfileComponent implements OnInit {
   }
 
   deleteReservation(reservation: Reservation): void {
-    const currentUser = this.authService.currentUser;
-
     if (
-      !currentUser ||
       !this.client ||
-      this.client.id !== currentUser.id ||
-      (reservation.client && reservation.client.id !== currentUser.id)
+      (reservation.client &&
+        reservation.client.id !== this.client.id)
     ) {
       this.errorMessage = 'No se puede eliminar esta reservación.';
       return;

@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { RoomsCardsComponent } from './pages/rooms-cards/rooms-cards.component';
@@ -51,7 +52,8 @@ export const routes: Routes = [
   },
   {
     path: 'profile/edit',
-    component: ProfileEditComponent,
+    redirectTo: 'login',
+    pathMatch: 'full',
   },
   {
     path: 'profile/:id',

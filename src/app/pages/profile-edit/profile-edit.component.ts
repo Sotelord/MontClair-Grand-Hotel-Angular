@@ -1,8 +1,13 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
 
@@ -15,7 +20,6 @@ import { Client } from '../../models/client.model';
 })
 export class ProfileEditComponent implements OnInit {
   private fb = inject(FormBuilder);
-  authService = inject(AuthService);
   private clientService = inject(ClientService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -26,40 +30,46 @@ export class ProfileEditComponent implements OnInit {
   successMessage: string | null = null;
   isSubmitting: boolean = false;
 
-  defaultAvatar = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
+  defaultAvatar =
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
-    const clientId = idParam ? Number(idParam) : this.authService.currentUser?.id;
+    const clientId = idParam ? Number(idParam) : null;
 
     if (!clientId) {
       this.router.navigate(['/login']);
       return;
     }
 
-    if (this.authService.currentUser && this.authService.currentUser.id === clientId) {
-      this.client = this.authService.currentUser;
-      this.initForm();
-    } else {
-      this.clientService.findById(clientId).subscribe({
-        next: (c) => {
-          this.client = c;
-          this.initForm();
-        },
-        error: () => {
-          this.router.navigate(['/login']);
-        },
-      });
-    }
+    this.clientService.findById(clientId).subscribe({
+      next: (client) => {
+        this.client = client;
+        this.initForm();
+      },
+      error: () => {
+        this.router.navigate(['/login']);
+      },
+    });
   }
 
   private initForm(): void {
     if (!this.client) return;
+
     this.profileForm = this.fb.group({
-      firstName: [this.client.firstName, [Validators.required, Validators.minLength(2)]],
+      firstName: [
+        this.client.firstName,
+        [Validators.required, Validators.minLength(2)],
+      ],
       lastName: [this.client.lastName || ''],
-      email: [this.client.email, [Validators.required, Validators.email]],
-      phone: [this.client.phone || '', [Validators.pattern(/^[+0-9\s-]{7,20}$/)]],
+      email: [
+        this.client.email,
+        [Validators.required, Validators.email],
+      ],
+      phone: [
+        this.client.phone || '',
+        [Validators.pattern(/^[+0-9\s-]{7,20}$/)],
+      ],
       avatarUrl: [this.client.avatarUrl || ''],
       newPassword: ['', [Validators.minLength(4)]],
       confirmPassword: [''],
@@ -68,17 +78,21 @@ export class ProfileEditComponent implements OnInit {
 
   get avatarPreview(): string {
     const inputUrl = this.profileForm?.get('avatarUrl')?.value;
-    return inputUrl && inputUrl.trim().length > 0 ? inputUrl : (this.client?.avatarUrl || this.defaultAvatar);
+
+    return inputUrl && inputUrl.trim().length > 0
+      ? inputUrl
+      : (this.client?.avatarUrl || this.defaultAvatar);
   }
 
   onSubmit(): void {
+    if (!this.profileForm || !this.client) return;
+
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
-      this.errorMessage = 'Por favor complete correctamente todos los campos obligatorios.';
+      this.errorMessage =
+        'Por favor complete correctamente todos los campos obligatorios.';
       return;
     }
-
-    if (!this.client) return;
 
     const val = this.profileForm.value;
 
@@ -99,16 +113,21 @@ export class ProfileEditComponent implements OnInit {
       email: val.email.trim(),
       phone: val.phone ? val.phone.trim() : '',
       avatarUrl: val.avatarUrl?.trim() || this.defaultAvatar,
-      password: (val.newPassword && val.newPassword.trim().length > 0) ? val.newPassword.trim() : this.client.password,
+      password:
+        val.newPassword && val.newPassword.trim().length > 0
+          ? val.newPassword.trim()
+          : this.client.password,
     };
 
     this.clientService.update(this.client.id, updatedClient).subscribe({
       next: (savedClient) => {
-        this.authService.setCurrentUser(savedClient || updatedClient);
         this.successMessage = '¡Perfil actualizado con éxito!';
-        setTimeout(() => {
-          this.router.navigate(['/profile', (savedClient || updatedClient).id]);
-        }, 1200);
+        this.isSubmitting = false;
+
+        this.router.navigate([
+          '/profile',
+          savedClient?.id || updatedClient.id,
+        ]);
       },
       error: () => {
         this.isSubmitting = false;
