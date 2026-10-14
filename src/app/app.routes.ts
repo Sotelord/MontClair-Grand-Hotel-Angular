@@ -72,6 +72,11 @@ export const routes: Routes = [
     component: ClientFormComponent,
   },
   {
+    path: 'admin',
+    redirectTo: 'admin/rooms',
+    pathMatch: 'full',
+  },
+  {
     path: 'admin/rooms',
     component: RoomsAdminComponent,
   },
