@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
-import { ReservationService } from '../../service/reservation.service';
 import { Room } from '../../models/room.model';
 import { RoomType } from '../../models/roomType.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
@@ -19,7 +18,6 @@ import { AdminPageHeaderComponent } from '../../components/admin-page-header/adm
 export class RoomsAdminComponent implements OnInit {
   private roomService = inject(RoomService);
   private roomTypeService = inject(RoomTypeService);
-  private reservationService = inject(ReservationService);
   private router = inject(Router);
 
   rooms: Room[] = [];
@@ -95,13 +93,6 @@ export class RoomsAdminComponent implements OnInit {
   executeDelete(): void {
     if (!this.roomToDelete) return;
 
-    if (this.reservationService.hasRoomReservations(this.roomToDelete.id)) {
-      this.errorMessage = `No se puede eliminar la habitación #${this.roomToDelete.number} porque tiene reservaciones registradas.`;
-      this.roomToDelete = null;
-      setTimeout(() => (this.errorMessage = null), 6000);
-      return;
-    }
-
     const roomNumber = this.roomToDelete.number;
     const roomId = this.roomToDelete.id;
     this.roomToDelete = null;
@@ -112,8 +103,8 @@ export class RoomsAdminComponent implements OnInit {
         this.loadData();
         setTimeout(() => (this.successMessage = null), 4000);
       },
-      error: () => {
-        this.errorMessage = 'Error al eliminar la habitación en el servidor.';
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Error al eliminar la habitación en el servidor.';
         setTimeout(() => (this.errorMessage = null), 6000);
       },
     });

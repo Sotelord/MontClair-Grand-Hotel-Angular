@@ -46,21 +46,28 @@ export class RoomTypesAdminComponent implements OnInit {
   }
 
   onDelete(roomType: RoomType): void {
-    const assignedRooms = this.roomService.getRoomsByTypeId(roomType.id);
-    if (assignedRooms.length > 0) {
-      this.errorMessage = `No se puede eliminar la categoría '${roomType.name}' porque tiene ${assignedRooms.length} habitación(es) asociada(s).`;
-      setTimeout(() => (this.errorMessage = null), 6000);
-      return;
-    }
+    this.roomService.findByTypeId(roomType.id).subscribe({
+      next: (assignedRooms) => {
+        if (assignedRooms && assignedRooms.length > 0) {
+          this.errorMessage = `No se puede eliminar la categoría '${roomType.name}' porque tiene ${assignedRooms.length} habitación(es) asociada(s).`;
+          setTimeout(() => (this.errorMessage = null), 6000);
+          return;
+        }
 
-    this.roomTypeService.delete(roomType.id).subscribe({
-      next: () => {
-        this.successMessage = `Categoría '${roomType.name}' eliminada correctamente.`;
-        this.loadRoomTypes();
-        setTimeout(() => (this.successMessage = null), 4000);
+        this.roomTypeService.delete(roomType.id).subscribe({
+          next: () => {
+            this.successMessage = `Categoría '${roomType.name}' eliminada correctamente.`;
+            this.loadRoomTypes();
+            setTimeout(() => (this.successMessage = null), 4000);
+          },
+          error: (err) => {
+            this.errorMessage = err.error?.message || 'Error al eliminar la categoría en el servidor.';
+            setTimeout(() => (this.errorMessage = null), 6000);
+          },
+        });
       },
       error: () => {
-        this.errorMessage = 'Error al eliminar la categoría en el servidor.';
+        this.errorMessage = 'Error al consultar las habitaciones asociadas.';
         setTimeout(() => (this.errorMessage = null), 6000);
       },
     });

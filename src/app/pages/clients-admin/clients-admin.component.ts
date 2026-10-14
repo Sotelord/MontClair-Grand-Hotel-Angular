@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientService } from '../../service/client.service';
-import { ReservationService } from '../../service/reservation.service';
 import { Client } from '../../models/client.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
 
@@ -16,7 +15,6 @@ import { AdminPageHeaderComponent } from '../../components/admin-page-header/adm
 })
 export class ClientsAdminComponent implements OnInit {
   private clientService = inject(ClientService);
-  private reservationService = inject(ReservationService);
   private router = inject(Router);
 
   clients: Client[] = [];
@@ -77,12 +75,6 @@ export class ClientsAdminComponent implements OnInit {
 
   executeDelete(): void {
     if (!this.clientToDelete) return;
-    if (this.reservationService.hasClientReservations(this.clientToDelete.id)) {
-      this.errorMessage = `No se puede eliminar el cliente '${this.clientToDelete.firstName} ${this.clientToDelete.lastName || ''}' porque tiene reservaciones registradas en el sistema.`;
-      this.clientToDelete = null;
-      setTimeout(() => (this.errorMessage = null), 6000);
-      return;
-    }
 
     const clientName = this.clientToDelete.firstName;
     const clientId = this.clientToDelete.id;
@@ -94,8 +86,8 @@ export class ClientsAdminComponent implements OnInit {
         this.loadClients();
         setTimeout(() => (this.successMessage = null), 4000);
       },
-      error: () => {
-        this.errorMessage = 'Error al eliminar el cliente.';
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Error al eliminar el cliente.';
         setTimeout(() => (this.errorMessage = null), 6000);
       },
     });

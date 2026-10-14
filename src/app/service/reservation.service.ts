@@ -1,12 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Reservation } from '../models/reservation.model';
-import { ReservationRoom } from '../models/reservationRoom.model';
-import { AcquiredService } from '../models/adquiredService.model';
-import { ClientService } from './client.service';
-import { RoomService } from './room.service';
-import { ServicesService } from './services.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,16 +10,8 @@ export class ReservationService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/reservations';
 
-  private reservations: Reservation[] = [];
-
   findAll(): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(this.apiUrl).pipe(
-      tap((data) => {
-        if (data) {
-          this.reservations = data;
-        }
-      }),
-    );
+    return this.http.get<Reservation[]>(this.apiUrl);
   }
 
   findById(id: number): Observable<Reservation> {
@@ -36,44 +23,15 @@ export class ReservationService {
   }
 
   add(data: any): Observable<Reservation> {
-    return this.http.post<Reservation>(this.apiUrl, data).pipe(
-      tap((saved) => {
-        if (saved) {
-          this.reservations.unshift(saved);
-        }
-      }),
-    );
+    return this.http.post<Reservation>(this.apiUrl, data);
   }
 
   update(id: number, data: any): Observable<Reservation> {
-    return this.http.put<Reservation>(`${this.apiUrl}/${id}`, data).pipe(
-      tap((updated) => {
-        const idx = this.reservations.findIndex((r) => r.id === id);
-        if (idx !== -1) {
-          this.reservations[idx] = updated;
-        }
-      }),
-    );
+    return this.http.put<Reservation>(`${this.apiUrl}/${id}`, data);
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => {
-        this.reservations = this.reservations.filter((r) => r.id !== id);
-      }),
-    );
-  }
-
-  getReservations(): Reservation[] {
-    return this.reservations;
-  }
-
-  getReservationById(id: number): Reservation | undefined {
-    return this.reservations.find((item) => item.id === id);
-  }
-
-  getReservationsByClientId(clientId: number): Reservation[] {
-    return this.reservations.filter((item) => item.client.id === clientId);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   calculateNights(checkInDate: string, checkOutDate: string): number {
@@ -107,16 +65,6 @@ export class ReservationService {
   calculateGrandTotal(res: Reservation): number {
     return (
       this.calculateRoomSubtotal(res) + this.calculateServicesSubtotal(res)
-    );
-  }
-
-  hasClientReservations(clientId: number): boolean {
-    return this.reservations.some((r) => r.client?.id === clientId);
-  }
-
-  hasRoomReservations(roomId: number): boolean {
-    return this.reservations.some((r) =>
-      r.reservationRooms?.some((rr) => rr.room?.id === roomId),
     );
   }
 }

@@ -36,15 +36,22 @@ export class LandingPageComponent implements OnInit {
   roomTypesArray: RoomType[] = [];
 
   ngOnInit(): void {
-    this.serviceService.services$.subscribe((services) => {
-      this.serviceArray = services || [];
+    this.serviceService.findNotHidden().subscribe({
+      next: (services) => {
+        this.serviceArray = services || [];
+      },
+      error: () => {
+        this.serviceArray = [];
+      },
     });
 
-    this.roomTypeService.roomTypes$.subscribe((types) => {
-      this.roomTypesArray = types || [];
+    this.roomTypeService.findAll().subscribe({
+      next: (types) => {
+        this.roomTypesArray = types || [];
+      },
+      error: () => {
+        this.roomTypesArray = [];
+      },
     });
-
-    this.serviceService.findNotHidden().subscribe();
-    this.roomTypeService.findAll().subscribe();
   }
 }
