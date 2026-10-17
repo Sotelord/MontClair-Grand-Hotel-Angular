@@ -1,153 +1,182 @@
 @if (room) {
-  <section class="max-w-6xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-    <div class="mb-6 flex items-center gap-2 text-xs text-woodsmoke/60">
-      <a routerLink="/rooms/cards" class="hover:text-twine transition"
-        >Habitaciones</a
-      >
-      <span>/</span>
-      <span class="text-woodsmoke font-semibold"
-        >{{ room.name }} (Hab. {{ room.number }})</span
-      >
+<section class="max-w-6xl w-full mx-auto p-6 sm:p-8 lg:p-12">
+  <div class="mb-6 flex items-center gap-2 text-xs text-woodsmoke/60">
+    <a routerLink="/rooms/cards" class="hover:text-twine transition">
+      Habitaciones
+    </a>
+
+    <span>/</span>
+
+    <span class="text-woodsmoke font-semibold">
+      {{ room.name }} (Hab. {{ room.number }})
+    </span>
+  </div>
+
+  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden mb-12">
+    <!-- IMAGEN PRINCIPAL -->
+    <div class="relative h-96 sm:h-[480px] w-full overflow-hidden bg-mirage">
+      <img [src]="room.secondaryImageUrl || room.roomType.imageUrl" [alt]="room.name"
+        class="w-full h-full object-cover opacity-90" />
+
+      <div class="absolute inset-0 bg-gradient-to-t from-mirage via-mirage/30 to-transparent"></div>
+
+      <div class="absolute bottom-8 left-8 right-8 text-white">
+        <span class="text-[10px] tracking-[4px] font-sans uppercase font-bold text-twine mb-2 block">
+          {{ room.roomType.name }}
+          • PISO {{ room.floor }}
+          • HABITACIÓN {{ room.number }}
+        </span>
+
+        <h1 class="font-serif text-3xl sm:text-4xl uppercase tracking-[2px] mb-2">
+          {{ room.name }}
+        </h1>
+
+        <p class="text-sm text-white/80 max-w-2xl font-light">
+          {{
+          room.headline ||
+          room.heroDescription ||
+          room.roomType.description
+          }}
+        </p>
+      </div>
     </div>
-    <div
-      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden mb-12"
-    >
-      <div class="relative h-96 sm:h-[480px] w-full overflow-hidden bg-mirage">
-        <img
-          [src]="room.secondaryImageUrl || room.roomType.imageUrl"
-          [alt]="room.name"
-          class="w-full h-full object-cover opacity-90"
-        />
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-mirage via-mirage/30 to-transparent"
-        ></div>
-        <div class="absolute bottom-8 left-8 right-8 text-white">
-          <span
-            class="text-[10px] tracking-[4px] font-sans uppercase font-bold text-twine mb-2 block"
-          >
-            {{ room.roomType.name }} • PISO {{ room.floor }} • HABITACIÓN
-            {{ room.number }}
-          </span>
-          <h1
-            class="font-serif text-3xl sm:text-4xl uppercase tracking-[2px] mb-2"
-          >
-            {{ room.name }}
-          </h1>
-          <p class="text-sm text-white/80 max-w-2xl font-light">
+
+    <!-- INFORMACIÓN -->
+    <div class="p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-6">
+        <div>
+          <h2 class="font-serif text-xl uppercase tracking-wider text-woodsmoke mb-3">
+            Descripción
+          </h2>
+
+          <p class="text-xs text-woodsmoke/70 leading-relaxed">
             {{
-              room.headline || room.heroDescription || room.roomType.description
+            room.fullDescription ||
+            room.heroDescription ||
+            room.roomType.description
             }}
           </p>
         </div>
-      </div>
-      <div class="p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-6">
-          <div>
-            <h2
-              class="font-serif text-xl uppercase tracking-wider text-woodsmoke mb-3"
-            >
-              Descripción
-            </h2>
-            <p class="text-xs text-woodsmoke/70 leading-relaxed">
-              {{
-                room.fullDescription ||
-                  room.heroDescription ||
-                  room.roomType.description
-              }}
-            </p>
-          </div>
-          @if (room.highlights && room.highlights.length > 0) {
-            <div>
-              <h3
-                class="font-serif text-base uppercase tracking-wider text-woodsmoke mb-3"
-              >
-                Aspectos Destacados
-              </h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                @for (h of room.highlights; track h.title) {
-                  <div
-                    class="p-4 bg-pampas/40 border border-[#E8E2DA] rounded-[2px]"
-                  >
-                    <h4 class="font-semibold text-xs text-woodsmoke mb-1">
-                      {{ h.title }}
-                    </h4>
-                    <p class="text-[11px] text-woodsmoke/60">
-                      {{ h.description }}
-                    </p>
-                  </div>
-                }
-              </div>
+
+        @if (room.highlights && room.highlights.length > 0) {
+        <div>
+          <h3 class="font-serif text-base uppercase tracking-wider text-woodsmoke mb-3">
+            Aspectos Destacados
+          </h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @for (h of room.highlights; track h.title) {
+            <div class="p-4 bg-pampas/40 border border-[#E8E2DA] rounded-[2px]">
+              <h4 class="font-semibold text-xs text-woodsmoke mb-1">
+                {{ h.title }}
+              </h4>
+
+              <p class="text-[11px] text-woodsmoke/60">
+                {{ h.description }}
+              </p>
             </div>
-          }
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- PRECIO Y ESTADO -->
+      <div class="bg-pampas/60 border border-[#E8E2DA] rounded-[2px] p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine block mb-1">
+            TARIFA DE ESTANCIA
+          </span>
+
+          <div class="flex items-baseline gap-2 mb-4">
+            <span class="font-serif text-3xl font-semibold text-twine-dark">
+              {{ formatPrice(room.pricePerNight) }}
+            </span>
+
+            <span class="text-xs text-woodsmoke/50 font-normal">
+              / noche
+            </span>
+          </div>
+
+          <div class="space-y-3 pt-4 border-t border-[#E8E2DA] text-xs">
+            <div class="flex justify-between">
+              <span class="text-woodsmoke/60">
+                Capacidad Máxima:
+              </span>
+
+              <span class="font-semibold text-woodsmoke">
+                {{ room.capacity }} Personas
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-woodsmoke/60">
+                Configuración Cama:
+              </span>
+
+              <span class="font-semibold text-woodsmoke">
+                {{ room.bedType || "King Size" }}
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-woodsmoke/60">
+                Superficie:
+              </span>
+
+              <span class="font-semibold text-woodsmoke">
+                {{ room.area || 30 }} m²
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-woodsmoke/60">
+                Estado operativo:
+              </span>
+
+              <span class="font-semibold" [class.text-emerald-700]="
+                    room.status === 'AVAILABLE'
+                  " [class.text-amber-700]="
+                    room.status === 'MAINTENANCE'
+                  ">
+                {{
+                room.status === 'AVAILABLE'
+                ? 'Habilitada'
+                : 'En mantenimiento'
+                }}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div
-          class="bg-pampas/60 border border-[#E8E2DA] rounded-[2px] p-6 flex flex-col justify-between space-y-6"
-        >
-          <div>
-            <span
-              class="text-[9px] uppercase tracking-[2px] font-bold text-twine block mb-1"
-              >TARIFA DE ESTANCIA</span
-            >
-            <div class="flex items-baseline gap-2 mb-4">
-              <span class="font-serif text-3xl font-semibold text-twine-dark">
-                {{ formatPrice(room.pricePerNight) }}
-              </span>
-              <span class="text-xs text-woodsmoke/50 font-normal">/ noche</span>
-            </div>
-
-            <div class="space-y-3 pt-4 border-t border-[#E8E2DA] text-xs">
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Capacidad Máxima:</span>
-                <span class="font-semibold text-woodsmoke"
-                  >{{ room.capacity }} Personas</span
-                >
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Configuración Cama:</span>
-                <span class="font-semibold text-woodsmoke">{{
-                  room.bedType || "King Size"
-                }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Superficie:</span>
-                <span class="font-semibold text-woodsmoke"
-                  >{{ room.area || 30 }} m²</span
-                >
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Disponibilidad:</span>
-                <span
-                  class="font-semibold"
-                  [class.text-emerald-700]="room.status === 'AVAILABLE'"
-                  [class.text-amber-700]="room.status === 'OCCUPIED'"
-                >
-                  {{
-                    room.status === "AVAILABLE"
-                      ? "Disponible para reservar"
-                      : "Ocupada actualmente"
-                  }}
-                </span>
-              </div>
-            </div>
+        <!-- ACCIONES -->
+        <div class="space-y-3">
+          @if (room.status === 'AVAILABLE') {
+          <a routerLink="/reservations/book" [queryParams]="{
+                  roomTypeId: room.roomType.id
+                }"
+            class="w-full text-center block bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] transition duration-300 shadow-sm">
+            Reservar este Tipo de Habitación
+          </a>
+          } @else {
+          <div
+            class="w-full text-center bg-pampas text-woodsmoke/60 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] border border-[#E8E2DA]">
+            Habitación en Mantenimiento
           </div>
+          }
 
-          <div class="space-y-3">
-            <a
-              [routerLink]="['/reservations/book', room.id]"
-              class="w-full text-center block bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] transition duration-300 shadow-sm"
-            >
-              Reservar Habitación
-            </a>
-            <a
-              routerLink="/rooms/cards"
-              class="w-full text-center block border border-[#E8E2DA] hover:bg-white text-woodsmoke/70 text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-4 rounded-[2px] transition"
-            >
-              Ver Todas las Habitaciones
-            </a>
-          </div>
+          <p class="text-[10px] text-woodsmoke/60 text-center">
+            La habitación específica será asignada
+            automáticamente según las fechas de tu reserva.
+          </p>
+
+          <a routerLink="/rooms/cards"
+            class="w-full text-center block border border-[#E8E2DA] hover:bg-white text-woodsmoke/70 text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-4 rounded-[2px] transition">
+            Ver Todas las Habitaciones
+          </a>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 }

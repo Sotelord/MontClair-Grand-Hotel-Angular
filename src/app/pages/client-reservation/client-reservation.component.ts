@@ -5,15 +5,15 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
-import { RoomService } from '../../service/room.service';
+import { RoomTypeService } from '../../service/room-type.service';
 import { ServicesService } from '../../service/services.service';
 import { Client } from '../../models/client.model';
-import { Room } from '../../models/room.model';
+import { RoomType } from '../../models/roomType.model';
 import { Service } from '../../models/service.model';
 
 @Component({
@@ -27,206 +27,128 @@ export class ClientReservationComponent implements OnInit {
   private fb = inject(FormBuilder);
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
-  private roomService = inject(RoomService);
+  private roomTypeService = inject(RoomTypeService);
   private servicesService = inject(ServicesService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   bookingForm!: FormGroup;
   currentUser: Client | null = null;
-
-  availableRooms: Room[] = [];
+  roomTypes: RoomType[] = [];
+  selectedRoomType: RoomType | null = null;
   services: Service[] = [];
-  selectedServiceIds: Set<number> = new Set<number>();
-
-  selectedRoom: Room | null = null;
+  selectedServiceIds = new Set<number>();
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  isSubmitting: boolean = false;
+  isSubmitting = false;
 
   ngOnInit(): void {
     this.initForm();
 
-    const clientIdParam =
-      this.route.snapshot.queryParamMap.get('clientId');
+    const id = Number(
+      this.route.snapshot.queryParamMap.get('clientId')
+    );
 
-    const clientId = clientIdParam
-      ? Number(clientIdParam)
-      : null;
-
-    if (clientId && Number.isInteger(clientId) && clientId > 0) {
-      this.clientService.findById(clientId).subscribe({
-        next: (client) => {
-          this.currentUser = client;
-        },
-        error: () => {
-          this.currentUser = null;
-          this.errorMessage =
-            'No se pudo cargar la información del cliente.';
-        },
+    if (Number.isInteger(id) && id > 0) {
+      this.clientService.findById(id).subscribe({
+        next: client => this.currentUser = client,
+        error: () => this.errorMessage = 'No se pudo cargar el cliente.',
       });
     }
 
-    const paramRoomId =
-      this.route.snapshot.paramMap.get('roomId');
-
-    const queryRoomId =
-      this.route.snapshot.queryParamMap.get('roomId');
-
-    const targetRoomId = Number(
-      paramRoomId || queryRoomId,
+    const targetTypeId = Number(
+      this.route.snapshot.queryParamMap.get('roomTypeId')
     );
 
-    this.servicesService.findNotHidden().subscribe({
-      next: (services) => {
-        this.services = services || [];
-      },
-      error: () => {
-        this.services = [];
-      },
-    });
+    this.roomTypeService.findAll().subscribe({
+      next: types => {
+        this.roomTypes = types || [];
 
-    this.roomService.findAvailable().subscribe({
-      next: (rooms) => {
-        this.availableRooms = rooms || [];
+        this.selectedRoomType = this.roomTypes.find(
+          t => t.id === targetTypeId
+        ) || this.roomTypes[0] || null;
 
-        if (targetRoomId) {
-          const room = this.availableRooms.find(
-            (item) => item.id === targetRoomId,
-          );
-
-          if (room) {
-            this.selectedRoom = room;
-            this.bookingForm.patchValue({
-              roomId: room.id,
-            });
-          } else {
-            this.errorMessage =
-              'La habitación seleccionada no está disponible.';
-
-            if (this.availableRooms.length > 0) {
-              this.selectedRoom = this.availableRooms[0];
-              this.bookingForm.patchValue({
-                roomId: this.selectedRoom.id,
-              });
-            }
-          }
-        } else if (this.availableRooms.length > 0) {
-          this.selectedRoom = this.availableRooms[0];
+        if (this.selectedRoomType) {
           this.bookingForm.patchValue({
-            roomId: this.selectedRoom.id,
+            roomTypeId: this.selectedRoomType.id
           });
         }
       },
       error: () => {
-        this.availableRooms = [];
         this.errorMessage =
-          'No se pudieron consultar las habitaciones.';
+          'No se pudieron cargar los tipos de habitación.';
       },
     });
 
-    this.bookingForm
-      .get('roomId')
-      ?.valueChanges.subscribe((id) => {
-        const numericId = Number(id);
+    this.servicesService.findNotHidden().subscribe({
+      next: services => this.services = services || [],
+      error: () => this.services = [],
+    });
 
-        this.selectedRoom =
-          this.availableRooms.find(
-            (room) => room.id === numericId,
-          ) || null;
-
-        if (this.selectedRoom) {
-          const currentGuests = Number(
-            this.bookingForm.get('numberOfPeople')?.value || 1,
-          );
-
-          if (currentGuests > this.selectedRoom.capacity) {
-            this.bookingForm.patchValue({
-              numberOfPeople: this.selectedRoom.capacity,
-            });
-          }
-        }
-      });
+    this.bookingForm.get('roomTypeId')?.valueChanges.subscribe(
+      value => {
+        this.selectedRoomType = this.roomTypes.find(
+          t => t.id === Number(value)
+        ) || null;
+      }
+    );
   }
 
   private initForm(): void {
-    const tomorrow = new Date(
-      Date.now() + 24 * 60 * 60 * 1000,
-    );
+    const formatLocal = (offset: number): string => {
+      const day = new Date();
+      day.setDate(day.getDate() + offset);
 
-    const checkout = new Date(
-      Date.now() + 4 * 24 * 60 * 60 * 1000,
-    );
+      const year = day.getFullYear();
+      const month = String(day.getMonth() + 1).padStart(2, '0');
+      const date = String(day.getDate()).padStart(2, '0');
 
-    const checkInDate = tomorrow.toISOString().split('T')[0];
-    const checkOutDate = checkout.toISOString().split('T')[0];
+      return `${year}-${month}-${date}`;
+    };
 
     this.bookingForm = this.fb.group({
-      roomId: [null, [Validators.required]],
-      checkInDate: [checkInDate, [Validators.required]],
-      checkOutDate: [checkOutDate, [Validators.required]],
+      roomTypeId: [null, Validators.required],
+      checkInDate: [formatLocal(1), Validators.required],
+      checkOutDate: [formatLocal(4), Validators.required],
       numberOfPeople: [
         2,
-        [Validators.required, Validators.min(1)],
+        [Validators.required, Validators.min(1)]
       ],
       specialRequests: [''],
     });
   }
 
-  toggleService(serviceId: number): void {
-    if (this.selectedServiceIds.has(serviceId)) {
-      this.selectedServiceIds.delete(serviceId);
+  toggleService(id: number): void {
+    if (this.selectedServiceIds.has(id)) {
+      this.selectedServiceIds.delete(id);
     } else {
-      this.selectedServiceIds.add(serviceId);
+      this.selectedServiceIds.add(id);
     }
   }
 
-  isServiceSelected(serviceId: number): boolean {
-    return this.selectedServiceIds.has(serviceId);
+  isServiceSelected(id: number): boolean {
+    return this.selectedServiceIds.has(id);
   }
 
   get nightsCount(): number {
-    const checkIn =
-      this.bookingForm?.get('checkInDate')?.value;
-
-    const checkOut =
-      this.bookingForm?.get('checkOutDate')?.value;
-
-    if (!checkIn || !checkOut) {
-      return 1;
-    }
-
     return this.reservationService.calculateNights(
-      checkIn,
-      checkOut,
+      this.bookingForm.get('checkInDate')?.value,
+      this.bookingForm.get('checkOutDate')?.value,
     );
   }
 
   get roomTotal(): number {
-    if (!this.selectedRoom) {
-      return 0;
-    }
-
-    return (
-      this.nightsCount *
-      this.selectedRoom.pricePerNight
-    );
+    return this.nightsCount *
+      (this.selectedRoomType?.pricePerNight || 0);
   }
 
   get servicesTotal(): number {
-    let total = 0;
-
-    this.selectedServiceIds.forEach((id) => {
-      const service = this.services.find(
-        (item) => item.id === id,
+    return this.services
+      .filter(service => this.selectedServiceIds.has(service.id))
+      .reduce(
+        (sum, service) => sum + (service.price || 0),
+        0
       );
-
-      if (service?.price) {
-        total += service.price;
-      }
-    });
-
-    return total;
   }
 
   get grandTotal(): number {
@@ -234,94 +156,58 @@ export class ClientReservationComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.errorMessage = null;
+
     if (!this.currentUser) {
       this.errorMessage =
         'Debes acceder desde tu perfil para realizar la reserva.';
       return;
     }
 
+    if (this.bookingForm.invalid || !this.selectedRoomType) {
+      this.bookingForm.markAllAsTouched();
+
+      this.errorMessage =
+        'Selecciona un tipo de habitación y completa los campos.';
+      return;
+    }
+
     const val = this.bookingForm.value;
 
-    if (!val.roomId || !this.selectedRoom) {
+    if (val.checkOutDate <= val.checkInDate) {
       this.errorMessage =
-        'Por favor seleccione una habitación disponible.';
-      return;
-    }
-
-    if (!val.checkInDate || !val.checkOutDate) {
-      this.errorMessage =
-        'Por favor seleccione las fechas de llegada y salida.';
-      return;
-    }
-
-    if (
-      new Date(val.checkOutDate) <=
-      new Date(val.checkInDate)
-    ) {
-      this.errorMessage =
-        'La fecha de salida debe ser posterior a la fecha de llegada.';
-      return;
-    }
-
-    const guests = Number(val.numberOfPeople);
-
-    if (!guests || guests < 1) {
-      this.errorMessage =
-        'El número de huéspedes debe ser de al menos 1 persona.';
-      return;
-    }
-
-    if (guests > this.selectedRoom.capacity) {
-      this.errorMessage =
-        `La habitación seleccionada (${this.selectedRoom.name}) ` +
-        `tiene una capacidad máxima de ` +
-        `${this.selectedRoom.capacity} personas.`;
-      return;
-    }
-
-    if (this.bookingForm.invalid) {
-      this.bookingForm.markAllAsTouched();
-      this.errorMessage =
-        'Por favor revise los campos requeridos.';
+        'La fecha de salida debe ser posterior a la de entrada.';
       return;
     }
 
     this.isSubmitting = true;
-    this.errorMessage = null;
 
     const clientId = this.currentUser.id;
-    const serviceIds = Array.from(
-      this.selectedServiceIds,
-    );
 
-    this.reservationService
-      .add({
-        clientId,
-        roomId: Number(val.roomId),
-        checkInDate: val.checkInDate,
-        checkOutDate: val.checkOutDate,
-        numberOfPeople: guests,
-        serviceIds,
-      })
-      .subscribe({
-        next: (reservation) => {
-          this.isSubmitting = false;
+    this.reservationService.add({
+      clientId,
+      roomTypeId: Number(val.roomTypeId),
+      checkInDate: val.checkInDate,
+      checkOutDate: val.checkOutDate,
+      numberOfPeople: Number(val.numberOfPeople),
+      serviceIds: Array.from(this.selectedServiceIds),
+    }).subscribe({
+      next: reservation => {
+        this.isSubmitting = false;
+        this.successMessage =
+          `¡Reserva #${reservation.id} confirmada!`;
 
-          this.successMessage =
-            `¡Su reserva #${reservation.id} ` +
-            `ha sido confirmada con éxito!`;
+        this.router.navigate(['/profile', clientId]);
+      },
+      error: err => {
+        this.isSubmitting = false;
 
-          this.router.navigate([
-            '/profile',
-            clientId,
-          ]);
-        },
-        error: () => {
-          this.isSubmitting = false;
-          this.errorMessage =
-            'Error al procesar la reserva. Intente nuevamente.';
-        },
-      });
+        this.errorMessage =
+          typeof err.error === 'string'
+            ? err.error
+            : 'No se pudo crear la reserva. Puede que no haya habitaciones libres para esas fechas.';
+      },
+    });
   }
 
   formatPrice(price: number): string {

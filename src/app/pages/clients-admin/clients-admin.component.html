@@ -58,24 +58,6 @@
   <div
     class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between"
   >
-    <div class="flex-1 relative">
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        placeholder="Buscar por nombre, usuario o correo..."
-        class="w-full pl-9 pr-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none transition"
-      />
-      <svg
-        class="w-4 h-4 text-woodsmoke/40 absolute left-3 top-3"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-    </div>
-
     <div class="flex items-center gap-3">
       <select
         [(ngModel)]="selectedRole"

@@ -1,112 +1,101 @@
-<section
-  class="bg-pampas py-14 px-6 lg:px-12 min-h-screen"
-  aria-labelledby="habitaciones-disponibles-titulo"
->
+<section class="bg-pampas py-14 px-6 lg:px-12 min-h-screen" aria-labelledby="habitaciones-disponibles-titulo">
   <div class="max-w-7xl mx-auto">
-    <!-- Header Section with Montclair Section Subtitle & Ornament -->
+    <!-- ENCABEZADO -->
     <div
-      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-silver/50"
-    >
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-silver/50">
       <div>
         <p class="font-sans text-[11px] tracking-[3px] text-twine uppercase font-medium mb-1.5">
-          {{ roomType()?.name ? 'Categoría ' + roomType()?.name : 'Montclair Grand Hotel' }}
+          {{
+          roomType()?.name
+          ? 'Categoría ' + roomType()?.name
+          : 'Montclair Grand Hotel'
+          }}
         </p>
-        <h2
-          id="habitaciones-disponibles-titulo"
-          class="font-serif text-2xl md:text-3xl font-normal uppercase tracking-[2px] text-woodsmoke"
-        >
-          Habitaciones Disponibles
+
+        <h2 id="habitaciones-disponibles-titulo"
+          class="font-serif text-2xl md:text-3xl font-normal uppercase tracking-[2px] text-woodsmoke">
+          Habitaciones del Hotel
         </h2>
+
+        <p class="text-xs text-woodsmoke/60 mt-2">
+          Consulta las habitaciones habilitadas y en mantenimiento.
+          La disponibilidad para una estancia se comprueba por fechas
+          al confirmar la reserva.
+        </p>
       </div>
 
-      <a
-        routerLink="/rooms/cards"
-        class="text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer flex items-center gap-1.5"
-      >
+      <a routerLink="/rooms/cards"
+        class="text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer flex items-center gap-1.5">
         <span>&larr; Volver a Categorías</span>
       </a>
     </div>
 
-    <!-- Editorial Luxury Filter Links (No clunky SaaS dashboards) -->
-    <div
-      class="flex items-center justify-between flex-wrap gap-4 mb-10 text-xs"
-    >
+    <!-- FILTROS -->
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-10 text-xs">
       <div class="flex items-center gap-6">
-        <button
-          type="button"
-          (click)="setAvailability('ALL')"
-          class="filter-link"
-          [class.active]="filterAvailability === 'ALL'"
-        >
+        <button type="button" (click)="setAvailability('ALL')" class="filter-link"
+          [class.active]="filterAvailability === 'ALL'">
           Todas ({{ totalCount }})
         </button>
-        <button
-          type="button"
-          (click)="setAvailability('AVAILABLE')"
-          class="filter-link"
-          [class.active]="filterAvailability === 'AVAILABLE'"
-        >
-          Disponibles ({{ availableCount }})
+
+        <button type="button" (click)="setAvailability('AVAILABLE')" class="filter-link"
+          [class.active]="filterAvailability === 'AVAILABLE'">
+          Habilitadas ({{ availableCount }})
         </button>
-        <button
-          type="button"
-          (click)="setAvailability('OCCUPIED')"
-          class="filter-link"
-          [class.active]="filterAvailability === 'OCCUPIED'"
-        >
-          Ocupadas ({{ occupiedCount }})
+
+        <button type="button" (click)="setAvailability('MAINTENANCE')" class="filter-link"
+          [class.active]="filterAvailability === 'MAINTENANCE'">
+          En mantenimiento ({{ maintenanceCount }})
         </button>
       </div>
 
       @if (floors.length > 1) {
-        <div class="flex items-center gap-2 text-woodsmoke/70">
-          <label class="text-[10px] uppercase tracking-[1.5px] font-semibold">
-            Planta:
-          </label>
-          <select
-            [value]="filterFloor"
-            (change)="
+      <div class="flex items-center gap-2 text-woodsmoke/70">
+        <label class="text-[10px] uppercase tracking-[1.5px] font-semibold">
+          Planta:
+        </label>
+
+        <select [value]="filterFloor" (change)="
               setFloor(
                 $any($event.target).value === 'ALL'
                   ? 'ALL'
                   : +$any($event.target).value
               )
             "
-            class="bg-transparent border border-silver text-woodsmoke text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-twine font-sans cursor-pointer"
-          >
-            <option value="ALL">Todas las plantas</option>
-            @for (fl of floors; track fl) {
-              <option [value]="fl">Piso {{ fl }}</option>
-            }
-          </select>
-        </div>
+          class="bg-transparent border border-silver text-woodsmoke text-xs px-2.5 py-1 rounded-[2px] focus:outline-none focus:border-twine font-sans cursor-pointer">
+          <option value="ALL">Todas las plantas</option>
+
+          @for (fl of floors; track fl) {
+          <option [value]="fl">
+            Piso {{ fl }}
+          </option>
+          }
+        </select>
+      </div>
       }
     </div>
 
-    <!-- Room Cards Grid -->
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-    >
+    <!-- TARJETAS DE HABITACIONES -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       @for (room of filteredRooms; track room.id) {
-        <app-room-item-card class="block h-full" [room]="room" />
+      <app-room-item-card class="block h-full" [room]="room" />
       }
 
       @if (filteredRooms.length === 0) {
-        <div class="col-span-full py-16 text-center text-woodsmoke/60">
-          <p class="font-serif text-lg mb-2 uppercase tracking-[1px]">
-            No hay habitaciones disponibles
-          </p>
-          <p class="text-xs mb-6 font-light">
-            No se encontraron habitaciones para el criterio seleccionado.
-          </p>
-          <button
-            type="button"
-            (click)="resetFilters()"
-            class="btn btn-outline"
-          >
-            Ver Todas
-          </button>
-        </div>
+      <div class="col-span-full py-16 text-center text-woodsmoke/60">
+        <p class="font-serif text-lg mb-2 uppercase tracking-[1px]">
+          No se encontraron habitaciones
+        </p>
+
+        <p class="text-xs mb-6 font-light">
+          No hay habitaciones que coincidan con los filtros
+          seleccionados.
+        </p>
+
+        <button type="button" (click)="resetFilters()" class="btn btn-outline">
+          Ver Todas
+        </button>
+      </div>
       }
     </div>
   </div>

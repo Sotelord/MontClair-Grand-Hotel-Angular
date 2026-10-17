@@ -1,7 +1,7 @@
 import { Highlight } from './highlight.model';
 import { RoomType } from './roomType.model';
 
-export type RoomStatus = 'AVAILABLE' | 'OCCUPIED';
+export type RoomStatus = 'AVAILABLE' | 'OCCUPIED' | 'MAINTENANCE';
 
 export interface Room {
   id: number;

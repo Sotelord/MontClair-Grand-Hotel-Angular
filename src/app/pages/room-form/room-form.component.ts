@@ -1,3 +1,4 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -10,7 +11,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
 import { RoomType } from '../../models/roomType.model';
-import { Room } from '../../models/room.model';
+import { Room, RoomStatus } from '../../models/room.model';
 
 @Component({
   selector: 'app-room-form',
@@ -27,18 +28,29 @@ export class RoomFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   roomForm!: FormGroup;
+
   isEditMode: boolean = false;
   roomId?: number;
+
   roomTypes: RoomType[] = [];
   errorMessage: string | null = null;
+
   private currentRoom?: Room;
 
   ngOnInit(): void {
     this.initForm();
 
+    const idParam = this.route.snapshot.paramMap.get('id');
+
+    if (idParam) {
+      this.isEditMode = true;
+      this.roomId = Number(idParam);
+    }
+
     this.roomTypeService.findAll().subscribe({
       next: (types) => {
         this.roomTypes = types || [];
+
         if (this.roomTypes.length > 0 && !this.isEditMode) {
           this.roomForm.patchValue({
             typeId: this.roomTypes[0].id,
@@ -49,33 +61,34 @@ export class RoomFormComponent implements OnInit {
       },
       error: () => {
         this.roomTypes = [];
+        this.errorMessage =
+          'No se pudieron cargar los tipos de habitación.';
       },
     });
 
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.isEditMode = true;
-      this.roomId = Number(idParam);
+    if (this.isEditMode && this.roomId) {
       this.roomService.findById(this.roomId).subscribe({
         next: (existing) => {
-          if (existing) {
-            this.currentRoom = existing;
-            this.roomForm.patchValue({
-              name: existing.name,
-              number: existing.number,
-              typeId: existing.roomType?.id || (existing as any).typeId,
-              floor: existing.floor,
-              status: existing.status,
-              pricePerNight: existing.pricePerNight,
-              capacity: existing.capacity,
-              bedType: existing.bedType || 'King Size',
-              area: existing.area || 30,
-              secondaryImageUrl: existing.secondaryImageUrl || '',
-              heroDescription: existing.heroDescription || '',
-            });
-          } else {
+          if (!existing) {
             this.router.navigate(['/admin/rooms']);
+            return;
           }
+
+          this.currentRoom = existing;
+
+          this.roomForm.patchValue({
+            name: existing.name,
+            number: existing.number,
+            typeId: existing.roomType?.id,
+            floor: existing.floor,
+            status: existing.status,
+            pricePerNight: existing.pricePerNight,
+            capacity: existing.capacity,
+            bedType: existing.bedType || 'King Size',
+            area: existing.area || 30,
+            secondaryImageUrl: existing.secondaryImageUrl || '',
+            heroDescription: existing.heroDescription || '',
+          });
         },
         error: () => {
           this.router.navigate(['/admin/rooms']);
@@ -86,105 +99,166 @@ export class RoomFormComponent implements OnInit {
 
   private initForm(): void {
     this.roomForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      name: [
+        '',
+        [Validators.required, Validators.minLength(2)]
+      ],
       number: [
         '',
-        [Validators.required, Validators.pattern(/^[0-9A-Za-z-]+$/)],
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9A-Za-z-]+$/)
+        ]
       ],
-      typeId: [this.roomTypes[0]?.id || 1, [Validators.required]],
+      typeId: [null, Validators.required],
       floor: [1, [Validators.required, Validators.min(1)]],
-      status: ['AVAILABLE', [Validators.required]],
-      pricePerNight: [100.0, [Validators.required, Validators.min(1)]],
-      capacity: [2, [Validators.required, Validators.min(1)]],
-      bedType: ['King Size', [Validators.required]],
+      status: ['AVAILABLE', Validators.required],
+      pricePerNight: [
+        100,
+        [Validators.required, Validators.min(1)]
+      ],
+      capacity: [
+        2,
+        [Validators.required, Validators.min(1)]
+      ],
+      bedType: ['King Size', Validators.required],
       area: [30, [Validators.required, Validators.min(10)]],
       secondaryImageUrl: [''],
       heroDescription: [''],
     });
 
-    this.roomForm.get('typeId')?.valueChanges.subscribe((typeId) => {
-      if (!this.isEditMode) {
+    this.roomForm.get('typeId')?.valueChanges.subscribe(
+      (typeId) => {
+        if (this.isEditMode) {
+          return;
+        }
+
         const selectedType = this.roomTypes.find(
-          (t) => t.id === Number(typeId),
+          (type) => type.id === Number(typeId)
         );
+
         if (selectedType) {
+          const currentName = this.roomForm.get('name')?.value;
+
           if (
-            !this.roomForm.get('name')?.value ||
+            !currentName ||
             this.roomTypes.some(
-              (t) => t.name === this.roomForm.get('name')?.value,
+              (type) => type.name === currentName
             )
           ) {
-            this.roomForm.patchValue({ name: selectedType.name });
+            this.roomForm.patchValue({
+              name: selectedType.name
+            });
           }
+
           this.roomForm.patchValue({
             pricePerNight: selectedType.pricePerNight,
           });
         }
       }
-    });
+    );
   }
 
   onSubmit(): void {
+    this.errorMessage = null;
+
     if (this.roomForm.invalid) {
       this.roomForm.markAllAsTouched();
+
       this.errorMessage =
         'Por favor, completa correctamente todos los campos obligatorios.';
       return;
     }
 
     const val = this.roomForm.value;
-    // Usamos la lista que el componente ya cargó, no la caché del servicio
+
     const selectedType = this.roomTypes.find(
-      (t) => t.id === Number(val.typeId),
+      (type) => type.id === Number(val.typeId)
     );
 
     if (!selectedType) {
-      this.errorMessage = 'Por favor selecciona una categoría válida.';
+      this.errorMessage =
+        'Por favor selecciona una categoría válida.';
       return;
     }
-    const { type, imageUrl, description, priceLabel, typeId, ...base } = (this
-      .currentRoom ?? {}) as any;
+
+    const status: RoomStatus =
+      val.status === 'MAINTENANCE'
+        ? 'MAINTENANCE'
+        : 'AVAILABLE';
+
+    const {
+      type,
+      imageUrl,
+      description,
+      priceLabel,
+      typeId,
+      ...base
+    } = (this.currentRoom ?? {}) as any;
 
     const roomData: Omit<Room, 'id'> & { id?: number } = {
       highlights: [],
       galleryImages: [],
       ...base,
+
       name: val.name,
-      number: val.number.trim(),
+      number: String(val.number).trim(),
       roomType: selectedType,
       floor: Number(val.floor),
-      status: val.status,
+      status,
       pricePerNight: Number(val.pricePerNight),
       capacity: Number(val.capacity),
       bedType: val.bedType,
       area: Number(val.area),
-      secondaryImageUrl: val.secondaryImageUrl?.trim() || selectedType.imageUrl,
-      heroDescription: val.heroDescription || selectedType.description,
-    };
 
-    this.errorMessage = null;
+      secondaryImageUrl:
+        val.secondaryImageUrl?.trim() ||
+        selectedType.imageUrl,
+
+      heroDescription:
+        val.heroDescription ||
+        selectedType.description,
+    };
 
     if (this.isEditMode && this.roomId) {
       this.roomService
-        .update(this.roomId, { ...roomData, id: this.roomId } as Room)
+        .update(this.roomId, {
+          ...roomData,
+          id: this.roomId,
+        } as Room)
         .subscribe({
-          next: () => this.router.navigate(['/admin/rooms']),
-          error: (err) =>
-            (this.errorMessage =
-              err.error?.mensaje ??
-              'Error al actualizar la habitación en el servidor.'),
+          next: () => {
+            this.router.navigate(['/admin/rooms']);
+          },
+          error: (err) => {
+            this.errorMessage =
+              err?.error?.mensaje ||
+              err?.error?.message ||
+              'Error al actualizar la habitación.';
+          },
         });
     } else {
-      this.roomService.add(roomData as any).subscribe({
-        next: () => this.router.navigate(['/admin/rooms']),
-        error: (err) =>
-          (this.errorMessage =
-            err.error?.mensaje ?? 'Error al registrar la habitación.'),
+      this.roomService.add(roomData as Room).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/rooms']);
+        },
+        error: (err) => {
+          this.errorMessage =
+            err?.error?.mensaje ||
+            err?.error?.message ||
+            'Error al registrar la habitación.';
+        },
       });
     }
   }
+
   isFieldInvalid(fieldName: string): boolean {
     const field = this.roomForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+
+    return !!(
+      field &&
+      field.invalid &&
+      (field.dirty || field.touched)
+    );
   }
 }

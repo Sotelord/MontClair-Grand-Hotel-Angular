@@ -44,6 +44,22 @@ p, span, a, label, button, input, select, textarea {
   font-family: var(--font-sans);
 }
 
+.bg-twine {
+  background-color: var(--twine) !important;
+}
+.hover\:bg-twine-hover:hover {
+  background-color: var(--twine-hover) !important;
+}
+.text-twine {
+  color: var(--twine) !important;
+}
+.text-twine-dark {
+  color: var(--twine-hover) !important;
+}
+.border-twine {
+  border-color: var(--twine) !important;
+}
+
 .bg-mirage-dark {
   background-color: #0f161c !important;
 }

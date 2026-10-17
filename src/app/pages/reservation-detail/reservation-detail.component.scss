@@ -1,0 +1,17 @@
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  button,
+  a,
+  .no-print {
+    display: none !important;
+  }
+
+  #reservation-voucher {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}

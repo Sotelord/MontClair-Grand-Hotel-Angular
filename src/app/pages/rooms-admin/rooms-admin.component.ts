@@ -1,17 +1,23 @@
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
-import { Room } from '../../models/room.model';
+import { Room, RoomStatus } from '../../models/room.model';
 import { RoomType } from '../../models/roomType.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
 
 @Component({
   selector: 'app-rooms-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AdminPageHeaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    AdminPageHeaderComponent
+  ],
   templateUrl: './rooms-admin.component.html',
   styleUrl: './rooms-admin.component.scss',
 })
@@ -23,9 +29,8 @@ export class RoomsAdminComponent implements OnInit {
   rooms: Room[] = [];
   roomTypes: RoomType[] = [];
 
-  searchTerm: string = '';
   selectedTypeId: string = 'ALL';
-  selectedStatus: string = 'ALL';
+  selectedStatus: RoomStatus | 'ALL' = 'ALL';
 
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -43,34 +48,34 @@ export class RoomsAdminComponent implements OnInit {
       },
       error: () => {
         this.rooms = [];
+        this.errorMessage =
+          'No se pudieron cargar las habitaciones.';
       },
     });
+
     this.roomTypeService.findAll().subscribe({
       next: (types) => {
         this.roomTypes = types || [];
       },
       error: () => {
         this.roomTypes = [];
+        this.errorMessage =
+          'No se pudieron cargar los tipos de habitación.';
       },
     });
   }
 
   get filteredRooms(): Room[] {
     return this.rooms.filter((room) => {
-      const matchSearch =
-        !this.searchTerm ||
-        room.number.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        (room.name &&
-          room.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
-
       const matchType =
         this.selectedTypeId === 'ALL' ||
-        (room.roomType && room.roomType.id === Number(this.selectedTypeId));
+        room.roomType?.id === Number(this.selectedTypeId);
 
       const matchStatus =
-        this.selectedStatus === 'ALL' || room.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' ||
+        room.status === this.selectedStatus;
 
-      return matchSearch && matchType && matchStatus;
+      return matchType && matchStatus;
     });
   }
 
@@ -91,21 +96,35 @@ export class RoomsAdminComponent implements OnInit {
   }
 
   executeDelete(): void {
-    if (!this.roomToDelete) return;
+    if (!this.roomToDelete) {
+      return;
+    }
 
     const roomNumber = this.roomToDelete.number;
     const roomId = this.roomToDelete.id;
+
     this.roomToDelete = null;
+    this.errorMessage = null;
 
     this.roomService.delete(roomId).subscribe({
       next: () => {
-        this.successMessage = `Habitación #${roomNumber} eliminada con éxito.`;
+        this.successMessage =
+          `Habitación #${roomNumber} eliminada con éxito.`;
+
         this.loadData();
-        setTimeout(() => (this.successMessage = null), 4000);
+
+        setTimeout(() => {
+          this.successMessage = null;
+        }, 4000);
       },
       error: (err) => {
-        this.errorMessage = err?.error?.message || 'Error al eliminar la habitación en el servidor.';
-        setTimeout(() => (this.errorMessage = null), 6000);
+        this.errorMessage =
+          err?.error?.message ||
+          'Error al eliminar la habitación en el servidor.';
+
+        setTimeout(() => {
+          this.errorMessage = null;
+        }, 6000);
       },
     });
   }

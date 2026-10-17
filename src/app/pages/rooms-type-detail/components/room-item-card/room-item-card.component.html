@@ -1,17 +1,14 @@
 <article class="room-card">
   <div class="room-img-wrapper">
-    <img
-      [src]="getImageUrl()"
-      [alt]="'Habitación ' + room().number"
-      class="room-img"
-      loading="lazy"
-    />
-    <span
-      class="status-tag"
-      [class.available]="room().status === 'AVAILABLE'"
-      [class.occupied]="room().status !== 'AVAILABLE'"
-    >
-      {{ room().status === 'AVAILABLE' ? 'Disponible' : 'Ocupada' }}
+    <img [src]="getImageUrl()" [alt]="'Habitación ' + room().number" class="room-img" loading="lazy" />
+
+    <span class="status-tag" [class.available]="room().status === 'AVAILABLE'"
+      [class.occupied]="room().status === 'MAINTENANCE'">
+      {{
+      room().status === 'AVAILABLE'
+      ? 'Habilitada'
+      : 'En mantenimiento'
+      }}
     </span>
   </div>
 
@@ -19,17 +16,22 @@
     <span class="room-subtitle">
       PISO {{ room().floor }} • HABITACIÓN {{ room().number }}
     </span>
-    <h3>{{ room().name || room().roomType.name }}</h3>
+
+    <h3>
+      {{ room().name || room().roomType.name }}
+    </h3>
 
     <ul class="room-features">
       <li>
         <img src="images/Dimensiones habitacion.png" alt="" />
         <span>{{ room().area }} m²</span>
       </li>
+
       <li>
         <img src="images/Servicio Habitaciones.png" alt="" />
         <span>{{ room().bedType || 'King Size' }}</span>
       </li>
+
       <li>
         <img src="images/Personas por habitacion.png" alt="" />
         <span>{{ room().capacity }} personas</span>
@@ -38,34 +40,31 @@
 
     <p class="room-desc">
       {{
-        room().headline ||
-          room().heroDescription ||
-          room().roomType.description ||
-          "Una experiencia de descanso excepcional con acabados de primera clase."
+      room().headline ||
+      room().heroDescription ||
+      room().roomType.description ||
+      "Una experiencia de descanso excepcional con acabados de primera clase."
       }}
     </p>
 
     <p class="room-price">
       Precio
-      <strong>€{{ room().pricePerNight.toFixed(2).replace(".", ",") }}</strong>
+      <strong>
+        €{{ room().pricePerNight.toFixed(2).replace(".", ",") }}
+      </strong>
       /noche
     </p>
 
     <div class="room-actions">
       @if (room().status === 'AVAILABLE') {
-        <a
-          [routerLink]="['/reservations/book', room().id]"
-          class="btn btn-outline full-width"
-        >
-          Reservar Habitación
-        </a>
+      <a routerLink="/reservations/book" [queryParams]="{ roomTypeId: room().roomType.id }"
+        class="btn btn-outline full-width">
+        Reservar este tipo
+      </a>
       } @else {
-        <a
-          [routerLink]="['/rooms', room().id]"
-          class="btn btn-outline full-width btn-occupied"
-        >
-          Ver Detalles
-        </a>
+      <a [routerLink]="['/rooms', room().id]" class="btn btn-outline full-width btn-occupied">
+        Ver Detalles
+      </a>
       }
     </div>
   </div>

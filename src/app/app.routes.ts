@@ -15,6 +15,7 @@ import { ProfileEditComponent } from './pages/profile-edit/profile-edit.componen
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ReservationsAdminComponent } from './pages/reservations-admin/reservations-admin.component';
 import { AdminReservationFormComponent } from './pages/admin-reservation-form/admin-reservation-form.component';
+import { ReservationDetailComponent } from './pages/reservation-detail/reservation-detail.component';
 import { ClientReservationComponent } from './pages/client-reservation/client-reservation.component';
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { LocationComponent } from './pages/location/location.component';
@@ -130,6 +131,27 @@ export const routes: Routes = [
     component: AdminReservationFormComponent,
   },
   {
+    path: 'admin/reservations/:id',
+    component: ReservationDetailComponent,
+  },
+  {
+    path: 'reservations/book',
+    component: ClientReservationComponent,
+  },
+  {
+    path: 'reservations/book/:roomId',
+    component: ClientReservationComponent,
+  },
+  {
+    path: 'reservations/new',
+    redirectTo: 'reservations/book',
+    pathMatch: 'full',
+  },
+  {
+    path: 'reservations/:id',
+    component: ReservationDetailComponent,
+  },
+  {
     path: 'services',
     loadComponent: () =>
       import('./pages/services-page/services-page.component').then(
@@ -163,14 +185,6 @@ export const routes: Routes = [
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
       ),
-  },
-  {
-    path: 'reservations/book',
-    component: ClientReservationComponent,
-  },
-  {
-    path: 'reservations/book/:roomId',
-    component: ClientReservationComponent,
   },
   {
     path: 'book',

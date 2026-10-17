@@ -18,7 +18,6 @@ export class ClientsAdminComponent implements OnInit {
   private router = inject(Router);
 
   clients: Client[] = [];
-  searchTerm: string = '';
   selectedRole: string = 'ALL';
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -41,19 +40,11 @@ export class ClientsAdminComponent implements OnInit {
 
   get filteredClients(): Client[] {
     return this.clients.filter((client) => {
-      const query = this.searchTerm.toLowerCase();
-      const matchSearch =
-        !this.searchTerm ||
-        client.firstName.toLowerCase().includes(query) ||
-        (client.lastName && client.lastName.toLowerCase().includes(query)) ||
-        client.username.toLowerCase().includes(query) ||
-        client.email.toLowerCase().includes(query);
-
       const matchRole =
         this.selectedRole === 'ALL' ||
         client.role?.toUpperCase() === this.selectedRole;
 
-      return matchSearch && matchRole;
+      return matchRole;
     });
   }
 

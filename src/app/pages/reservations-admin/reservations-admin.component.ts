@@ -19,7 +19,6 @@ export class ReservationsAdminComponent implements OnInit {
   private router = inject(Router);
 
   reservations: ReservationDTO[] = [];
-  searchTerm: string = '';
   selectedStatus: string = 'ALL';
 
   successMessage: string | null = null;
@@ -45,22 +44,12 @@ export class ReservationsAdminComponent implements OnInit {
   }
 
   get filteredReservations(): ReservationDTO[] {
-    const query = this.searchTerm.trim().toLowerCase();
-
     return this.reservations.filter((res) => {
-      const matchSearch =
-        !query ||
-        (res.clientFirstName || '').toLowerCase().includes(query) ||
-        (res.clientLastName || '').toLowerCase().includes(query) ||
-        (res.clientEmail || '').toLowerCase().includes(query) ||
-        (res.roomNumber || '').toLowerCase().includes(query) ||
-        (res.roomName || '').toLowerCase().includes(query);
-
       const matchStatus =
         this.selectedStatus === 'ALL' ||
         res.status === this.selectedStatus;
 
-      return matchSearch && matchStatus;
+      return matchStatus;
     });
   }
 
@@ -80,6 +69,10 @@ export class ReservationsAdminComponent implements OnInit {
 
   onAddReservation(): void {
     this.router.navigate(['/admin/reservations/new']);
+  }
+
+  onViewReservation(id: number): void {
+    this.router.navigate(['/admin/reservations', id]);
   }
 
   onEditReservation(id: number): void {
