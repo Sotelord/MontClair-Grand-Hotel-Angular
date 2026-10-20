@@ -1,6 +1,7 @@
-
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
+import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-navbar',
@@ -10,4 +11,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+  private authService = inject(AuthService);
+
+  get currentClient(): Client | null {
+    return this.authService.getSession();
+  }
 }

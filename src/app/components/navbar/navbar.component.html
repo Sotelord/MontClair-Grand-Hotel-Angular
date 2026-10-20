@@ -1,19 +1,26 @@
 <header>
   <nav class="bg-pampas sticky top-0 z-40 w-full border-b border-[rgba(202,198,198,0.5)] shadow-sm"
     aria-label="Navegación principal">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-6 py-3 relative">
-      <a routerLink="/" fragment="inicio" class="flex items-center">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-6 py-3 gap-4">
+      <a routerLink="/" fragment="inicio" class="flex items-center shrink-0">
         <img src="images/Logo.jpg" class="h-[70px] w-[200px] object-cover" alt="Montclair Grand Hotel" />
       </a>
 
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-3 md:order-2 shrink-0">
+        @if (currentClient) {
+        <a [routerLink]="['/profile', currentClient.id]"
+          class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
+          Mi Perfil
+        </a>
+        } @else {
         <a routerLink="/login"
-          class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer">
+          class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
           Login
         </a>
+        }
 
-        <a routerLink="/rooms/cards"
-          class="font-sans text-xs font-bold uppercase tracking-widest bg-twine text-white px-5 py-2.5 rounded-sm shadow-sm transition-colors duration-300 hover:bg-twine-hover inline-block">
+        <a routerLink="/reservations/book"
+          class="font-sans text-xs font-bold uppercase tracking-widest bg-twine text-white px-5 py-2.5 rounded-sm shadow-sm transition-colors duration-300 hover:bg-twine-hover inline-block whitespace-nowrap">
           Reservar Ahora
         </a>
 
@@ -29,36 +36,36 @@
       </div>
 
       <div
-        class="items-center justify-between hidden w-full md:flex md:w-auto md:absolute md:left-1/2 md:-translate-x-1/2"
+        class="items-center justify-center hidden w-full md:flex md:w-auto md:order-1"
         id="navbar-index">
         <ul
-          class="flex flex-col p-4 md:p-0 mt-4 font-sans text-xs font-semibold uppercase tracking-widest border border-[#E3DDD4] rounded-sm bg-white md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-transparent">
+          class="flex flex-col p-4 md:p-0 mt-4 font-sans text-xs font-semibold uppercase tracking-widest border border-[#E3DDD4] rounded-sm bg-white md:space-x-6 lg:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-transparent">
           <li>
-            <a routerLink="/" fragment="inicio" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/" fragment="inicio" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0 whitespace-nowrap">
               Inicio
             </a>
           </li>
 
           <li>
-            <a routerLink="/rooms/cards" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/rooms/cards" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0 whitespace-nowrap">
               Habitaciones
             </a>
           </li>
 
           <li>
-            <a routerLink="/services" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/services" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0 whitespace-nowrap">
               Servicios
             </a>
           </li>
 
           <li>
-            <a routerLink="/gallery" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/gallery" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0 whitespace-nowrap">
               Galería
             </a>
           </li>
 
           <li>
-            <a routerLink="/location" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/location" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0 whitespace-nowrap">
               Ubicación & Contacto
             </a>
           </li>

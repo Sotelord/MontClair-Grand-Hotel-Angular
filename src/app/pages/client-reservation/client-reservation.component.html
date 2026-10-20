@@ -5,7 +5,7 @@
     </a>
     <span>/</span>
     <span class="text-woodsmoke font-semibold">
-      Reserva de Huésped
+      {{ isEditMode ? "Modificar Reserva #" + reservationId : "Reserva de Huésped" }}
     </span>
   </div>
 
@@ -54,7 +54,7 @@
 
         <div>
           <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-0.5">
-            RESERVA A NOMBRE DE
+            {{ isEditMode ? "MODIFICANDO RESERVA #" + reservationId + " DE" : "RESERVA A NOMBRE DE" }}
           </span>
 
           <h1 class="font-serif text-xl sm:text-2xl uppercase tracking-[1px]">
@@ -156,12 +156,6 @@
               <p class="text-[11px] text-woodsmoke/60">
                 {{ selectedRoomType.description }}
               </p>
-
-              <p class="text-[10px] text-woodsmoke/60">
-                La habitación específica se asigna automáticamente
-                según disponibilidad y capacidad para las fechas
-                seleccionadas.
-              </p>
             </div>
           </div>
           }
@@ -183,7 +177,7 @@
                 Fecha de Entrada
               </label>
 
-              <input type="date" formControlName="checkInDate"
+              <input type="date" formControlName="checkInDate" [attr.min]="isEditMode ? null : todayDate" max="9999-12-31"
                 class="w-full px-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono" />
             </div>
 
@@ -192,7 +186,7 @@
                 Fecha de Salida
               </label>
 
-              <input type="date" formControlName="checkOutDate"
+              <input type="date" formControlName="checkOutDate" [attr.min]="minCheckOutDate" max="9999-12-31"
                 class="w-full px-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono" />
             </div>
 
@@ -201,13 +195,8 @@
                 Número de Huéspedes
               </label>
 
-              <input type="number" formControlName="numberOfPeople" min="1"
+              <input type="number" formControlName="numberOfPeople" min="1" max="10"
                 class="w-full px-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono" />
-
-              <p class="mt-1 text-[10px] text-woodsmoke/60">
-                Spring Boot comprobará la capacidad antes de
-                asignar una habitación.
-              </p>
             </div>
           </div>
 
@@ -376,13 +365,15 @@
               {{
               isSubmitting
               ? "Procesando Reserva..."
+              : isEditMode
+              ? "Guardar Cambios en Reserva"
               : "Confirmar y Garantizar Reserva"
               }}
             </button>
 
-            <a routerLink="/rooms/cards"
+            <a [routerLink]="isEditMode ? ['/profile', currentUser.id] : ['/rooms/cards']"
               class="w-full text-center block border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-wider font-semibold py-2.5 px-4 rounded-[2px] transition">
-              Ver Otras Habitaciones
+              {{ isEditMode ? "Cancelar y Volver a Mi Perfil" : "Ver Otras Habitaciones" }}
             </a>
           </div>
         </div>

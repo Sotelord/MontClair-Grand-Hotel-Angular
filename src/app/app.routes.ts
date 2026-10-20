@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { RoomsCardsComponent } from './pages/rooms-cards/rooms-cards.component';
@@ -20,6 +19,7 @@ import { ClientReservationComponent } from './pages/client-reservation/client-re
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -63,6 +63,7 @@ export const routes: Routes = [
   {
     path: 'clients',
     component: ClientsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'clients/add',
@@ -71,6 +72,7 @@ export const routes: Routes = [
   {
     path: 'clients/edit/:id',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin',
@@ -80,18 +82,22 @@ export const routes: Routes = [
   {
     path: 'admin/rooms',
     component: RoomsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms/add',
     component: RoomFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms/edit/:id',
     component: RoomFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms-types',
     component: RoomTypesAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/room-types',
@@ -101,38 +107,47 @@ export const routes: Routes = [
   {
     path: 'admin/room-types/add',
     component: RoomTypeFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/room-types/edit/:id',
     component: RoomTypeFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients',
     component: ClientsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients/add',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients/edit/:id',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/reservations',
     component: ReservationsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/reservations/new',
     component: AdminReservationFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/reservations/edit/:id',
     component: AdminReservationFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/reservations/:id',
     component: ReservationDetailComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'reservations/book',
@@ -140,6 +155,10 @@ export const routes: Routes = [
   },
   {
     path: 'reservations/book/:roomId',
+    component: ClientReservationComponent,
+  },
+  {
+    path: 'reservations/edit/:id',
     component: ClientReservationComponent,
   },
   {
@@ -167,6 +186,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin/services',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/services-admin/services-admin.component').then(
         (m) => m.ServicesAdminComponent,
@@ -174,6 +194,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin/services/add',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
@@ -181,6 +202,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin/services/edit/:id',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,

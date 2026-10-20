@@ -1,4 +1,3 @@
-
 import { Client } from './client.model';
 import { ReservationRoom } from './reservationRoom.model';
 
@@ -10,6 +9,15 @@ export interface Reservation {
   numberOfPeople: number;
   status: string;
   reservationRooms?: ReservationRoom[];
+}
+
+export interface ReservationRequestDTO {
+  clientId: number;
+  roomTypeId: number;
+  checkInDate: string;
+  checkOutDate: string;
+  numberOfPeople: number;
+  serviceIds: number[];
 }
 
 export interface ReservationServiceDTO {

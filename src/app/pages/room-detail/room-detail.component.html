@@ -8,7 +8,7 @@
     <span>/</span>
 
     <span class="text-woodsmoke font-semibold">
-      {{ room.name }} (Hab. {{ room.number }})
+      {{ room.name }}
     </span>
   </div>
 
@@ -23,8 +23,6 @@
       <div class="absolute bottom-8 left-8 right-8 text-white">
         <span class="text-[10px] tracking-[4px] font-sans uppercase font-bold text-twine mb-2 block">
           {{ room.roomType.name }}
-          • PISO {{ room.floor }}
-          • HABITACIÓN {{ room.number }}
         </span>
 
         <h1 class="font-serif text-3xl sm:text-4xl uppercase tracking-[2px] mb-2">
@@ -81,7 +79,7 @@
         }
       </div>
 
-      <!-- PRECIO Y ESTADO -->
+      <!-- PRECIO Y ACCIONES -->
       <div class="bg-pampas/60 border border-[#E8E2DA] rounded-[2px] p-6 flex flex-col justify-between space-y-6">
         <div>
           <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine block mb-1">
@@ -128,47 +126,17 @@
                 {{ room.area || 30 }} m²
               </span>
             </div>
-
-            <div class="flex justify-between">
-              <span class="text-woodsmoke/60">
-                Estado operativo:
-              </span>
-
-              <span class="font-semibold" [class.text-emerald-700]="
-                    room.status === 'AVAILABLE'
-                  " [class.text-amber-700]="
-                    room.status === 'MAINTENANCE'
-                  ">
-                {{
-                room.status === 'AVAILABLE'
-                ? 'Habilitada'
-                : 'En mantenimiento'
-                }}
-              </span>
-            </div>
           </div>
         </div>
 
         <!-- ACCIONES -->
         <div class="space-y-3">
-          @if (room.status === 'AVAILABLE') {
           <a routerLink="/reservations/book" [queryParams]="{
                   roomTypeId: room.roomType.id
                 }"
             class="w-full text-center block bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] transition duration-300 shadow-sm">
             Reservar este Tipo de Habitación
           </a>
-          } @else {
-          <div
-            class="w-full text-center bg-pampas text-woodsmoke/60 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] border border-[#E8E2DA]">
-            Habitación en Mantenimiento
-          </div>
-          }
-
-          <p class="text-[10px] text-woodsmoke/60 text-center">
-            La habitación específica será asignada
-            automáticamente según las fechas de tu reserva.
-          </p>
 
           <a routerLink="/rooms/cards"
             class="w-full text-center block border border-[#E8E2DA] hover:bg-white text-woodsmoke/70 text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-4 rounded-[2px] transition">

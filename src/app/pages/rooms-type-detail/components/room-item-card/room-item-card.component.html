@@ -2,13 +2,8 @@
   <div class="room-img-wrapper">
     <img [src]="getImageUrl()" [alt]="'Habitación ' + room().number" class="room-img" loading="lazy" />
 
-    <span class="status-tag" [class.available]="room().status === 'AVAILABLE'"
-      [class.occupied]="room().status === 'MAINTENANCE'">
-      {{
-      room().status === 'AVAILABLE'
-      ? 'Habilitada'
-      : 'En mantenimiento'
-      }}
+    <span class="status-tag available">
+      Disponible
     </span>
   </div>
 
@@ -56,16 +51,10 @@
     </p>
 
     <div class="room-actions">
-      @if (room().status === 'AVAILABLE') {
       <a routerLink="/reservations/book" [queryParams]="{ roomTypeId: room().roomType.id }"
         class="btn btn-outline full-width">
         Reservar este tipo
       </a>
-      } @else {
-      <a [routerLink]="['/rooms', room().id]" class="btn btn-outline full-width btn-occupied">
-        Ver Detalles
-      </a>
-      }
     </div>
   </div>
 </article>

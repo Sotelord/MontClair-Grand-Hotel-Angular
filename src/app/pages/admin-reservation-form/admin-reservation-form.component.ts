@@ -1,4 +1,3 @@
-
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -15,6 +14,7 @@ import { ServicesService } from '../../service/services.service';
 import { Client } from '../../models/client.model';
 import { RoomType } from '../../models/roomType.model';
 import { Service } from '../../models/service.model';
+import { ReservationRequestDTO } from '../../models/reservation.model';
 
 @Component({
   selector: 'app-admin-reservation-form',
@@ -37,6 +37,8 @@ export class AdminReservationFormComponent implements OnInit {
   isEditMode = false;
   isSubmitting = false;
   reservationId?: number;
+  originalCheckInDate?: string;
+  todayDate = '';
 
   clients: Client[] = [];
   roomTypes: RoomType[] = [];
@@ -61,28 +63,50 @@ export class AdminReservationFormComponent implements OnInit {
     }
   }
 
+  private formatDate(offset: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + offset);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   private initForm(): void {
-    const formatDate = (offset: number): string => {
-      const date = new Date();
-      date.setDate(date.getDate() + offset);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-
-      return `${year}-${month}-${day}`;
-    };
+    this.todayDate = this.formatDate(0);
 
     this.reservationForm = this.fb.group({
       clientId: [null, Validators.required],
       roomTypeId: [null, Validators.required],
-      checkInDate: [formatDate(0), Validators.required],
-      checkOutDate: [formatDate(3), Validators.required],
+      checkInDate: [this.todayDate, Validators.required],
+      checkOutDate: [this.formatDate(3), Validators.required],
       numberOfPeople: [
         2,
-        [Validators.required, Validators.min(1)],
+        [Validators.required, Validators.min(1), Validators.max(10)],
       ],
     });
+  }
+
+  get minCheckOutDate(): string {
+    const checkIn = this.reservationForm?.get('checkInDate')?.value;
+    if (!checkIn || typeof checkIn !== 'string') {
+      return this.formatDate(1);
+    }
+    const parts = checkIn.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(isNaN) || parts[0] > 9999) {
+      return this.formatDate(1);
+    }
+    const [year, month, day] = parts;
+    const nextDay = new Date(year, month - 1, day + 1);
+    if (isNaN(nextDay.getTime())) {
+      return this.formatDate(1);
+    }
+    const y = nextDay.getFullYear();
+    const m = String(nextDay.getMonth() + 1).padStart(2, '0');
+    const d = String(nextDay.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   private loadClients(): void {
@@ -133,7 +157,7 @@ export class AdminReservationFormComponent implements OnInit {
   private loadServices(): void {
     this.servicesService.findNotHidden().subscribe({
       next: (services) => {
-        this.services = services || [];
+        this.services = (services || []).filter((s) => (s.price ?? 0) > 0);
       },
       error: () => {
         this.services = [];
@@ -149,6 +173,8 @@ export class AdminReservationFormComponent implements OnInit {
 
         const currentRoom = reservationRoom?.room;
 
+        this.originalCheckInDate = existing.checkInDate;
+
         this.reservationForm.patchValue({
           clientId: existing.client.id,
           roomTypeId: currentRoom?.roomType?.id ?? null,
@@ -160,7 +186,7 @@ export class AdminReservationFormComponent implements OnInit {
         this.selectedServiceIds.clear();
 
         reservationRoom?.acquiredServices?.forEach((acquired) => {
-          if (acquired.service?.id != null) {
+          if (acquired.service?.id != null && (acquired.service.price ?? 0) > 0) {
             this.selectedServiceIds.add(acquired.service.id);
           }
         });
@@ -232,18 +258,38 @@ export class AdminReservationFormComponent implements OnInit {
   onSubmit(): void {
     this.errorMessage = null;
 
-    if (this.reservationForm.invalid) {
+    const val = this.reservationForm.value;
+
+    if (!val.clientId) {
       this.reservationForm.markAllAsTouched();
-      this.errorMessage =
-        'Por favor completa todos los campos requeridos.';
+      this.errorMessage = 'Debes seleccionar un cliente.';
       return;
     }
 
-    const val = this.reservationForm.value;
+    if (!val.roomTypeId) {
+      this.reservationForm.markAllAsTouched();
+      this.errorMessage = 'Debes seleccionar un tipo de habitación.';
+      return;
+    }
 
-    if (val.checkOutDate <= val.checkInDate) {
+    const validationError = this.reservationService.validateReservationDatesAndGuests(
+      val.checkInDate,
+      val.checkOutDate,
+      Number(val.numberOfPeople),
+      this.isEditMode,
+      this.originalCheckInDate,
+    );
+
+    if (validationError) {
+      this.reservationForm.markAllAsTouched();
+      this.errorMessage = validationError;
+      return;
+    }
+
+    if (this.reservationForm.invalid) {
+      this.reservationForm.markAllAsTouched();
       this.errorMessage =
-        'La fecha de salida debe ser posterior a la de entrada.';
+        'Por favor completa todos los campos requeridos correctamente.';
       return;
     }
 
@@ -251,7 +297,7 @@ export class AdminReservationFormComponent implements OnInit {
       return;
     }
 
-    const reservationData = {
+    const reservationData: ReservationRequestDTO = {
       clientId: Number(val.clientId),
       roomTypeId: Number(val.roomTypeId),
       checkInDate: val.checkInDate,

@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
+import { AuthService } from '../../service/auth.service';
 import { Reservation } from '../../models/reservation.model';
 
 @Component({
@@ -15,11 +16,19 @@ export class ReservationDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reservationService = inject(ReservationService);
+  private authService = inject(AuthService);
   private location = inject(Location);
 
   reservation: Reservation | null = null;
   isLoading = true;
   errorMessage: string | null = null;
+
+  get isAdminView(): boolean {
+    return (
+      this.router.url.startsWith('/admin') &&
+      this.authService.getSession()?.role?.toUpperCase() === 'ADMIN'
+    );
+  }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -37,7 +46,8 @@ export class ReservationDetailComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'No se encontró la reserva solicitada o hubo un error al cargarla.';
+        this.errorMessage =
+          'No se encontró la reserva solicitada o hubo un error al cargarla.';
         this.isLoading = false;
       },
     });
@@ -63,7 +73,7 @@ export class ReservationDetailComponent implements OnInit {
     if (!this.reservation) return 1;
     return this.reservationService.calculateNights(
       this.reservation.checkInDate,
-      this.reservation.checkOutDate
+      this.reservation.checkOutDate,
     );
   }
 

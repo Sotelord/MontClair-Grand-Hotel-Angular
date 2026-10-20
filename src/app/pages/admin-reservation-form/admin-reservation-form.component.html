@@ -20,8 +20,7 @@
 
       <p class="text-xs text-woodsmoke/60 mt-3 max-w-md mx-auto">
         Selecciona el cliente, el tipo de habitación, las fechas y
-        los servicios contratados. El sistema asignará una habitación
-        disponible automáticamente.
+        los servicios contratados.
       </p>
     </div>
 
@@ -70,7 +69,7 @@
             Fecha de Entrada (Check-In) *
           </label>
 
-          <input type="date" formControlName="checkInDate"
+          <input type="date" formControlName="checkInDate" [attr.min]="isEditMode ? null : todayDate" max="9999-12-31"
             class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
         </div>
 
@@ -79,7 +78,7 @@
             Fecha de Salida (Check-Out) *
           </label>
 
-          <input type="date" formControlName="checkOutDate"
+          <input type="date" formControlName="checkOutDate" [attr.min]="minCheckOutDate" max="9999-12-31"
             class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
         </div>
       </div>
@@ -90,7 +89,7 @@
           Cantidad de Personas *
         </label>
 
-        <input type="number" min="1" formControlName="numberOfPeople"
+        <input type="number" min="1" max="10" formControlName="numberOfPeople"
           class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
       </div>
 
@@ -125,12 +124,6 @@
           </p>
           }
         </div>
-
-        <p class="text-[10px] text-woodsmoke/60 mt-2">
-          Spring Boot asignará automáticamente una habitación
-          habilitada de este tipo, siempre que esté libre
-          para las fechas y capacidad solicitadas.
-        </p>
       </div>
 
       <!-- SERVICIOS ADICIONALES -->
@@ -192,11 +185,6 @@
             {{ formatPrice(estimatedGrandTotal) }}
           </span>
         </div>
-
-        <p class="text-[10px] text-white/60">
-          El valor definitivo se calcula según la habitación
-          asignada por el sistema.
-        </p>
       </div>
 
       <!-- ACCIONES -->
