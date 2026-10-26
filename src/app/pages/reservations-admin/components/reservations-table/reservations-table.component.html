@@ -1,0 +1,68 @@
+<div
+  class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse text-xs">
+      <thead>
+        <tr
+          class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10"
+        >
+          <th class="py-4 px-5 font-semibold">ID</th>
+          <th class="py-4 px-5 font-semibold">Cliente</th>
+          <th class="py-4 px-5 font-semibold">Habitación Asignada</th>
+          <th class="py-4 px-5 font-semibold">Fechas & Estancia</th>
+          <th class="py-4 px-5 font-semibold">
+            Servicios Contratados (Cuenta)
+          </th>
+          <th class="py-4 px-5 font-semibold">Estado</th>
+          <th class="py-4 px-5 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-[#E8E2DA]">
+        @for (res of reservations(); track res.id) {
+          <tr class="hover:bg-pampas/60 transition group">
+            <td
+              class="py-4 px-5 font-mono text-twine-dark font-semibold text-[11px]"
+            >
+              {{ formatId(res.id) }}
+            </td>
+
+            <td class="py-4 px-5"><app-client-cell [reservation]="res" /></td>
+            <td class="py-4 px-5"><app-room-cell [reservation]="res" /></td>
+            <td class="py-4 px-5"><app-dates-cell [reservation]="res" /></td>
+            <td class="py-4 px-5 min-w-[240px]">
+              <app-account-cell [reservation]="res" />
+            </td>
+
+            <td class="py-4 px-5">
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                {{ res.status }}
+              </span>
+            </td>
+
+            <td class="py-4 px-5 text-right">
+              <app-row-actions
+                (viewClicked)="viewRequested.emit(res.id)"
+                (editClicked)="editRequested.emit(res.id)"
+                (deleteClicked)="deleteRequested.emit(res)"
+              />
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td
+              colspan="7"
+              class="py-12 text-center text-woodsmoke/50 italic text-sm"
+            >
+              No se encontraron reservas registradas actualmente.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

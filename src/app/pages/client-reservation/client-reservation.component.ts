@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
@@ -16,11 +15,35 @@ import { Client } from '../../models/client.model';
 import { RoomType } from '../../models/roomType.model';
 import { Service } from '../../models/service.model';
 import { ReservationRequestDTO } from '../../models/reservation.model';
+import { BookingBreadcrumbComponent } from './components/booking-breadcrumb/booking-breadcrumb.component';
+import { LoginRequiredComponent } from './components/login-required/login-required.component';
+import { GuestBannerComponent } from './components/guest-banner/guest-banner.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { RoomTypeStepComponent } from './components/room-type-step/room-type-step.component';
+import { DatesStepComponent } from './components/dates-step/dates-step.component';
+import { ServicesStepComponent } from './components/services-step/services-step.component';
+import { QuoteSummaryComponent } from './components/quote-summary/quote-summary.component';
+import { BookingBenefitsComponent } from './components/booking-benefits/booking-benefits.component';
+import { QuoteActionsComponent } from './components/quote-actions/quote-actions.component';
 
 @Component({
   selector: 'app-client-reservation',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    BookingBreadcrumbComponent,
+    LoginRequiredComponent,
+    GuestBannerComponent,
+    ErrorAlertComponent,
+    SuccessAlertComponent,
+    RoomTypeStepComponent,
+    DatesStepComponent,
+    ServicesStepComponent,
+    QuoteSummaryComponent,
+    BookingBenefitsComponent,
+    QuoteActionsComponent,
+  ],
   templateUrl: './client-reservation.component.html',
   styleUrl: './client-reservation.component.scss',
 })
@@ -58,7 +81,7 @@ export class ClientReservationComponent implements OnInit {
     }
 
     const queryClientId = Number(
-      this.route.snapshot.queryParamMap.get('clientId')
+      this.route.snapshot.queryParamMap.get('clientId'),
     );
     const sessionClient = this.authService.getSession();
 
@@ -66,13 +89,14 @@ export class ClientReservationComponent implements OnInit {
       this.currentUser = sessionClient;
     }
 
-    const id = (Number.isInteger(queryClientId) && queryClientId > 0)
-      ? queryClientId
-      : (sessionClient?.id || 0);
+    const id =
+      Number.isInteger(queryClientId) && queryClientId > 0
+        ? queryClientId
+        : sessionClient?.id || 0;
 
     if (id > 0) {
       this.clientService.findById(id).subscribe({
-        next: client => {
+        next: (client) => {
           this.currentUser = client;
           this.authService.saveSession(client);
         },
@@ -85,21 +109,22 @@ export class ClientReservationComponent implements OnInit {
     }
 
     const targetTypeId = Number(
-      this.route.snapshot.queryParamMap.get('roomTypeId')
+      this.route.snapshot.queryParamMap.get('roomTypeId'),
     );
 
     this.roomTypeService.findAll().subscribe({
-      next: types => {
+      next: (types) => {
         this.roomTypes = types || [];
 
         if (!this.isEditMode) {
-          this.selectedRoomType = this.roomTypes.find(
-            t => t.id === targetTypeId
-          ) || this.roomTypes[0] || null;
+          this.selectedRoomType =
+            this.roomTypes.find((t) => t.id === targetTypeId) ||
+            this.roomTypes[0] ||
+            null;
 
           if (this.selectedRoomType) {
             this.bookingForm.patchValue({
-              roomTypeId: this.selectedRoomType.id
+              roomTypeId: this.selectedRoomType.id,
             });
           }
         } else if (this.reservationId) {
@@ -107,30 +132,26 @@ export class ClientReservationComponent implements OnInit {
         }
       },
       error: () => {
-        this.errorMessage =
-          'No se pudieron cargar los tipos de habitación.';
+        this.errorMessage = 'No se pudieron cargar los tipos de habitación.';
       },
     });
 
     this.servicesService.findNotHidden().subscribe({
-      next: services => {
-        this.services = (services || []).filter(s => (s.price ?? 0) > 0);
+      next: (services) => {
+        this.services = (services || []).filter((s) => (s.price ?? 0) > 0);
       },
-      error: () => this.services = [],
+      error: () => (this.services = []),
     });
 
-    this.bookingForm.get('roomTypeId')?.valueChanges.subscribe(
-      value => {
-        this.selectedRoomType = this.roomTypes.find(
-          t => t.id === Number(value)
-        ) || null;
-      }
-    );
+    this.bookingForm.get('roomTypeId')?.valueChanges.subscribe((value) => {
+      this.selectedRoomType =
+        this.roomTypes.find((t) => t.id === Number(value)) || null;
+    });
   }
 
   private loadReservation(id: number): void {
     this.reservationService.findById(id).subscribe({
-      next: existing => {
+      next: (existing) => {
         const reservationRoom = existing.reservationRooms?.[0];
         const currentRoomTypeId = reservationRoom?.room?.roomType?.id ?? null;
 
@@ -143,13 +164,17 @@ export class ClientReservationComponent implements OnInit {
           numberOfPeople: existing.numberOfPeople,
         });
 
-        this.selectedRoomType = this.roomTypes.find(
-          t => t.id === Number(currentRoomTypeId)
-        ) || this.roomTypes[0] || null;
+        this.selectedRoomType =
+          this.roomTypes.find((t) => t.id === Number(currentRoomTypeId)) ||
+          this.roomTypes[0] ||
+          null;
 
         this.selectedServiceIds.clear();
-        reservationRoom?.acquiredServices?.forEach(acquired => {
-          if (acquired.service?.id != null && (acquired.service.price ?? 0) > 0) {
+        reservationRoom?.acquiredServices?.forEach((acquired) => {
+          if (
+            acquired.service?.id != null &&
+            (acquired.service.price ?? 0) > 0
+          ) {
             this.selectedServiceIds.add(acquired.service.id);
           }
         });
@@ -180,7 +205,7 @@ export class ClientReservationComponent implements OnInit {
       checkOutDate: [this.formatLocal(4), Validators.required],
       numberOfPeople: [
         2,
-        [Validators.required, Validators.min(1), Validators.max(10)]
+        [Validators.required, Validators.min(1), Validators.max(10)],
       ],
       specialRequests: [''],
     });
@@ -226,17 +251,13 @@ export class ClientReservationComponent implements OnInit {
   }
 
   get roomTotal(): number {
-    return this.nightsCount *
-      (this.selectedRoomType?.pricePerNight || 0);
+    return this.nightsCount * (this.selectedRoomType?.pricePerNight || 0);
   }
 
   get servicesTotal(): number {
     return this.services
-      .filter(service => this.selectedServiceIds.has(service.id))
-      .reduce(
-        (sum, service) => sum + (service.price || 0),
-        0
-      );
+      .filter((service) => this.selectedServiceIds.has(service.id))
+      .reduce((sum, service) => sum + (service.price || 0), 0);
   }
 
   get grandTotal(): number {
@@ -247,8 +268,7 @@ export class ClientReservationComponent implements OnInit {
     this.errorMessage = null;
 
     if (!this.currentUser) {
-      this.errorMessage =
-        'Debes iniciar sesión para realizar la reserva.';
+      this.errorMessage = 'Debes iniciar sesión para realizar la reserva.';
       return;
     }
 
@@ -260,13 +280,14 @@ export class ClientReservationComponent implements OnInit {
 
     const val = this.bookingForm.value;
 
-    const validationError = this.reservationService.validateReservationDatesAndGuests(
-      val.checkInDate,
-      val.checkOutDate,
-      Number(val.numberOfPeople),
-      this.isEditMode,
-      this.originalCheckInDate,
-    );
+    const validationError =
+      this.reservationService.validateReservationDatesAndGuests(
+        val.checkInDate,
+        val.checkOutDate,
+        Number(val.numberOfPeople),
+        this.isEditMode,
+        this.originalCheckInDate,
+      );
 
     if (validationError) {
       this.bookingForm.markAllAsTouched();
@@ -298,12 +319,13 @@ export class ClientReservationComponent implements OnInit {
       serviceIds: Array.from(this.selectedServiceIds),
     };
 
-    const request$ = (this.isEditMode && this.reservationId)
-      ? this.reservationService.update(this.reservationId, requestData)
-      : this.reservationService.add(requestData);
+    const request$ =
+      this.isEditMode && this.reservationId
+        ? this.reservationService.update(this.reservationId, requestData)
+        : this.reservationService.add(requestData);
 
     request$.subscribe({
-      next: reservation => {
+      next: (reservation) => {
         this.isSubmitting = false;
         this.successMessage = this.isEditMode
           ? `¡Reserva #${reservation.id} actualizada!`
@@ -311,7 +333,7 @@ export class ClientReservationComponent implements OnInit {
 
         this.router.navigate(['/profile', clientId]);
       },
-      error: err => {
+      error: (err) => {
         this.isSubmitting = false;
 
         if (typeof err?.error === 'string') {
@@ -323,12 +345,5 @@ export class ClientReservationComponent implements OnInit {
         }
       },
     });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
   }
 }

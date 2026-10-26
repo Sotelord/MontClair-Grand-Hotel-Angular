@@ -1,0 +1,60 @@
+<div [formGroup]="form()" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Tarifa (€ / Noche) *
+    </label>
+    <input
+      type="number"
+      step="0.01"
+      formControlName="pricePerNight"
+      placeholder="ej. 116.52"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Cap. máx.
+    </label>
+    <input
+      type="number"
+      min="1"
+      formControlName="capacity"
+      placeholder="ej. 2"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Tipo de Cama
+    </label>
+    <input
+      type="text"
+      formControlName="bedType"
+      placeholder="ej. King Size"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Área (m²)
+    </label>
+    <input
+      type="number"
+      min="10"
+      formControlName="area"
+      placeholder="ej. 35"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+</div>

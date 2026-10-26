@@ -4,13 +4,18 @@ import { ServicesTableComponent } from './components/services-table/services-tab
 import { ServicesService } from '../../service/services.service';
 import { Router } from '@angular/router';
 import { Service } from '../../models/service.model';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 
 @Component({
   selector: 'app-services-admin',
   standalone: true,
-  imports: [AdminPageHeaderComponent, ServicesTableComponent],
+  imports: [
+    AdminPageHeaderComponent,
+    ServicesTableComponent,
+    ErrorAlertComponent,
+  ],
   templateUrl: './services-admin.component.html',
-  styleUrl: './services-admin.component.scss'
+  styleUrl: './services-admin.component.scss',
 })
 export class ServicesAdminComponent implements OnInit {
   private servicesService = inject(ServicesService);

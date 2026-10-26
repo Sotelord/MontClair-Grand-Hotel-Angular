@@ -1,20 +1,36 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
+import { ProfileBreadcrumbComponent } from './components/profile-breadcrumb/profile-breadcrumb.component';
+import { EditHeaderComponent } from './components/edit-header/edit-header.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { PersonalFieldsComponent } from './components/personal-fields/personal-fields.component';
+import { AvatarFieldComponent } from './components/avatar-field/avatar-field.component';
+import { PasswordFieldsComponent } from './components/password-fields/password-fields.component';
+import { EditActionsComponent } from './components/edit-actions/edit-actions.component';
 
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    ProfileBreadcrumbComponent,
+    EditHeaderComponent,
+    ErrorAlertComponent,
+    SuccessAlertComponent,
+    PersonalFieldsComponent,
+    AvatarFieldComponent,
+    PasswordFieldsComponent,
+    EditActionsComponent,
+  ],
   templateUrl: './profile-edit.component.html',
   styleUrl: './profile-edit.component.scss',
 })
@@ -62,10 +78,7 @@ export class ProfileEditComponent implements OnInit {
         [Validators.required, Validators.minLength(2)],
       ],
       lastName: [this.client.lastName || ''],
-      email: [
-        this.client.email,
-        [Validators.required, Validators.email],
-      ],
+      email: [this.client.email, [Validators.required, Validators.email]],
       phone: [
         this.client.phone || '',
         [Validators.pattern(/^[+0-9\s-]{7,20}$/)],
@@ -81,7 +94,7 @@ export class ProfileEditComponent implements OnInit {
 
     return inputUrl && inputUrl.trim().length > 0
       ? inputUrl
-      : (this.client?.avatarUrl || this.defaultAvatar);
+      : this.client?.avatarUrl || this.defaultAvatar;
   }
 
   onSubmit(): void {
@@ -124,10 +137,7 @@ export class ProfileEditComponent implements OnInit {
         this.successMessage = '¡Perfil actualizado con éxito!';
         this.isSubmitting = false;
 
-        this.router.navigate([
-          '/profile',
-          savedClient?.id || updatedClient.id,
-        ]);
+        this.router.navigate(['/profile', savedClient?.id || updatedClient.id]);
       },
       error: () => {
         this.isSubmitting = false;

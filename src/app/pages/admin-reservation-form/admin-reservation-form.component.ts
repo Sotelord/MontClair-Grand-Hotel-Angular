@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
 import { ClientService } from '../../service/client.service';
 import { RoomTypeService } from '../../service/room-type.service';
@@ -15,11 +14,29 @@ import { Client } from '../../models/client.model';
 import { RoomType } from '../../models/roomType.model';
 import { Service } from '../../models/service.model';
 import { ReservationRequestDTO } from '../../models/reservation.model';
+import { FormHeaderComponent } from './components/form-header/form-header.component';
+import { ClientSelectComponent } from './components/client-select/client-select.component';
+import { StayDetailsComponent } from './components/stay-details/stay-details.component';
+import { RoomTypeSelectorComponent } from './components/room-type-selector/room-type-selector.component';
+import { ServicesSelectorComponent } from './components/services-selector/services-selector.component';
+import { PriceSummaryComponent } from './components/price-summary/price-summary.component';
+import { FormActionsComponent } from './components/form-actions/form-actions.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 
 @Component({
   selector: 'app-admin-reservation-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    FormHeaderComponent,
+    ErrorAlertComponent,
+    ClientSelectComponent,
+    StayDetailsComponent,
+    RoomTypeSelectorComponent,
+    ServicesSelectorComponent,
+    PriceSummaryComponent,
+    FormActionsComponent,
+  ],
   templateUrl: './admin-reservation-form.component.html',
   styleUrl: './admin-reservation-form.component.scss',
 })
@@ -148,8 +165,7 @@ export class AdminReservationFormComponent implements OnInit {
       },
       error: () => {
         this.roomTypes = [];
-        this.errorMessage =
-          'No se pudieron cargar los tipos de habitación.';
+        this.errorMessage = 'No se pudieron cargar los tipos de habitación.';
       },
     });
   }
@@ -168,8 +184,7 @@ export class AdminReservationFormComponent implements OnInit {
   private loadReservation(id: number): void {
     this.reservationService.findById(id).subscribe({
       next: (existing) => {
-        const reservationRoom =
-          existing.reservationRooms?.[0];
+        const reservationRoom = existing.reservationRooms?.[0];
 
         const currentRoom = reservationRoom?.room;
 
@@ -186,7 +201,10 @@ export class AdminReservationFormComponent implements OnInit {
         this.selectedServiceIds.clear();
 
         reservationRoom?.acquiredServices?.forEach((acquired) => {
-          if (acquired.service?.id != null && (acquired.service.price ?? 0) > 0) {
+          if (
+            acquired.service?.id != null &&
+            (acquired.service.price ?? 0) > 0
+          ) {
             this.selectedServiceIds.add(acquired.service.id);
           }
         });
@@ -205,10 +223,6 @@ export class AdminReservationFormComponent implements OnInit {
     }
   }
 
-  isServiceSelected(serviceId: number): boolean {
-    return this.selectedServiceIds.has(serviceId);
-  }
-
   get nightsCount(): number {
     return this.reservationService.calculateNights(
       this.reservationForm.get('checkInDate')?.value,
@@ -217,13 +231,9 @@ export class AdminReservationFormComponent implements OnInit {
   }
 
   get selectedRoomPrice(): number {
-    const selectedId = Number(
-      this.reservationForm.get('roomTypeId')?.value,
-    );
+    const selectedId = Number(this.reservationForm.get('roomTypeId')?.value);
 
-    const selectedType = this.roomTypes.find(
-      (type) => type.id === selectedId,
-    );
+    const selectedType = this.roomTypes.find((type) => type.id === selectedId);
 
     return selectedType?.pricePerNight || 0;
   }
@@ -236,9 +246,7 @@ export class AdminReservationFormComponent implements OnInit {
     let total = 0;
 
     this.selectedServiceIds.forEach((id) => {
-      const service = this.services.find(
-        (item) => item.id === id,
-      );
+      const service = this.services.find((item) => item.id === id);
 
       if (service) {
         total += service.price || 0;
@@ -249,10 +257,7 @@ export class AdminReservationFormComponent implements OnInit {
   }
 
   get estimatedGrandTotal(): number {
-    return (
-      this.estimatedRoomTotal +
-      this.estimatedServicesTotal
-    );
+    return this.estimatedRoomTotal + this.estimatedServicesTotal;
   }
 
   onSubmit(): void {
@@ -272,13 +277,14 @@ export class AdminReservationFormComponent implements OnInit {
       return;
     }
 
-    const validationError = this.reservationService.validateReservationDatesAndGuests(
-      val.checkInDate,
-      val.checkOutDate,
-      Number(val.numberOfPeople),
-      this.isEditMode,
-      this.originalCheckInDate,
-    );
+    const validationError =
+      this.reservationService.validateReservationDatesAndGuests(
+        val.checkInDate,
+        val.checkOutDate,
+        Number(val.numberOfPeople),
+        this.isEditMode,
+        this.originalCheckInDate,
+      );
 
     if (validationError) {
       this.reservationForm.markAllAsTouched();
@@ -341,21 +347,11 @@ export class AdminReservationFormComponent implements OnInit {
     }
   }
 
-  private getErrorMessage(
-    error: any,
-    defaultMessage: string,
-  ): string {
+  private getErrorMessage(error: any, defaultMessage: string): string {
     if (typeof error?.error === 'string') {
       return error.error;
     }
 
     return error?.error?.message || defaultMessage;
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
   }
 }

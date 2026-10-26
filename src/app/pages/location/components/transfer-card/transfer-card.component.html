@@ -1,0 +1,33 @@
+<div
+  class="p-6 bg-white border border-[#E8E2DA] rounded-[2px] shadow-xs h-full"
+>
+  <div
+    class="w-8 h-8 rounded-full bg-twine/10 text-twine flex items-center justify-center font-bold text-xs mb-4"
+  >
+    <svg
+      class="w-4 h-4 text-twine"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 10V3L4 14h7v7l9-11h-7z"
+      />
+    </svg>
+  </div>
+
+  <h3 class="font-serif text-base text-woodsmoke uppercase mb-1">
+    {{ transfer().title }}
+  </h3>
+  <span
+    class="text-[11px] font-sans text-twine font-semibold tracking-wide block mb-2"
+  >
+    {{ transfer().duration }}
+  </span>
+  <p class="text-xs text-woodsmoke/70 font-light leading-relaxed">
+    {{ transfer().details }}
+  </p>
+</div>

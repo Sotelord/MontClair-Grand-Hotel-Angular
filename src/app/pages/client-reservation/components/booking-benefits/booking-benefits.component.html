@@ -1,0 +1,22 @@
+<div
+  class="p-4 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-2 text-[11px] text-woodsmoke/70 font-light"
+>
+  @for (benefit of benefits; track benefit) {
+    <div class="flex items-center gap-2">
+      <svg
+        class="w-3.5 h-3.5 text-twine flex-shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+      <span>{{ benefit }}</span>
+    </div>
+  }
+</div>

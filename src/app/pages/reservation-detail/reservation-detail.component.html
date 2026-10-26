@@ -1,287 +1,75 @@
 <section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-  <!-- BREADCRUMB & BACK BUTTON -->
-  <div class="mb-6 flex items-center justify-between">
-    <button
-      type="button"
-      (click)="goBack()"
-      class="inline-flex items-center gap-2 text-xs uppercase tracking-wider font-semibold text-woodsmoke/70 hover:text-twine transition cursor-pointer"
-    >
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      <span>Volver</span>
-    </button>
-
-    <div class="flex items-center gap-3">
-      <a
-        [routerLink]="isAdminView ? ['/admin/reservations/edit', reservation.id] : ['/reservations/edit', reservation.id]"
-        *ngIf="reservation"
-        style="background-color: #BF925A; color: #FFFFFF;"
-        class="hover:opacity-90 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-4 rounded-[2px] transition shadow-xs inline-flex items-center gap-2"
-      >
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        <span>Modificar</span>
-      </a>
-    </div>
-  </div>
+  <app-detail-toolbar
+    [reservationId]="reservation?.id ?? null"
+    [isAdminView]="isAdminView"
+    (backClicked)="goBack()"
+  ></app-detail-toolbar>
 
   @if (isLoading) {
-    <div class="py-24 text-center">
-      <div class="inline-block w-8 h-8 border-2 border-twine border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p class="text-xs uppercase tracking-widest text-woodsmoke/60">Cargando detalles de la reserva...</p>
-    </div>
+    <app-detail-loading></app-detail-loading>
   } @else if (errorMessage || !reservation) {
-    <div class="bg-white border border-red-200 rounded-[4px] p-8 text-center max-w-lg mx-auto shadow-sm">
-      <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <circle cx="12" cy="12" r="10" stroke-width="2" />
-          <line x1="12" y1="8" x2="12" y2="12" stroke-width="2" stroke-linecap="round" />
-          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </div>
-      <h3 class="font-sans font-bold text-lg uppercase tracking-wide text-woodsmoke mb-2">Reserva no encontrada</h3>
-      <p class="text-xs text-woodsmoke/60 mb-6">{{ errorMessage }}</p>
-      <button type="button" (click)="goBack()" class="btn btn-outline">Volver</button>
-    </div>
+    <app-detail-not-found
+      [message]="errorMessage"
+      (backClicked)="goBack()"
+    ></app-detail-not-found>
   } @else {
     <!-- DETALLE DE RESERVA -->
-    <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative">
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative"
+    >
       <!-- TOP GOLD ACCENT -->
-      <div class="h-2 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+      <div
+        class="h-2 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+      ></div>
 
-      <!-- HEADER -->
-      <div class="p-6 sm:p-10 border-b border-[#E8E2DA] bg-pampas/20">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <div class="flex items-center gap-3 mb-1.5">
-              <span class="text-[9px] uppercase tracking-[3px] font-bold text-twine">
-                MONTCLAIR GRAND HOTEL
-              </span>
-              <span class="text-woodsmoke/30">•</span>
-              <span class="text-[9px] uppercase tracking-[2px] font-mono text-woodsmoke/60">
-                DETALLE DE RESERVA
-              </span>
-            </div>
-            <h1 class="font-sans font-bold text-2xl sm:text-3xl text-woodsmoke uppercase tracking-[2px]">
-              Reserva #{{ reservation.id }}
-            </h1>
-          </div>
-
-          <div class="flex flex-col sm:items-end gap-1.5">
-            <span
-              class="px-3 py-1 rounded-[2px] text-[10px] uppercase tracking-[2px] font-bold border"
-              [ngClass]="reservation.status === 'CONFIRMED'
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                : 'bg-pampas text-woodsmoke border-[#E8E2DA]'"
-            >
-              {{ reservation.status }}
-            </span>
-          </div>
-        </div>
-      </div>
-
+      <app-reservation-header
+        [reservationId]="reservation.id"
+        [status]="reservation.status"
+      ></app-reservation-header>
       <!-- MAIN CONTENT GRID -->
       <div class="p-6 sm:p-10 space-y-8">
         <!-- SECCIÓN 1: HUÉSPED & ESTANCIA -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8 border-b border-[#E8E2DA]">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8 border-b border-[#E8E2DA]"
+        >
           <!-- DATOS DEL HUÉSPED -->
-          <div class="p-5 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-3">
-            <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block">
-              1. INFORMACIÓN DEL HUÉSPED
-            </span>
-            <div class="space-y-1.5 text-xs text-woodsmoke">
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Nombre Completo:</span>
-                <span class="font-semibold uppercase">{{ reservation.client.firstName }} {{ reservation.client.lastName || '' }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Correo Electrónico:</span>
-                <span class="font-mono">{{ reservation.client.email }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Teléfono:</span>
-                <span class="font-mono">{{ reservation.client.phone || 'No especificado' }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-woodsmoke/60">Número de Huéspedes:</span>
-                <span class="font-semibold">{{ reservation.numberOfPeople }} Huéspedes</span>
-              </div>
-              <div class="flex justify-between pt-1 border-t border-[#E8E2DA]/60">
-                <span class="text-woodsmoke/60">Código de Cliente:</span>
-                <span class="font-mono text-twine-dark font-semibold">#CLI-{{ reservation.client.id }}</span>
-              </div>
-            </div>
-          </div>
+          <app-guest-info-card
+            [reservation]="reservation"
+          ></app-guest-info-card>
 
           <!-- FECHAS DE ESTANCIA -->
-          <div class="p-5 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-3">
-            <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block">
-              2. FECHAS DE ESTANCIA
-            </span>
-            <div class="grid grid-cols-2 gap-3 pt-1">
-              <div class="p-3 bg-white border border-[#E8E2DA] rounded-[2px]">
-                <span class="text-[9px] uppercase tracking-wider text-woodsmoke/50 block font-semibold">Check-In (Llegada)</span>
-                <span class="font-sans text-base font-semibold text-woodsmoke block mt-0.5">{{ reservation.checkInDate }}</span>
-                <span class="text-[10px] text-woodsmoke/50">A partir de las 15:00 hrs</span>
-              </div>
-              <div class="p-3 bg-white border border-[#E8E2DA] rounded-[2px]">
-                <span class="text-[9px] uppercase tracking-wider text-woodsmoke/50 block font-semibold">Check-Out (Salida)</span>
-                <span class="font-sans text-base font-semibold text-woodsmoke block mt-0.5">{{ reservation.checkOutDate }}</span>
-                <span class="text-[10px] text-woodsmoke/50">Hasta las 12:00 hrs</span>
-              </div>
-            </div>
-            <div class="flex justify-between items-center text-xs text-woodsmoke/80 pt-1">
-              <span>Duración calculada:</span>
-              <span class="font-mono font-semibold text-twine-dark">
-                {{ nightsCount }} {{ nightsCount === 1 ? 'Noche' : 'Noches' }}
-              </span>
-            </div>
-          </div>
+          <app-stay-dates-card
+            [checkInDate]="reservation.checkInDate"
+            [checkOutDate]="reservation.checkOutDate"
+            [nightsCount]="nightsCount"
+          ></app-stay-dates-card>
         </div>
 
         <!-- SECCIÓN 2: HABITACIÓN RESERVADA -->
-        <div class="pb-8 border-b border-[#E8E2DA]">
-          <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block mb-4">
-            3. HABITACIÓN RESERVADA
-          </span>
-
-          @if (assignedRoom) {
-            <div class="border border-[#E8E2DA] rounded-[2px] p-5 bg-white flex flex-col md:flex-row gap-6 items-start">
-              <img
-                [src]="assignedRoom.secondaryImageUrl || assignedRoom.imageUrl || assignedRoom.roomType.imageUrl || 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80'"
-                [alt]="assignedRoom.name"
-                class="w-full md:w-48 h-36 object-cover rounded-[2px] border border-[#E8E2DA] flex-shrink-0"
-              />
-
-              <div class="flex-grow space-y-3 w-full">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <span class="text-[10px] uppercase tracking-wider font-semibold text-twine">
-                      {{ assignedRoom.roomType.name || 'Categoría Premium' }}
-                    </span>
-                    <h3 class="font-sans font-bold text-xl uppercase tracking-wide text-woodsmoke">
-                      {{ assignedRoom.name || 'Habitación ' + assignedRoom.number }}
-                    </h3>
-                  </div>
-
-                  <div class="text-left sm:text-right">
-                    <span class="text-[10px] uppercase text-woodsmoke/50 block">Tarifa Aplicada</span>
-                    <span class="font-mono text-lg font-bold text-twine-dark">
-                      {{ formatPrice(roomPricePerNight) }}
-                      <span class="text-xs font-normal text-woodsmoke/50">/ noche</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#E8E2DA] text-xs text-woodsmoke">
-                  <div>
-                    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Número</span>
-                    <span class="font-mono font-bold text-woodsmoke text-sm">#{{ assignedRoom.number }}</span>
-                  </div>
-                  <div>
-                    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Planta / Piso</span>
-                    <span class="font-semibold text-woodsmoke">Piso {{ assignedRoom.floor }}</span>
-                  </div>
-                  <div>
-                    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Capacidad</span>
-                    <span class="font-semibold text-woodsmoke">{{ assignedRoom.capacity }} Huéspedes</span>
-                  </div>
-                  <div>
-                    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">Superficie</span>
-                    <span class="font-semibold text-woodsmoke">{{ assignedRoom.area || 30 }} m²</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          } @else {
-            <div class="p-6 bg-pampas/50 border border-dashed border-[#E8E2DA] text-center text-xs text-woodsmoke/60">
-              No se encontraron datos detallados de la habitación asociada.
-            </div>
-          }
-        </div>
+        <app-room-section
+          [room]="assignedRoom"
+          [pricePerNight]="roomPricePerNight"
+        ></app-room-section>
 
         <!-- SECCIÓN 3: SERVICIOS CONTRATADOS -->
-        <div class="pb-8 border-b border-[#E8E2DA]">
-          <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block mb-4">
-            4. SERVICIOS Y EXPERIENCIAS CONTRATADAS
-          </span>
-
-          @if (acquiredServices && acquiredServices.length > 0) {
-            <div class="border border-[#E8E2DA] rounded-[2px] overflow-hidden">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]">
-                  <tr>
-                    <th class="py-3 px-4">Servicio</th>
-                    <th class="py-3 px-4 text-center">Cantidad</th>
-                    <th class="py-3 px-4 text-right">Precio Unitario</th>
-                    <th class="py-3 px-4 text-right">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
-                  @for (acq of acquiredServices; track acq.id) {
-                    <tr class="hover:bg-pampas/20">
-                      <td class="py-3 px-4 font-semibold">
-                        {{ acq.service.name || 'Servicio del Hotel' }}
-                      </td>
-                      <td class="py-3 px-4 text-center font-mono">
-                        {{ acq.quantity }}
-                      </td>
-                      <td class="py-3 px-4 text-right font-mono">
-                        {{ formatPrice(acq.unitPrice) }}
-                      </td>
-                      <td class="py-3 px-4 text-right font-mono font-semibold text-twine-dark">
-                        {{ formatPrice(acq.quantity * acq.unitPrice) }}
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          } @else {
-            <div class="p-4 bg-pampas/30 border border-[#E8E2DA] rounded-[2px] text-xs text-woodsmoke/60 italic">
-              Esta reserva no incluye servicios adicionales contratados.
-            </div>
-          }
-        </div>
-
+        <app-services-section
+          [services]="acquiredServices"
+        ></app-services-section>
         <!-- SECCIÓN 4: LIQUIDACIÓN FINANCIERA -->
-        <div class="flex justify-end">
-          <div class="w-full sm:w-80 bg-pampas/30 border border-[#E8E2DA] p-5 rounded-[2px] space-y-3 text-xs">
-            <span class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block border-b border-[#E8E2DA] pb-2">
-              DESGLOSE DE CUENTA
-            </span>
-
-            <div class="flex justify-between text-woodsmoke/70">
-              <span>Estancia ({{ nightsCount }} noches):</span>
-              <span class="font-mono text-woodsmoke">{{ formatPrice(roomSubtotal) }}</span>
-            </div>
-
-            <div class="flex justify-between text-woodsmoke/70">
-              <span>Servicios Adicionales:</span>
-              <span class="font-mono text-woodsmoke">{{ formatPrice(servicesSubtotal) }}</span>
-            </div>
-
-            <div class="pt-3 border-t-2 border-[#E8E2DA] flex justify-between items-baseline">
-              <span class="font-sans uppercase tracking-wider text-xs font-bold text-woodsmoke">
-                TOTAL RESERVA:
-              </span>
-              <span class="font-mono text-2xl font-bold text-twine-dark">
-                {{ formatPrice(grandTotal) }}
-              </span>
-            </div>
-
-            <p class="text-[10px] text-woodsmoke/50 text-right">
-              Impuestos y tasas de estancia incluidos.
-            </p>
-          </div>
-        </div>
+        <app-account-summary
+          [nightsCount]="nightsCount"
+          [roomSubtotal]="roomSubtotal"
+          [servicesSubtotal]="servicesSubtotal"
+          [grandTotal]="grandTotal"
+        ></app-account-summary>
       </div>
 
       <!-- VOUCHER FOOTER -->
-      <div class="p-6 bg-pampas/40 border-t border-[#E8E2DA] text-center text-[10px] text-woodsmoke/50 font-light">
-        MontClair Grand Hotel • Luxury Stay & Concierge Experience • Emitido electrónicamente sin necesidad de firma física.
+      <div
+        class="p-6 bg-pampas/40 border-t border-[#E8E2DA] text-center text-[10px] text-woodsmoke/50 font-light"
+      >
+        MontClair Grand Hotel • Luxury Stay & Concierge Experience • Emitido
+        electrónicamente sin necesidad de firma física.
       </div>
     </div>
   }

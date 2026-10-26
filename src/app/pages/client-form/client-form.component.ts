@@ -1,20 +1,34 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
+import { ClientFormHeaderComponent } from './components/client-form-header/client-form-header.component';
+import { PersonalInfoFieldsComponent } from './components/personal-info-fields/personal-info-fields.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { AccountFieldsComponent } from './components/account-fields/account-fields.component';
+import { ProfileFieldsComponent } from './components/profile-fields/profile-fields.component';
+import { ClientFormActionsComponent } from './components/client-form-actions/client-form-actions.component';
+import { LoginLinkComponent } from './components/login-link/login-link.component';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    ClientFormHeaderComponent,
+    PersonalInfoFieldsComponent,
+    ErrorAlertComponent,
+    AccountFieldsComponent,
+    ProfileFieldsComponent,
+    ClientFormActionsComponent,
+    LoginLinkComponent,
+  ],
   templateUrl: './client-form.component.html',
   styleUrl: './client-form.component.scss',
 })
@@ -70,26 +84,11 @@ export class ClientFormComponent implements OnInit {
 
   private initForm(): void {
     this.clientForm = this.fb.group({
-      firstName: [
-        '',
-        [Validators.required, Validators.minLength(2)],
-      ],
-      lastName: [
-        '',
-        [Validators.required, Validators.minLength(2)],
-      ],
-      username: [
-        '',
-        [Validators.required, Validators.minLength(3)],
-      ],
-      email: [
-        '',
-        [Validators.required, Validators.email],
-      ],
-      password: [
-        '',
-        [Validators.required, Validators.minLength(3)],
-      ],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(3)]],
       phone: [''],
       avatarUrl: [''],
       role: ['CLIENT', [Validators.required]],
@@ -126,9 +125,7 @@ export class ClientFormComponent implements OnInit {
         .subscribe({
           next: (updated) => {
             this.router.navigate(
-              this.isAdminView
-                ? ['/admin/clients']
-                : ['/profile', updated.id],
+              this.isAdminView ? ['/admin/clients'] : ['/profile', updated.id],
             );
           },
           error: () => {
@@ -151,15 +148,5 @@ export class ClientFormComponent implements OnInit {
         },
       });
     }
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.clientForm.get(fieldName);
-
-    return !!(
-      field &&
-      field.invalid &&
-      (field.dirty || field.touched)
-    );
   }
 }

@@ -1,0 +1,16 @@
+<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+  <a
+    routerLink="/"
+    class="w-full sm:w-auto bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm"
+  >
+    Volver al Inicio
+  </a>
+
+  <button
+    type="button"
+    (click)="backClicked.emit()"
+    class="w-full sm:w-auto border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 cursor-pointer"
+  >
+    Regresar
+  </button>
+</div>

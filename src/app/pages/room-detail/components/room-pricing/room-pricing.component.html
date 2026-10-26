@@ -1,0 +1,58 @@
+<div
+  class="bg-pampas/60 border border-[#E8E2DA] rounded-[2px] p-6 flex flex-col justify-between space-y-6 h-full"
+>
+  <div>
+    <span
+      class="text-[9px] uppercase tracking-[2px] font-bold text-twine block mb-1"
+    >
+      TARIFA DE ESTANCIA
+    </span>
+
+    <div class="flex items-baseline gap-2 mb-4">
+      <span class="font-serif text-3xl font-semibold text-twine-dark">
+        {{ formatPrice(room().pricePerNight) }}
+      </span>
+      <span class="text-xs text-woodsmoke/50 font-normal">/ noche</span>
+    </div>
+
+    <div class="space-y-3 pt-4 border-t border-[#E8E2DA] text-xs">
+      <div class="flex justify-between">
+        <span class="text-woodsmoke/60">Capacidad Máxima:</span>
+        <span class="font-semibold text-woodsmoke"
+          >{{ room().capacity }} Personas</span
+        >
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-woodsmoke/60">Configuración Cama:</span>
+        <span class="font-semibold text-woodsmoke">{{
+          room().bedType || "King Size"
+        }}</span>
+      </div>
+
+      <div class="flex justify-between">
+        <span class="text-woodsmoke/60">Superficie:</span>
+        <span class="font-semibold text-woodsmoke"
+          >{{ room().area || 30 }} m²</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-3">
+    <a
+      routerLink="/reservations/book"
+      [queryParams]="{ roomTypeId: room().roomType.id }"
+      class="w-full text-center block bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-4 rounded-[2px] transition duration-300 shadow-sm"
+    >
+      Reservar este Tipo de Habitación
+    </a>
+
+    <a
+      routerLink="/rooms/cards"
+      class="w-full text-center block border border-[#E8E2DA] hover:bg-white text-woodsmoke/70 text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-4 rounded-[2px] transition"
+    >
+      Ver Todas las Habitaciones
+    </a>
+  </div>
+</div>

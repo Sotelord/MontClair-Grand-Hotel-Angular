@@ -5,241 +5,29 @@
     <div
       class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
     ></div>
-
-    <div class="text-center mb-8">
-      <span
-        class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-2"
-      >
-        {{ isEditMode ? "ADMINISTRACIÓN DE CUENTA" : "MEMBRESÍA & ACCESO" }}
-      </span>
-      <h1
-        class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase"
-      >
-        {{ isEditMode ? "Modificar Cliente" : "Crear Nueva Cuenta" }}
-      </h1>
-      <div class="flex items-center justify-center gap-3 mt-3">
-        <div class="h-[1px] w-8 bg-twine/40"></div>
-        <div class="w-1.5 h-1.5 rotate-45 border border-twine"></div>
-        <div class="h-[1px] w-8 bg-twine/40"></div>
-      </div>
-      <p class="text-xs text-woodsmoke/60 mt-3 max-w-md mx-auto">
-        {{
-          isEditMode
-            ? "Actualiza la información y credenciales asociadas a este cliente."
-            : "Ingresa los datos para registrar un huésped y disfrutar de la experiencia Montclair Grand Hotel."
-        }}
-      </p>
-    </div>
+    <app-client-form-header [isEditMode]="isEditMode"></app-client-form-header>
     @if (errorMessage) {
-      <div
-        class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between"
-      >
-        <div class="flex items-center gap-2">
-          <svg
-            class="w-4 h-4 text-red-600 flex-shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span>{{ errorMessage }}</span>
-        </div>
-        <button
-          type="button"
-          (click)="errorMessage = null"
-          class="text-red-500 hover:text-red-700"
-        >
-          ✕
-        </button>
-      </div>
+      <app-error-alert
+        [message]="errorMessage"
+        (closed)="errorMessage = null"
+      ></app-error-alert>
     }
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Nombre *
-          </label>
-          <input
-            type="text"
-            formControlName="firstName"
-            placeholder="ej. Alejandro"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-            [class.border-red-400]="isFieldInvalid('firstName')"
-          />
-          @if (isFieldInvalid("firstName")) {
-            <span class="text-[10px] text-red-500 mt-1 block"
-              >El nombre es requerido.</span
-            >
-          }
-        </div>
-
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Apellido *
-          </label>
-          <input
-            type="text"
-            formControlName="lastName"
-            placeholder="ej. Morales"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-            [class.border-red-400]="isFieldInvalid('lastName')"
-          />
-          @if (isFieldInvalid("lastName")) {
-            <span class="text-[10px] text-red-500 mt-1 block"
-              >El apellido es requerido.</span
-            >
-          }
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Nombre de Usuario *
-          </label>
-          <input
-            type="text"
-            formControlName="username"
-            placeholder="ej. amorales"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-            [class.border-red-400]="isFieldInvalid('username')"
-          />
-          @if (isFieldInvalid("username")) {
-            <span class="text-[10px] text-red-500 mt-1 block"
-              >El usuario es requerido.</span
-            >
-          }
-        </div>
-
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Correo Electrónico *
-          </label>
-          <input
-            type="email"
-            formControlName="email"
-            placeholder="ej. amorales@example.com"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-            [class.border-red-400]="isFieldInvalid('email')"
-          />
-          @if (isFieldInvalid("email")) {
-            <span class="text-[10px] text-red-500 mt-1 block"
-              >Ingresa un correo electrónico válido.</span
-            >
-          }
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Contraseña *
-          </label>
-          <input
-            type="password"
-            formControlName="password"
-            placeholder="••••••••"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-            [class.border-red-400]="isFieldInvalid('password')"
-          />
-          @if (isFieldInvalid("password")) {
-            <span class="text-[10px] text-red-500 mt-1 block"
-              >La contraseña es requerida.</span
-            >
-          }
-        </div>
-
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            Teléfono de Contacto
-          </label>
-          <input
-            type="tel"
-            formControlName="phone"
-            placeholder="ej. +34 600 123 456"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-          />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1" [class.sm:grid-cols-2]="isAdminView" gap-4>
-        <div>
-          <label
-            class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-          >
-            URL de Foto de Perfil (Opcional)
-          </label>
-          <input
-            type="url"
-            formControlName="avatarUrl"
-            placeholder="https://images.unsplash.com/..."
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-          />
-        </div>
-
-        @if (isAdminView) {
-          <div>
-            <label
-              class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-            >
-              Rol de Usuario *
-            </label>
-            <select
-              formControlName="role"
-              class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer"
-            >
-              <option value="CLIENT">Huésped (CLIENT)</option>
-              <option value="ADMIN">Administrador (ADMIN)</option>
-            </select>
-          </div>
-        }
-      </div>
-
-      <div class="pt-4 flex flex-col sm:flex-row gap-3">
-        <button
-          type="submit"
-          class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
-        >
-          {{ isEditMode ? "Guardar Cambios" : "Registrarme e Ingresar" }}
-        </button>
-
-        <a
-          [routerLink]="isAdminView ? '/admin/clients' : '/login'"
-          class="sm:w-auto text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300"
-        >
-          Cancelar
-        </a>
-      </div>
+      <app-personal-info-fields [form]="clientForm"></app-personal-info-fields>
+      <app-account-fields [form]="clientForm"></app-account-fields>
+      <app-profile-fields
+        [form]="clientForm"
+        [isAdminView]="isAdminView"
+      ></app-profile-fields>
+      <app-client-form-actions
+        [isEditMode]="isEditMode"
+        [isAdminView]="isAdminView"
+      ></app-client-form-actions>
     </form>
 
     @if (!isEditMode && !isAdminView) {
-      <div class="mt-6 pt-5 border-t border-[#E8E2DA] text-center">
-        <p class="text-xs text-woodsmoke/60">
-          ¿Ya tienes una cuenta registrada?
-          <a
-            routerLink="/login"
-            class="text-twine-dark font-bold hover:underline ml-1"
-          >
-            Inicia sesión aquí
-          </a>
-        </p>
-      </div>
+      <app-login-link></app-login-link>
     }
   </div>
 </div>

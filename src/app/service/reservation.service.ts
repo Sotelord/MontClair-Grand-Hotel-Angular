@@ -7,6 +7,7 @@ import {
   ReservationRequestDTO,
 } from '../models/reservation.model';
 
+//Acceso a la API REST de reservas (/api/reservations) y reglas de negocio que se validan en el cliente: fechas, huéspedes y cálculo de totales.
 @Injectable({
   providedIn: 'root',
 })
@@ -14,53 +15,49 @@ export class ReservationService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/reservations';
 
+  //Límites de negocio para validar una reserva.
   private static readonly MAX_STAY_NIGHTS = 30;
   private static readonly MAX_ADVANCE_YEARS = 1;
   private static readonly MIN_GUESTS = 1;
   private static readonly MAX_GUESTS = 10;
 
+  //Lista todas las reservas con su detalle completo.
   findAll(): Observable<Reservation[]> {
     return this.http.get<Reservation[]>(this.apiUrl);
   }
 
+  //Lista las reservas en formato resumido (DTO plano), usado en el panel de administración.
   findSummary(): Observable<ReservationDTO[]> {
-    return this.http.get<ReservationDTO[]>(
-      `${this.apiUrl}/summary`,
-    );
+    return this.http.get<ReservationDTO[]>(`${this.apiUrl}/summary`);
   }
 
+  //Busca una reserva por su id.
   findById(id: number): Observable<Reservation> {
-    return this.http.get<Reservation>(
-      `${this.apiUrl}/${id}`,
-    );
+    return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
   }
 
+  //Lista las reservas de un cliente (perfil del huésped).
   findByClientId(clientId: number): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(
-      `${this.apiUrl}/client/${clientId}`,
-    );
+    return this.http.get<Reservation[]>(`${this.apiUrl}/client/${clientId}`);
   }
 
+  //Crea una reserva. Recibe el DTO de solicitud, no la entidad completa.
   add(data: ReservationRequestDTO): Observable<Reservation> {
-    return this.http.post<Reservation>(
-      this.apiUrl,
-      data,
-    );
+    return this.http.post<Reservation>(this.apiUrl, data);
   }
 
+  //Actualiza una reserva existente (PUT).
   update(id: number, data: ReservationRequestDTO): Observable<Reservation> {
-    return this.http.put<Reservation>(
-      `${this.apiUrl}/${id}`,
-      data,
-    );
+    return this.http.put<Reservation>(`${this.apiUrl}/${id}`, data);
   }
 
+  //Elimina una reserva; el backend libera la habitación asociada.
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(
-      `${this.apiUrl}/${id}`,
-    );
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  /*Convierte una fecha "YYYY-MM-DD" a milisegundos en UTC a medianoche. Se usa UTC para que la zona horaria o el horario de verano no alteren
+  la diferencia de días entre dos fechas.*/
   private parseIsoDateUtc(dateStr: string): number | null {
     if (!dateStr || typeof dateStr !== 'string') {
       return null;
@@ -81,6 +78,8 @@ export class ReservationService {
     return isNaN(time) ? null : time;
   }
 
+  /*Valida fechas y número de huéspedes de una reserva. Reglas: fechas válidas, entrada no pasada, salida posterior a la entrada,
+  máximo de noches, máximo un año de anticipación y huéspedes entre 1 y 10.*/
   validateReservationDatesAndGuests(
     checkInDate: string,
     checkOutDate: string,
@@ -100,13 +99,12 @@ export class ReservationService {
     }
 
     const now = new Date();
-    const todayUtc = Date.UTC(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
+    const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (!isEditMode || (originalCheckInDate && checkInDate !== originalCheckInDate)) {
+    if (
+      !isEditMode ||
+      (originalCheckInDate && checkInDate !== originalCheckInDate)
+    ) {
       if (startUtc < todayUtc) {
         return isEditMode
           ? 'La nueva fecha de entrada no puede ser anterior a la fecha actual.'
@@ -144,27 +142,22 @@ export class ReservationService {
     return null;
   }
 
-  calculateNights(
-    checkInDate: string,
-    checkOutDate: string,
-  ): number {
+  /*Calcula las noches entre dos fechas "YYYY-MM-DD". Si alguna fecha es inválida o la diferencia no es positiva devuelve 1,
+  para que los totales mostrados nunca queden en 0 noches.*/
+  calculateNights(checkInDate: string, checkOutDate: string): number {
     const start = this.parseIsoDateUtc(checkInDate);
     const end = this.parseIsoDateUtc(checkOutDate);
     if (start === null || end === null) {
       return 1;
     }
-    const diffDays = Math.round(
-      (end - start) / (1000 * 60 * 60 * 24),
-    );
+    const diffDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
 
     return diffDays > 0 ? diffDays : 1;
   }
 
+  //Subtotal de la estancia: noches × tarifa por noche.
   calculateRoomSubtotal(res: Reservation): number {
-    const nights = this.calculateNights(
-      res.checkInDate,
-      res.checkOutDate,
-    );
+    const nights = this.calculateNights(res.checkInDate, res.checkOutDate);
 
     const roomPrice =
       res.reservationRooms?.[0]?.pricePerNight ||
@@ -174,21 +167,20 @@ export class ReservationService {
     return nights * roomPrice;
   }
 
+  //Subtotal de servicios: suma de cantidad × precio unitario de cada servicio contratado.
   calculateServicesSubtotal(res: Reservation): number {
-    const services =
-      res.reservationRooms?.[0]?.acquiredServices || [];
+    const services = res.reservationRooms?.[0]?.acquiredServices || [];
 
     return services.reduce(
-      (acc, curr) =>
-        acc + curr.quantity * curr.unitPrice,
+      (acc, curr) => acc + curr.quantity * curr.unitPrice,
       0,
     );
   }
 
+  //Total de la reserva: estancia + servicios.
   calculateGrandTotal(res: Reservation): number {
     return (
-      this.calculateRoomSubtotal(res) +
-      this.calculateServicesSubtotal(res)
+      this.calculateRoomSubtotal(res) + this.calculateServicesSubtotal(res)
     );
   }
 }

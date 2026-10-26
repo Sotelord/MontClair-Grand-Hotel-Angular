@@ -1,0 +1,36 @@
+<div
+  [formGroup]="form()"
+  class="grid grid-cols-1 gap-4"
+  [class.sm:grid-cols-2]="isAdminView()"
+>
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      URL de Foto de Perfil (Opcional)
+    </label>
+    <input
+      type="url"
+      formControlName="avatarUrl"
+      placeholder="https://images.unsplash.com/..."
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+
+  @if (isAdminView()) {
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Rol de Usuario *
+      </label>
+      <select
+        formControlName="role"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer"
+      >
+        <option value="CLIENT">Huésped (CLIENT)</option>
+        <option value="ADMIN">Administrador (ADMIN)</option>
+      </select>
+    </div>
+  }
+</div>

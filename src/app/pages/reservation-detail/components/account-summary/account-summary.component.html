@@ -1,0 +1,41 @@
+<div class="flex justify-end">
+  <div
+    class="w-full sm:w-80 bg-pampas/30 border border-[#E8E2DA] p-5 rounded-[2px] space-y-3 text-xs"
+  >
+    <span
+      class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block border-b border-[#E8E2DA] pb-2"
+    >
+      DESGLOSE DE CUENTA
+    </span>
+
+    <div class="flex justify-between text-woodsmoke/70">
+      <span>Estancia ({{ nightsCount() }} noches):</span>
+      <span class="font-mono text-woodsmoke">{{
+        formatPrice(roomSubtotal())
+      }}</span>
+    </div>
+
+    <div class="flex justify-between text-woodsmoke/70">
+      <span>Servicios Adicionales:</span>
+      <span class="font-mono text-woodsmoke">{{
+        formatPrice(servicesSubtotal())
+      }}</span>
+    </div>
+
+    <div
+      class="pt-3 border-t-2 border-[#E8E2DA] flex justify-between items-baseline"
+    >
+      <span
+        class="font-sans uppercase tracking-wider text-xs font-bold text-woodsmoke"
+        >TOTAL RESERVA:</span
+      >
+      <span class="font-mono text-2xl font-bold text-twine-dark">{{
+        formatPrice(grandTotal())
+      }}</span>
+    </div>
+
+    <p class="text-[10px] text-woodsmoke/50 text-right">
+      Impuestos y tasas de estancia incluidos.
+    </p>
+  </div>
+</div>

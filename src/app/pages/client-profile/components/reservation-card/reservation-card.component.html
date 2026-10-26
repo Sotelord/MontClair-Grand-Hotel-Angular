@@ -1,0 +1,134 @@
+<div
+  class="border border-[#E8E2DA] rounded-[2px] p-5 hover:border-twine transition bg-pampas/20"
+>
+  <div
+    class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]"
+  >
+    <div>
+      <span class="font-mono text-twine-dark font-semibold text-xs"
+        >#{{ reservation().id }}</span
+      >
+
+      <h3
+        class="font-serif text-base font-semibold text-woodsmoke uppercase mt-0.5"
+      >
+        {{ firstRoom?.room?.name || "Habitación Reservada" }}
+        (Hab. {{ firstRoom?.room?.number }})
+      </h3>
+    </div>
+
+    <span
+      class="px-3 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border"
+      [ngClass]="
+        reservation().status === 'CONFIRMED'
+          ? 'bg-twine/10 text-twine-dark border-twine/40'
+          : 'bg-pampas text-woodsmoke/70 border-[#E8E2DA]'
+      "
+    >
+      {{ reservation().status }}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 text-xs">
+    <div>
+      <span class="text-woodsmoke/50 text-[10px] uppercase block">Fechas</span>
+      <span class="font-mono text-woodsmoke">
+        {{ reservation().checkInDate }} → {{ reservation().checkOutDate }}
+      </span>
+    </div>
+
+    <div>
+      <span class="text-woodsmoke/50 text-[10px] uppercase block"
+        >Huéspedes</span
+      >
+      <span class="text-woodsmoke"
+        >{{ reservation().numberOfPeople }} Personas</span
+      >
+    </div>
+
+    <div>
+      <span class="text-woodsmoke/50 text-[10px] uppercase block"
+        >Tarifa Base</span
+      >
+      <span class="font-semibold text-twine-dark">
+        {{ formatPrice(firstRoom?.pricePerNight || 0) }}
+        / noche
+      </span>
+    </div>
+  </div>
+
+  @if (firstRoom?.acquiredServices?.length) {
+    <div
+      class="mt-3 pt-2 border-t border-[#E8E2DA]/60 text-[11px] text-woodsmoke/70"
+    >
+      <span class="font-semibold text-woodsmoke/80">Servicios Incluidos:</span>
+
+      @for (svc of firstRoom?.acquiredServices; track svc.id) {
+        <span
+          class="inline-block bg-pampas border border-[#E8E2DA] px-2 py-0.5 rounded-[2px] mr-2 mt-1"
+        >
+          {{ svc.quantity }}x {{ svc.service.name }} (€{{ svc.unitPrice }})
+        </span>
+      }
+    </div>
+  }
+
+  <div
+    class="mt-4 pt-3 border-t border-[#E8E2DA]/60 flex items-center justify-end gap-3"
+  >
+    <a
+      [routerLink]="['/reservations', reservation().id]"
+      class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer"
+    >
+      <svg
+        class="w-3.5 h-3.5 text-twine"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+        />
+      </svg>
+      Ver Detalle
+    </a>
+
+    <a
+      [routerLink]="['/reservations/edit', reservation().id]"
+      class="border border-twine/40 bg-twine/10 hover:bg-twine hover:text-white text-twine-dark text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer"
+    >
+      <svg
+        class="w-3.5 h-3.5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+        />
+      </svg>
+      Modificar
+    </a>
+
+    <button
+      type="button"
+      (click)="deleteRequested.emit(reservation())"
+      [disabled]="isDeleting()"
+      class="bg-red-50 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed text-red-700 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition cursor-pointer border border-red-200"
+    >
+      {{ isDeleting() ? "Eliminando..." : "Eliminar Reserva" }}
+    </button>
+  </div>
+</div>

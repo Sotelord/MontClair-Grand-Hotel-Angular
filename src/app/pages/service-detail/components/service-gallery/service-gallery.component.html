@@ -1,0 +1,25 @@
+<section class="max-w-6xl mx-auto px-6 pt-24">
+  <div class="text-center mb-10">
+    <h4
+      class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold mb-3"
+    >
+      THE MONTCLAIR RITUAL
+    </h4>
+    <h2 class="font-serif text-3xl text-woodsmoke tracking-[2px] uppercase">
+      GALERÍA
+    </h2>
+    <app-ornament-divider class="block mt-6" />
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    @for (img of images(); track $index) {
+      <div class="border-[4px] border-twine/80 p-1 bg-white">
+        <img
+          [src]="img"
+          alt="Gallery image"
+          class="w-full aspect-[4/3] object-cover"
+        />
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,14 @@
+<div>
+  <h3 class="font-serif text-base uppercase tracking-wider text-woodsmoke mb-3">
+    Aspectos Destacados
+  </h3>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    @for (h of highlights(); track h.title) {
+      <div class="p-4 bg-pampas/40 border border-[#E8E2DA] rounded-[2px]">
+        <h4 class="font-semibold text-xs text-woodsmoke mb-1">{{ h.title }}</h4>
+        <p class="text-[11px] text-woodsmoke/60">{{ h.description }}</p>
+      </div>
+    }
+  </div>
+</div>

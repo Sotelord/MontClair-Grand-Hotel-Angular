@@ -1,0 +1,50 @@
+<div
+  class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6"
+>
+  <div class="flex flex-col sm:flex-row items-center gap-6">
+    <img
+      [src]="client().avatarUrl || defaultAvatar"
+      [alt]="client().firstName"
+      class="w-24 h-24 rounded-full object-cover border-3 border-twine shadow-md"
+    />
+
+    <div class="text-center sm:text-left">
+      <span
+        class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+      >
+        {{
+          client().role === "ADMIN"
+            ? "ADMINISTRADOR DEL HOTEL"
+            : "HUÉSPED DISTINGUIDO"
+        }}
+      </span>
+
+      <h1
+        class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[1px] uppercase"
+      >
+        {{ client().firstName }} {{ client().lastName || "" }}
+      </h1>
+
+      <p class="text-xs text-woodsmoke/60 mt-1 font-mono">
+        &#64;{{ client().username }} • {{ client().email }}
+      </p>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <a
+      [routerLink]="['/profile/edit', client().id]"
+      class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer"
+    >
+      Editar Perfil
+    </a>
+
+    <button
+      type="button"
+      (click)="logoutClicked.emit()"
+      class="bg-red-50 hover:bg-red-100 text-red-700 text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer border border-red-200"
+    >
+      Cerrar Sesión
+    </button>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div
+  [formGroup]="form()"
+  class="bg-white border border-[#E8E2DA] rounded-[4px] p-6 sm:p-8 shadow-sm"
+>
+  <span
+    class="text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-2"
+    >PASO 1</span
+  >
+
+  <h2 class="font-serif text-xl uppercase tracking-wider text-woodsmoke mb-4">
+    Seleccionar Suite o Habitación
+  </h2>
+
+  <div class="mb-6">
+    <label
+      class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+    >
+      Tipo de habitación
+    </label>
+
+    <select
+      formControlName="roomTypeId"
+      class="w-full px-4 py-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke"
+    >
+      @for (type of roomTypes(); track type.id) {
+        <option [value]="type.id">
+          {{ type.name }} · {{ formatPrice(type.pricePerNight) }} / noche
+        </option>
+      }
+    </select>
+  </div>
+
+  @if (selectedRoomType(); as selected) {
+    <div
+      class="p-4 bg-pampas/30 border border-[#E8E2DA] rounded-[3px] flex flex-col sm:flex-row items-center gap-4"
+    >
+      @if (selected.imageUrl) {
+        <img
+          [src]="selected.imageUrl"
+          [alt]="selected.name"
+          class="w-full sm:w-36 h-24 object-cover rounded-[2px] border border-[#E8E2DA]"
+        />
+      }
+
+      <div class="flex-grow text-xs space-y-1 text-woodsmoke/80">
+        <div class="flex justify-between items-start">
+          <h3
+            class="font-serif text-base font-semibold text-woodsmoke uppercase"
+          >
+            {{ selected.name }}
+          </h3>
+
+          <span class="font-mono text-twine-dark font-bold text-sm">
+            {{ formatPrice(selected.pricePerNight) }} / noche
+          </span>
+        </div>
+
+        <p class="text-[11px] text-woodsmoke/60">{{ selected.description }}</p>
+      </div>
+    </div>
+  }
+</div>

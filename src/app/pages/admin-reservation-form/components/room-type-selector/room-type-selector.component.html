@@ -1,0 +1,46 @@
+<div [formGroup]="form()">
+  <label
+    class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2"
+  >
+    Tipo de Habitación *
+  </label>
+
+  <div
+    class="space-y-1 max-h-52 overflow-y-auto border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20"
+  >
+    @for (type of roomTypes(); track type.id) {
+      <label
+        class="flex items-center gap-3 p-3 rounded-[2px] hover:bg-white transition cursor-pointer"
+      >
+        <input
+          type="radio"
+          formControlName="roomTypeId"
+          [value]="type.id"
+          class="accent-twine"
+        />
+
+        <span
+          class="text-xs text-woodsmoke flex-1 flex justify-between items-center gap-3"
+        >
+          <span>
+            <strong>{{ type.name }}</strong>
+
+            <span class="block text-[10px] text-woodsmoke/60 mt-1">
+              {{ type.description }}
+            </span>
+          </span>
+
+          <span
+            class="font-mono text-twine-dark font-semibold whitespace-nowrap"
+          >
+            {{ formatPrice(type.pricePerNight) }}/noche
+          </span>
+        </span>
+      </label>
+    } @empty {
+      <p class="text-xs text-woodsmoke/50 italic p-3 text-center">
+        No hay tipos de habitación registrados.
+      </p>
+    }
+  </div>
+</div>

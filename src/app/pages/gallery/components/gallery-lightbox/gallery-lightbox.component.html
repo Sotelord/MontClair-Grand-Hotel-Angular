@@ -1,0 +1,54 @@
+<div
+  class="fixed inset-0 z-50 bg-mirage/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-fade-in"
+  (click)="closed.emit()"
+>
+  <div
+    class="relative max-w-4xl w-full bg-woodsmoke border border-twine/40 rounded-[3px] overflow-hidden shadow-2xl"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      type="button"
+      (click)="closed.emit()"
+      class="absolute top-4 right-4 z-20 text-white/70 hover:text-white bg-mirage/70 hover:bg-mirage rounded-full w-10 h-10 flex items-center justify-center transition border border-white/20 cursor-pointer"
+      aria-label="Cerrar modal"
+    >
+      <span class="text-xl font-mono leading-none">&times;</span>
+    </button>
+
+    <div
+      class="max-h-[75vh] overflow-hidden bg-black flex items-center justify-center"
+    >
+      <img
+        [src]="item().imageUrl"
+        [alt]="item().title"
+        class="max-h-[75vh] w-auto max-w-full object-contain"
+      />
+    </div>
+
+    <div
+      class="p-6 bg-mirage text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+    >
+      <div>
+        <span
+          class="text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1"
+        >
+          {{ item().categoryLabel }}
+        </span>
+        <h3 class="font-serif text-xl uppercase tracking-[1px] text-white">
+          {{ item().title }}
+        </h3>
+        <p class="text-xs text-silver font-light mt-1 max-w-2xl">
+          {{ item().description }}
+        </p>
+      </div>
+
+      <a
+        routerLink="/rooms/cards"
+        (click)="closed.emit()"
+        class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-widest font-bold py-2.5 px-5 rounded-[2px] transition whitespace-nowrap"
+      >
+        Reservar
+      </a>
+    </div>
+  </div>
+</div>

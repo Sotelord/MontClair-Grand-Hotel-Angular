@@ -1,0 +1,50 @@
+<div class="pb-8 border-b border-[#E8E2DA]">
+  <span
+    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block mb-4"
+  >
+    4. SERVICIOS Y EXPERIENCIAS CONTRATADAS
+  </span>
+
+  @if (services().length > 0) {
+    <div class="border border-[#E8E2DA] rounded-[2px] overflow-hidden">
+      <table class="w-full text-left text-xs">
+        <thead
+          class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
+        >
+          <tr>
+            <th class="py-3 px-4">Servicio</th>
+            <th class="py-3 px-4 text-center">Cantidad</th>
+            <th class="py-3 px-4 text-right">Precio Unitario</th>
+            <th class="py-3 px-4 text-right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
+          @for (acq of services(); track acq.id) {
+            <tr class="hover:bg-pampas/20">
+              <td class="py-3 px-4 font-semibold">
+                {{ acq.service.name || "Servicio del Hotel" }}
+              </td>
+              <td class="py-3 px-4 text-center font-mono">
+                {{ acq.quantity }}
+              </td>
+              <td class="py-3 px-4 text-right font-mono">
+                {{ formatPrice(acq.unitPrice) }}
+              </td>
+              <td
+                class="py-3 px-4 text-right font-mono font-semibold text-twine-dark"
+              >
+                {{ formatPrice(acq.quantity * acq.unitPrice) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div
+      class="p-4 bg-pampas/30 border border-[#E8E2DA] rounded-[2px] text-xs text-woodsmoke/60 italic"
+    >
+      Esta reserva no incluye servicios adicionales contratados.
+    </div>
+  }
+</div>

@@ -1,0 +1,15 @@
+@if (status() === "AVAILABLE") {
+  <span
+    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+  >
+    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+    Disponible
+  </span>
+} @else {
+  <span
+    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-amber-50 text-amber-800 border border-amber-200"
+  >
+    <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+    En mantenimiento
+  </span>
+}

@@ -1,16 +1,25 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
 import { ReservationDTO } from '../../models/reservation.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { ReservationFiltersComponent } from './components/reservation-filters/reservation-filters.component';
+import { ReservationsTableComponent } from './components/reservations-table/reservations-table.component';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-reservations-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminPageHeaderComponent],
+  imports: [
+    AdminPageHeaderComponent,
+    ErrorAlertComponent,
+    SuccessAlertComponent,
+    ReservationFiltersComponent,
+    ReservationsTableComponent,
+    ConfirmModalComponent,
+  ],
   templateUrl: './reservations-admin.component.html',
   styleUrl: './reservations-admin.component.scss',
 })
@@ -37,8 +46,7 @@ export class ReservationsAdminComponent implements OnInit {
       },
       error: () => {
         this.reservations = [];
-        this.errorMessage =
-          'No se pudieron cargar las reservas.';
+        this.errorMessage = 'No se pudieron cargar las reservas.';
       },
     });
   }
@@ -46,25 +54,18 @@ export class ReservationsAdminComponent implements OnInit {
   get filteredReservations(): ReservationDTO[] {
     return this.reservations.filter((res) => {
       const matchStatus =
-        this.selectedStatus === 'ALL' ||
-        res.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' || res.status === this.selectedStatus;
 
       return matchStatus;
     });
   }
 
   get totalRevenue(): number {
-    return this.reservations.reduce(
-      (acc, res) => acc + res.totalPrice,
-      0,
-    );
+    return this.reservations.reduce((acc, res) => acc + res.totalPrice, 0);
   }
 
   get totalGuests(): number {
-    return this.reservations.reduce(
-      (acc, res) => acc + res.numberOfPeople,
-      0,
-    );
+    return this.reservations.reduce((acc, res) => acc + res.numberOfPeople, 0);
   }
 
   onAddReservation(): void {
@@ -106,24 +107,12 @@ export class ReservationsAdminComponent implements OnInit {
         }, 4000);
       },
       error: () => {
-        this.errorMessage =
-          'Error al eliminar la reserva en el servidor.';
+        this.errorMessage = 'Error al eliminar la reserva en el servidor.';
 
         setTimeout(() => {
           this.errorMessage = null;
         }, 6000);
       },
     });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
-  }
-
-  formatId(id: number): string {
-    return '#' + String(id).padStart(3, '0');
   }
 }

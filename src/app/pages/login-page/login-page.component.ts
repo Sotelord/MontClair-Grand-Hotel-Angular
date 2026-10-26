@@ -1,14 +1,22 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
+import { LoginHeaderComponent } from './components/login-header/login-header.component';
+import { LoginAlertComponent } from './components/login-alert/login-alert.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { DemoAccessComponent } from './components/demo-access/demo-access.component';
+import { RegisterPromptComponent } from './components/register-prompt/register-prompt.component';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [
+    LoginHeaderComponent,
+    LoginAlertComponent,
+    LoginFormComponent,
+    DemoAccessComponent,
+    RegisterPromptComponent,
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
 })

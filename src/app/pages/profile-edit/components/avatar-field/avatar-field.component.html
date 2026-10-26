@@ -1,0 +1,18 @@
+<div [formGroup]="form()">
+  <label
+    class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+  >
+    URL de Fotografía de Perfil (Avatar)
+  </label>
+
+  <input
+    type="url"
+    formControlName="avatarUrl"
+    placeholder="https://..."
+    class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke font-mono"
+  />
+
+  <p class="text-[10px] text-woodsmoke/50 mt-1">
+    Pegue el enlace a su fotografía (Unsplash, Cloudinary, etc.)
+  </p>
+</div>

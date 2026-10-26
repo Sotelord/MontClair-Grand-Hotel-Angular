@@ -1,14 +1,29 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RoomTypeService } from '../../service/room-type.service';
 import { RoomType } from '../../models/roomType.model';
+import { RoomTypeFormHeaderComponent } from './components/room-type-form-header/room-type-form-header.component';
+import { RoomTypeFieldsComponent } from './components/room-type-fields/room-type-fields.component';
+import { RoomTypeFormActionsComponent } from './components/room-type-form-actions/room-type-form-actions.component';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-room-type-form',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    RoomTypeFormHeaderComponent,
+    RoomTypeFieldsComponent,
+    RoomTypeFormActionsComponent,
+    ConfirmModalComponent,
+  ],
   templateUrl: './room-type-form.component.html',
-  styleUrl: './room-type-form.component.scss'
+  styleUrl: './room-type-form.component.scss',
 })
 export class RoomTypeFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -25,7 +40,7 @@ export class RoomTypeFormComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', Validators.required],
       pricePerNight: [0, [Validators.required, Validators.min(1)]],
-      imageUrl: ['', Validators.required]
+      imageUrl: ['', Validators.required],
     });
   }
 
@@ -61,7 +76,7 @@ export class RoomTypeFormComponent implements OnInit {
       name: formValue.name,
       description: formValue.description,
       pricePerNight: Number(formValue.pricePerNight),
-      imageUrl: formValue.imageUrl
+      imageUrl: formValue.imageUrl,
     };
 
     if (this.isEditMode && this.currentRoomTypeId) {

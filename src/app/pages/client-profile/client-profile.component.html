@@ -1,238 +1,41 @@
 @if (client) {
-<section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8 mb-8 relative overflow-hidden">
-    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+  <section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8 mb-8 relative overflow-hidden"
+    >
+      <div
+        class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+      ></div>
 
-    <div class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
-      <div class="flex flex-col sm:flex-row items-center gap-6">
-        <img [src]="
-              client.avatarUrl ||
-              'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
-            " [alt]="client.firstName" class="w-24 h-24 rounded-full object-cover border-3 border-twine shadow-md" />
+      <app-profile-header
+        [client]="client"
+        (logoutClicked)="logout()"
+      ></app-profile-header>
 
-        <div class="text-center sm:text-left">
-          <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">
-            {{
-            client.role === "ADMIN"
-            ? "ADMINISTRADOR DEL HOTEL"
-            : "HUÉSPED DISTINGUIDO"
-            }}
-          </span>
-
-          <h1 class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[1px] uppercase">
-            {{ client.firstName }} {{ client.lastName || "" }}
-          </h1>
-
-          <p class="text-xs text-woodsmoke/60 mt-1 font-mono">
-            &#64;{{ client.username }} • {{ client.email }}
-          </p>
+      @if (errorMessage) {
+        <div class="mt-6">
+          <app-error-alert
+            [message]="errorMessage"
+            (closed)="errorMessage = null"
+          />
         </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <a [routerLink]="['/profile/edit', client.id]"
-          class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer">
-          Editar Perfil
-        </a>
-
-        <button type="button" (click)="logout()"
-          class="bg-red-50 hover:bg-red-100 text-red-700 text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer border border-red-200">
-          Cerrar Sesión
-        </button>
-      </div>
-    </div>
-
-    @if (errorMessage) {
-    <div class="mt-6 bg-red-50 border border-red-200 text-red-800 p-3 rounded-[3px] text-xs" role="alert">
-      {{ errorMessage }}
-    </div>
-    }
-
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E8E2DA] text-xs">
-      <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">
-          Teléfono
-        </span>
-        <span class="font-semibold text-woodsmoke font-mono">
-          {{ client.phone || "No registrado" }}
-        </span>
-      </div>
-
-      <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">
-          Rol en Plataforma
-        </span>
-        <span class="font-semibold text-woodsmoke">
-          {{ client.role }}
-        </span>
-      </div>
-
-      <div>
-        <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">
-          Reservas Registradas
-        </span>
-        <span class="font-semibold text-twine-dark font-mono">
-          {{ reservations.length }}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <span class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">
-          HISTORIAL DE ESTANCIAS
-        </span>
-        <h2 class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke">
-          Mis Reservas
-        </h2>
-      </div>
-
-      <a routerLink="/reservations/book" [queryParams]="{ clientId: client.id }"
-        class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-2.5 px-4 rounded-[2px] transition shadow-xs">
-        Nueva Reserva
-      </a>
-    </div>
-
-    @if (reservations.length > 0) {
-    <div class="space-y-4">
-      @for (res of reservations; track res.id) {
-      <div class="border border-[#E8E2DA] rounded-[2px] p-5 hover:border-twine transition bg-pampas/20">
-        <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]">
-          <div>
-            <span class="font-mono text-twine-dark font-semibold text-xs">
-              #{{ res.id }}
-            </span>
-
-            <h3 class="font-serif text-base font-semibold text-woodsmoke uppercase mt-0.5">
-              {{
-              res.reservationRooms?.[0]?.room?.name ||
-              "Habitación Reservada"
-              }}
-              (Hab. {{ res.reservationRooms?.[0]?.room?.number }})
-            </h3>
-          </div>
-
-          <span class="px-3 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border" [ngClass]="
-                    res.status === 'CONFIRMED'
-                      ? 'bg-twine/10 text-twine-dark border-twine/40'
-                      : 'bg-pampas text-woodsmoke/70 border-[#E8E2DA]'
-                  ">
-            {{ res.status }}
-          </span>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 text-xs">
-          <div>
-            <span class="text-woodsmoke/50 text-[10px] uppercase block">
-              Fechas
-            </span>
-            <span class="font-mono text-woodsmoke">
-              {{ res.checkInDate }} → {{ res.checkOutDate }}
-            </span>
-          </div>
-
-          <div>
-            <span class="text-woodsmoke/50 text-[10px] uppercase block">
-              Huéspedes
-            </span>
-            <span class="text-woodsmoke">
-              {{ res.numberOfPeople }} Personas
-            </span>
-          </div>
-
-          <div>
-            <span class="text-woodsmoke/50 text-[10px] uppercase block">
-              Tarifa Base
-            </span>
-            <span class="font-semibold text-twine-dark">
-              {{
-              formatPrice(
-              res.reservationRooms?.[0]?.pricePerNight || 0
-              )
-              }}
-              / noche
-            </span>
-          </div>
-        </div>
-
-        @if (
-        res.reservationRooms?.[0]?.acquiredServices &&
-        (res.reservationRooms?.[0]?.acquiredServices)!.length > 0
-        ) {
-        <div class="mt-3 pt-2 border-t border-[#E8E2DA]/60 text-[11px] text-woodsmoke/70">
-          <span class="font-semibold text-woodsmoke/80">
-            Servicios Incluidos:
-          </span>
-
-          @for (
-          svc of res.reservationRooms?.[0]?.acquiredServices;
-          track svc.id
-          ) {
-          <span class="inline-block bg-pampas border border-[#E8E2DA] px-2 py-0.5 rounded-[2px] mr-2 mt-1">
-            {{ svc.quantity }}x {{ svc.service.name }}
-            (€{{ svc.unitPrice }})
-          </span>
-          }
-        </div>
-        }
-
-        <div class="mt-4 pt-3 border-t border-[#E8E2DA]/60 flex items-center justify-end gap-3">
-          <a [routerLink]="['/reservations', res.id]"
-            class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer">
-            <svg class="w-3.5 h-3.5 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            Ver Detalle
-          </a>
-
-          <a [routerLink]="['/reservations/edit', res.id]"
-            class="border border-twine/40 bg-twine/10 hover:bg-twine hover:text-white text-twine-dark text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Modificar
-          </a>
-
-          <button type="button" (click)="deleteReservation(res)" [disabled]="deletingReservationIds.has(res.id)"
-            class="bg-red-50 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed text-red-700 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition cursor-pointer border border-red-200">
-            {{
-            deletingReservationIds.has(res.id)
-            ? "Eliminando..."
-            : "Eliminar Reserva"
-            }}
-          </button>
-        </div>
-      </div>
       }
+      <app-profile-stats
+        [client]="client"
+        [reservationsCount]="reservations.length"
+      ></app-profile-stats>
     </div>
-    } @else {
-    <div class="py-12 text-center text-woodsmoke/50 italic text-xs">
-      Aún no tienes reservaciones activas. Explora nuestras suites
-      de lujo y planifica tu estancia.
-    </div>
-    }
-  </div>
 
-  <div class="bg-white border border-red-200 rounded-[4px] shadow-lg p-6 sm:p-8 mt-8">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div>
-        <h2 class="font-serif text-lg uppercase tracking-[1px] text-red-800">
-          Zona de peligro
-        </h2>
-        <p class="text-xs text-woodsmoke/60 mt-1">
-          Eliminar tu perfil borra permanentemente tu cuenta.
-        </p>
-      </div>
+    <app-reservations-list
+      [reservations]="reservations"
+      [clientId]="client.id"
+      [deletingIds]="deletingReservationIds"
+      (deleteRequested)="deleteReservation($event)"
+    ></app-reservations-list>
 
-      <button type="button" (click)="deleteProfile()" [disabled]="isDeletingProfile"
-        class="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer">
-        {{ isDeletingProfile ? "Eliminando..." : "Eliminar Perfil" }}
-      </button>
-    </div>
-  </div>
-</section>
+    <app-danger-zone
+      [isDeleting]="isDeletingProfile"
+      (deleteRequested)="deleteProfile()"
+    ></app-danger-zone>
+  </section>
 }

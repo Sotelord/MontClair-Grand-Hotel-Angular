@@ -1,0 +1,41 @@
+<div [formGroup]="form()" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Nombre *
+    </label>
+    <input
+      type="text"
+      formControlName="firstName"
+      placeholder="ej. Alejandro"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+      [class.border-red-400]="isInvalid('firstName')"
+    />
+    @if (isInvalid("firstName")) {
+      <span class="text-[10px] text-red-500 mt-1 block"
+        >El nombre es requerido.</span
+      >
+    }
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Apellido *
+    </label>
+    <input
+      type="text"
+      formControlName="lastName"
+      placeholder="ej. Morales"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+      [class.border-red-400]="isInvalid('lastName')"
+    />
+    @if (isInvalid("lastName")) {
+      <span class="text-[10px] text-red-500 mt-1 block"
+        >El apellido es requerido.</span
+      >
+    }
+  </div>
+</div>

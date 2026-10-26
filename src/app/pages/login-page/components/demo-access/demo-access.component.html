@@ -1,0 +1,21 @@
+<div class="pt-2 text-center">
+  <p class="text-[10px] text-woodsmoke/50 uppercase tracking-wider mb-2">
+    Acceso Rápido de Prueba:
+  </p>
+  <div class="flex justify-center gap-2">
+    <button
+      type="button"
+      (click)="selected.emit('admin')"
+      class="text-[10px] px-3 py-1 bg-pampas hover:bg-pampas/80 border border-[#E8E2DA] text-woodsmoke font-sans font-semibold rounded-[2px] transition cursor-pointer"
+    >
+      Admin (admin/admin)
+    </button>
+    <button
+      type="button"
+      (click)="selected.emit('demo')"
+      class="text-[10px] px-3 py-1 bg-pampas hover:bg-pampas/80 border border-[#E8E2DA] text-woodsmoke font-sans font-semibold rounded-[2px] transition cursor-pointer"
+    >
+      Demo (demo/demo)
+    </button>
+  </div>
+</div>

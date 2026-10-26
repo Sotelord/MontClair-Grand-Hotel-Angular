@@ -1,0 +1,51 @@
+<div [formGroup]="form()" class="space-y-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Fecha de Entrada (Check-In) *
+      </label>
+
+      <input
+        type="date"
+        formControlName="checkInDate"
+        [attr.min]="isEditMode() ? null : todayDate()"
+        max="9999-12-31"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+      />
+    </div>
+
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Fecha de Salida (Check-Out) *
+      </label>
+
+      <input
+        type="date"
+        formControlName="checkOutDate"
+        [attr.min]="minCheckOutDate()"
+        max="9999-12-31"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Cantidad de Personas *
+    </label>
+
+    <input
+      type="number"
+      min="1"
+      max="10"
+      formControlName="numberOfPeople"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+</div>

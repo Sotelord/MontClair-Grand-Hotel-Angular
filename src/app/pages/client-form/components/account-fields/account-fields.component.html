@@ -1,0 +1,79 @@
+<div [formGroup]="form()" class="space-y-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Nombre de Usuario *
+      </label>
+      <input
+        type="text"
+        formControlName="username"
+        placeholder="ej. amorales"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+        [class.border-red-400]="isInvalid('username')"
+      />
+      @if (isInvalid("username")) {
+        <span class="text-[10px] text-red-500 mt-1 block"
+          >El usuario es requerido.</span
+        >
+      }
+    </div>
+
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Correo Electrónico *
+      </label>
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="ej. amorales@example.com"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+        [class.border-red-400]="isInvalid('email')"
+      />
+      @if (isInvalid("email")) {
+        <span class="text-[10px] text-red-500 mt-1 block"
+          >Ingresa un correo electrónico válido.</span
+        >
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Contraseña *
+      </label>
+      <input
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+        [class.border-red-400]="isInvalid('password')"
+      />
+      @if (isInvalid("password")) {
+        <span class="text-[10px] text-red-500 mt-1 block"
+          >La contraseña es requerida.</span
+        >
+      }
+    </div>
+
+    <div>
+      <label
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+      >
+        Teléfono de Contacto
+      </label>
+      <input
+        type="tel"
+        formControlName="phone"
+        placeholder="ej. +34 600 123 456"
+        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+      />
+    </div>
+  </div>
+</div>

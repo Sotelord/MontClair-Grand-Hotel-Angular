@@ -1,210 +1,62 @@
 <div class="flex items-center justify-center p-6 py-12">
   <div
-    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden">
-    <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"></div>
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-2xl p-8 sm:p-10 relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+    ></div>
 
-    <div class="text-center mb-8">
-      <span class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-2">
-        GESTIÓN DE RESERVACIONES
-      </span>
-
-      <h1 class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase">
-        {{ isEditMode ? "Modificar Reserva" : "Nueva Reserva de Estancia" }}
-      </h1>
-
-      <div class="flex items-center justify-center gap-3 mt-3">
-        <div class="h-[1px] w-8 bg-twine/40"></div>
-        <div class="w-1.5 h-1.5 rotate-45 border border-twine"></div>
-        <div class="h-[1px] w-8 bg-twine/40"></div>
-      </div>
-
-      <p class="text-xs text-woodsmoke/60 mt-3 max-w-md mx-auto">
-        Selecciona el cliente, el tipo de habitación, las fechas y
-        los servicios contratados.
-      </p>
-    </div>
+    <app-form-header [isEditMode]="isEditMode"></app-form-header>
 
     @if (errorMessage) {
-    <div
-      class="mb-6 p-4 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-
-        <span>{{ errorMessage }}</span>
-      </div>
-
-      <button type="button" (click)="errorMessage = null" class="text-red-500 hover:text-red-700">
-        ✕
-      </button>
-    </div>
+      <app-error-alert
+        [message]="errorMessage"
+        (closed)="errorMessage = null"
+      ></app-error-alert>
     }
 
-    <form [formGroup]="reservationForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <!-- CLIENTE -->
-      <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
-          Cliente Huésped *
-        </label>
+    <form
+      [formGroup]="reservationForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6"
+    >
+      <app-client-select
+        [form]="reservationForm"
+        [clients]="clients"
+      ></app-client-select>
 
-        <select formControlName="clientId"
-          class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer">
-          @for (c of clients; track c.id) {
-          <option [value]="c.id">
-            {{ c.firstName }}
-            {{ c.lastName || "" }}
-            ({{ c.email }})
-          </option>
-          }
-        </select>
-      </div>
+      <app-stay-details
+        [form]="reservationForm"
+        [isEditMode]="isEditMode"
+        [todayDate]="todayDate"
+        [minCheckOutDate]="minCheckOutDate"
+      ></app-stay-details>
 
-      <!-- FECHAS -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
-            Fecha de Entrada (Check-In) *
-          </label>
+      <app-room-type-selector
+        [form]="reservationForm"
+        [roomTypes]="roomTypes"
+      ></app-room-type-selector>
 
-          <input type="date" formControlName="checkInDate" [attr.min]="isEditMode ? null : todayDate" max="9999-12-31"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
-        </div>
+      <app-services-selector
+        [services]="services"
+        [selectedIds]="selectedServiceIds"
+        (toggled)="toggleService($event)"
+      ></app-services-selector>
 
-        <div>
-          <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
-            Fecha de Salida (Check-Out) *
-          </label>
+      <app-price-summary
+        [nightsCount]="nightsCount"
+        [roomPrice]="selectedRoomPrice"
+        [roomTotal]="estimatedRoomTotal"
+        [servicesCount]="selectedServiceIds.size"
+        [servicesTotal]="estimatedServicesTotal"
+        [grandTotal]="estimatedGrandTotal"
+      ></app-price-summary>
 
-          <input type="date" formControlName="checkOutDate" [attr.min]="minCheckOutDate" max="9999-12-31"
-            class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
-        </div>
-      </div>
-
-      <!-- HUÉSPEDES -->
-      <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5">
-          Cantidad de Personas *
-        </label>
-
-        <input type="number" min="1" max="10" formControlName="numberOfPeople"
-          class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition" />
-      </div>
-
-      <!-- TIPO DE HABITACIÓN -->
-      <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2">
-          Tipo de Habitación *
-        </label>
-
-        <div class="space-y-1 max-h-52 overflow-y-auto border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20">
-          @for (type of roomTypes; track type.id) {
-          <label class="flex items-center gap-3 p-3 rounded-[2px] hover:bg-white transition cursor-pointer">
-            <input type="radio" formControlName="roomTypeId" [value]="type.id" class="accent-twine" />
-
-            <span class="text-xs text-woodsmoke flex-1 flex justify-between items-center gap-3">
-              <span>
-                <strong>{{ type.name }}</strong>
-
-                <span class="block text-[10px] text-woodsmoke/60 mt-1">
-                  {{ type.description }}
-                </span>
-              </span>
-
-              <span class="font-mono text-twine-dark font-semibold whitespace-nowrap">
-                {{ formatPrice(type.pricePerNight) }}/noche
-              </span>
-            </span>
-          </label>
-          } @empty {
-          <p class="text-xs text-woodsmoke/50 italic p-3 text-center">
-            No hay tipos de habitación registrados.
-          </p>
-          }
-        </div>
-      </div>
-
-      <!-- SERVICIOS ADICIONALES -->
-      <div>
-        <label class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-2">
-          Servicios Adicionales (Cargo a la Cuenta)
-        </label>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border border-[#E8E2DA] rounded-[2px] p-3 bg-pampas/20">
-          @for (svc of services; track svc.id) {
-          <label class="flex items-center gap-3 p-2 rounded-[2px] hover:bg-white transition cursor-pointer">
-            <input type="checkbox" [checked]="isServiceSelected(svc.id)" (change)="toggleService(svc.id)"
-              class="accent-twine" />
-
-            <span class="text-xs text-woodsmoke flex-1 flex justify-between gap-2">
-              <span>{{ svc.name }}</span>
-
-              <span class="text-twine-dark font-mono font-medium">
-                +{{ formatPrice(svc.price) }}
-              </span>
-            </span>
-          </label>
-          }
-        </div>
-      </div>
-
-      <!-- DESGLOSE -->
-      <div class="bg-mirage text-white p-5 rounded-[3px] space-y-2 border border-white/10 shadow-sm">
-        <span class="text-[9px] uppercase tracking-[2px] font-sans font-bold text-twine block">
-          DESGLOSE DE CUENTA DE ESTANCIA
-        </span>
-
-        <div class="flex justify-between text-xs text-white/80">
-          <span>
-            Estancia ({{ nightsCount }}
-            noches × {{ formatPrice(selectedRoomPrice) }}):
-          </span>
-
-          <span class="font-mono">
-            {{ formatPrice(estimatedRoomTotal) }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-xs text-white/80">
-          <span>
-            Servicios Adicionales
-            ({{ selectedServiceIds.size }} seleccionados):
-          </span>
-
-          <span class="font-mono">
-            {{ formatPrice(estimatedServicesTotal) }}
-          </span>
-        </div>
-
-        <div class="flex justify-between text-sm font-bold border-t border-white/10 pt-2 text-twine">
-          <span>TOTAL ESTIMADO EN CUENTA:</span>
-
-          <span class="font-mono">
-            {{ formatPrice(estimatedGrandTotal) }}
-          </span>
-        </div>
-      </div>
-
-      <!-- ACCIONES -->
-      <div class="pt-4 flex flex-col sm:flex-row gap-3">
-        <button type="submit" [disabled]="isSubmitting || reservationForm.invalid"
-          class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-          {{
-          isSubmitting
-          ? "Procesando Reserva..."
-          : isEditMode
-          ? "Guardar Cambios en Reserva"
-          : "Confirmar y Crear Reserva"
-          }}
-        </button>
-
-        <a routerLink="/admin/reservations"
-          class="sm:w-auto text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300">
-          Cancelar
-        </a>
-      </div>
+      <app-form-actions
+        [isSubmitting]="isSubmitting"
+        [isInvalid]="reservationForm.invalid"
+        [isEditMode]="isEditMode"
+      ></app-form-actions>
     </form>
   </div>
 </div>

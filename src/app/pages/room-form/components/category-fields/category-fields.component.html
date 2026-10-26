@@ -1,0 +1,49 @@
+<div [formGroup]="form()" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Tipo de Habitación *
+    </label>
+    <select
+      formControlName="typeId"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer"
+    >
+      @for (type of roomTypes(); track type.id) {
+        <option [value]="type.id">
+          {{ type.name }} (€{{ type.pricePerNight }})
+        </option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Piso *
+    </label>
+    <input
+      type="number"
+      formControlName="floor"
+      min="1"
+      placeholder="ej. 1"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+    />
+  </div>
+
+  <div>
+    <label
+      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+    >
+      Estado *
+    </label>
+    <select
+      formControlName="status"
+      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition cursor-pointer"
+    >
+      <option value="AVAILABLE">Disponible</option>
+      <option value="MAINTENANCE">En mantenimiento</option>
+    </select>
+  </div>
+</div>

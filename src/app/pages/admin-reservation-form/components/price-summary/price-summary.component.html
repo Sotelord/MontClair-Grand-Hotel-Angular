@@ -1,0 +1,28 @@
+<div
+  class="bg-mirage text-white p-5 rounded-[3px] space-y-2 border border-white/10 shadow-sm"
+>
+  <span
+    class="text-[9px] uppercase tracking-[2px] font-sans font-bold text-twine block"
+  >
+    DESGLOSE DE CUENTA DE ESTANCIA
+  </span>
+
+  <div class="flex justify-between text-xs text-white/80">
+    <span>
+      Estancia ({{ nightsCount() }} noches × {{ formatPrice(roomPrice()) }}):
+    </span>
+    <span class="font-mono">{{ formatPrice(roomTotal()) }}</span>
+  </div>
+
+  <div class="flex justify-between text-xs text-white/80">
+    <span> Servicios Adicionales ({{ servicesCount() }} seleccionados): </span>
+    <span class="font-mono">{{ formatPrice(servicesTotal()) }}</span>
+  </div>
+
+  <div
+    class="flex justify-between text-sm font-bold border-t border-white/10 pt-2 text-twine"
+  >
+    <span>TOTAL ESTIMADO EN CUENTA:</span>
+    <span class="font-mono">{{ formatPrice(grandTotal()) }}</span>
+  </div>
+</div>

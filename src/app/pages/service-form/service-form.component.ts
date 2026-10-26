@@ -5,14 +5,26 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ServicesService } from '../../service/services.service';
 import { Service } from '../../models/service.model';
+import { ServiceFormBannerComponent } from './components/service-form-banner/service-form-banner.component';
+import { ServiceMainFieldsComponent } from './components/service-main-fields/service-main-fields.component';
+import { ServiceDetailsFieldsComponent } from './components/service-details-fields/service-details-fields.component';
+import { ServiceImageFieldComponent } from './components/service-image-field/service-image-field.component';
+import { ServiceFormActionsComponent } from './components/service-form-actions/service-form-actions.component';
 
 @Component({
   selector: 'app-service-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    ServiceFormBannerComponent,
+    ServiceMainFieldsComponent,
+    ServiceDetailsFieldsComponent,
+    ServiceImageFieldComponent,
+    ServiceFormActionsComponent,
+  ],
   templateUrl: './service-form.component.html',
   styleUrl: './service-form.component.scss',
 })
@@ -92,22 +104,5 @@ export class ServiceFormComponent implements OnInit {
         error: () => {},
       });
     }
-  }
-
-  getError(campo: string): string | null {
-    const control = this.serviceForm.get(campo);
-    if (!control || !control.touched || !control.errors) {
-      return null;
-    }
-    if (control.errors['required']) {
-      return 'Este campo es obligatorio.';
-    }
-    if (control.errors['minlength']) {
-      return `Debe tener al menos ${control.errors['minlength'].requiredLength} caracteres.`;
-    }
-    if (control.errors['min']) {
-      return `El valor mínimo es ${control.errors['min'].min}.`;
-    }
-    return 'Valor no válido.';
   }
 }

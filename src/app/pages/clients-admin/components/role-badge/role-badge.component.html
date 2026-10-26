@@ -1,0 +1,13 @@
+@if (role() === "ADMIN") {
+  <span
+    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-amber-50 text-amber-800 border border-amber-200"
+  >
+    ADMIN
+  </span>
+} @else {
+  <span
+    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"
+  >
+    CLIENTE
+  </span>
+}

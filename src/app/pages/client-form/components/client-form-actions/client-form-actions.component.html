@@ -1,0 +1,15 @@
+<div class="pt-4 flex flex-col sm:flex-row gap-3">
+  <button
+    type="submit"
+    class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
+  >
+    {{ isEditMode() ? "Guardar Cambios" : "Registrarme e Ingresar" }}
+  </button>
+
+  <a
+    [routerLink]="isAdminView() ? '/admin/clients' : '/login'"
+    class="sm:w-auto text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300"
+  >
+    Cancelar
+  </a>
+</div>

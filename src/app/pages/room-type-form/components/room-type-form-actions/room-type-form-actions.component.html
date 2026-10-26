@@ -1,0 +1,20 @@
+<div class="pt-4 flex flex-col sm:flex-row gap-3">
+  <button
+    type="submit"
+    [disabled]="isInvalid()"
+    class="flex-1 bg-twine hover:bg-twine-hover disabled:bg-gray-400 text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm"
+  >
+    @if (isEditMode()) {
+      Actualizar Categoría
+    } @else {
+      Guardar Categoría
+    }
+  </button>
+
+  <a
+    routerLink="/admin/rooms-types"
+    class="sm:w-auto text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 cursor-pointer"
+  >
+    Cancelar
+  </a>
+</div>

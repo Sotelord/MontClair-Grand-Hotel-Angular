@@ -1,0 +1,41 @@
+<div
+  class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8"
+>
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <span
+        class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+      >
+        HISTORIAL DE ESTANCIAS
+      </span>
+      <h2 class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke">
+        Mis Reservas
+      </h2>
+    </div>
+
+    <a
+      routerLink="/reservations/book"
+      [queryParams]="{ clientId: clientId() }"
+      class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-2.5 px-4 rounded-[2px] transition shadow-xs"
+    >
+      Nueva Reserva
+    </a>
+  </div>
+
+  @if (reservations().length > 0) {
+    <div class="space-y-4">
+      @for (res of reservations(); track res.id) {
+        <app-reservation-card
+          [reservation]="res"
+          [isDeleting]="deletingIds().has(res.id)"
+          (deleteRequested)="deleteRequested.emit($event)"
+        />
+      }
+    </div>
+  } @else {
+    <div class="py-12 text-center text-woodsmoke/50 italic text-xs">
+      Aún no tienes reservaciones activas. Explora nuestras suites de lujo y
+      planifica tu estancia.
+    </div>
+  }
+</div>

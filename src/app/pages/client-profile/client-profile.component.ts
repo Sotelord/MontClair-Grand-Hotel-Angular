@@ -1,16 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
 import { Client } from '../../models/client.model';
 import { Reservation } from '../../models/reservation.model';
+import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { ProfileStatsComponent } from './components/profile-stats/profile-stats.component';
+import { ReservationsListComponent } from './components/reservations-list/reservations-list.component';
+import { DangerZoneComponent } from './components/danger-zone/danger-zone.component';
 
 @Component({
   selector: 'app-client-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [
+    ProfileHeaderComponent,
+    ErrorAlertComponent,
+    ProfileStatsComponent,
+    ReservationsListComponent,
+    DangerZoneComponent,
+  ],
   templateUrl: './client-profile.component.html',
   styleUrl: './client-profile.component.scss',
 })
@@ -30,7 +40,7 @@ export class ClientProfileComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const sessionClient = this.authService.getSession();
-    const clientId = idParam ? Number(idParam) : (sessionClient?.id || null);
+    const clientId = idParam ? Number(idParam) : sessionClient?.id || null;
 
     if (!clientId) {
       this.router.navigate(['/login']);
@@ -96,8 +106,7 @@ export class ClientProfileComponent implements OnInit {
   deleteReservation(reservation: Reservation): void {
     if (
       !this.client ||
-      (reservation.client &&
-        reservation.client.id !== this.client.id)
+      (reservation.client && reservation.client.id !== this.client.id)
     ) {
       this.errorMessage = 'No se puede eliminar esta reservación.';
       return;
@@ -127,12 +136,5 @@ export class ClientProfileComponent implements OnInit {
           'No se pudo eliminar la reservación. Intenta nuevamente.';
       },
     });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
   }
 }
