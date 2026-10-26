@@ -71,6 +71,13 @@ export class ReservationService {
     return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/pay`, {});
   }
 
+  //Asigna un servicio consumido a una habitacion (REGLA 5: requiere reserva activa en la habitacion).
+  assignServiceToRoom(roomId: number, serviceId: number, quantity: number = 1): Observable<ReservationDTO> {
+    return this.http.post<ReservationDTO>(`${this.apiUrl}/rooms/${roomId}/services`, {
+      serviceId,
+      quantity,
+    });
+  }
   //Elimina una reserva (en backend ejecuta la cancelación lógica para conservar historial).
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);

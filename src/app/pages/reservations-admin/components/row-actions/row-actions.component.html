@@ -92,18 +92,29 @@
     </button>
   }
 
-  <!-- CANCELAR RESERVA -->
+  <!-- CANCELAR RESERVA (REGLA 4: SOLO SI TODAVÍA NO ESTÁ ACTIVA Y FECHA INICIO ES POSTERIOR A HOY) -->
   @if (reservation().status === 'CONFIRMED') {
-    <button
-      type="button"
-      (click)="cancelClicked.emit()"
-      class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-[2px] transition cursor-pointer"
-      title="Cancelar Reserva (se mantiene en historial)"
-    >
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-      </svg>
-    </button>
+    @if (isCancelable) {
+      <button
+        type="button"
+        (click)="cancelClicked.emit()"
+        class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-[2px] transition cursor-pointer"
+        title="Cancelar Reserva: fecha posterior a hoy (se conserva en historial)"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+      </button>
+    } @else {
+      <span
+        class="p-1.5 text-slate-300 cursor-not-allowed inline-flex items-center"
+        title="No cancelable: la fecha de inicio debe ser posterior a la fecha actual"
+      >
+        <svg class="w-4 h-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+      </span>
+    }
   }
 
   <!-- ELIMINAR / PURGAR (CONFIRMAR BORRADO) -->

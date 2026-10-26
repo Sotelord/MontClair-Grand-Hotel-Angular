@@ -153,9 +153,27 @@ export class ReservationsAdminComponent implements OnInit {
 
   /**
    * CANCELAR RESERVA:
+   * REGLA 4: Solo se pueden cancelar reservas que todavía no están activas,
+   * es decir que su fecha de inicio es posterior a la fecha actual.
    * Cambia el estado a CANCELADA sin eliminarla físicamente, conservando el historial.
    */
   requestCancel(res: ReservationDTO): void {
+    if (res.status === 'ACTIVE') {
+      this.errorMessage = `No se puede cancelar la reserva #${res.id}: solo se pueden cancelar reservas que todavía no están activas.`;
+      return;
+    }
+
+    if (res.checkInDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const parts = res.checkInDate.split('-').map(Number);
+      const checkIn = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (checkIn.getTime() <= today.getTime()) {
+        this.errorMessage = `No se puede cancelar la reserva #${res.id}: la fecha de inicio debe ser posterior a la fecha actual.`;
+        return;
+      }
+    }
+
     this.activeAction = {
       type: 'CANCEL',
       reservation: res,

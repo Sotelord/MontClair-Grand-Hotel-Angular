@@ -82,4 +82,19 @@ export class ReservationCardComponent {
       currency: 'EUR',
     }).format(price || 0);
   }
+  /**
+   * REGLA 4: Solo se pueden cancelar reservas que todavia no estan activas,
+   * es decir que su fecha de inicio es posterior a la fecha actual.
+   */
+  get isCancelable(): boolean {
+    const res = this.reservation();
+    if (!res || res.status !== 'CONFIRMED' || !res.checkInDate) {
+      return false;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const parts = res.checkInDate.split('-').map(Number);
+    const checkIn = new Date(parts[0], parts[1] - 1, parts[2]);
+    return checkIn.getTime() > today.getTime();
+  }
 }
