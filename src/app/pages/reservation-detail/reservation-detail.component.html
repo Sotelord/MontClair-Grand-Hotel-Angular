@@ -25,6 +25,7 @@
       <app-reservation-header
         [reservationId]="reservation.id"
         [status]="reservation.status"
+        [paid]="reservation.paid"
       ></app-reservation-header>
       <!-- MAIN CONTENT GRID -->
       <div class="p-6 sm:p-10 space-y-8">
@@ -61,6 +62,8 @@
           [roomSubtotal]="roomSubtotal"
           [servicesSubtotal]="servicesSubtotal"
           [grandTotal]="grandTotal"
+          [paid]="reservation.paid"
+          [pendingBalance]="reservation.pendingBalance"
         ></app-account-summary>
       </div>
 

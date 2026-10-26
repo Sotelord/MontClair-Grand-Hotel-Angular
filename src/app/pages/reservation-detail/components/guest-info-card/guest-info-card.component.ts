@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { Reservation } from '../../../../models/reservation.model';
+import { Reservation, ReservationDTO } from '../../../../models/reservation.model';
 
 @Component({
   selector: 'app-guest-info-card',
@@ -9,5 +9,5 @@ import { Reservation } from '../../../../models/reservation.model';
   standalone: true,
 })
 export class GuestInfoCardComponent {
-  reservation = input.required<Reservation>();
+  reservation = input.required<Reservation | ReservationDTO>();
 }

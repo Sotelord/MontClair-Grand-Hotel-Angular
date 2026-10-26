@@ -1,4 +1,52 @@
-<div class="inline-flex items-center gap-2">
+<div class="inline-flex items-center gap-1.5 flex-wrap justify-end">
+  <!-- BOTÓN: ACTIVAR ESTADÍA (LLEGADA DEL HUÉSPED) -->
+  @if (reservation().status === 'CONFIRMED') {
+    <button
+      type="button"
+      (click)="activateClicked.emit()"
+      class="p-1.5 text-emerald-700 hover:text-white hover:bg-emerald-600 rounded-[2px] transition cursor-pointer border border-emerald-300 bg-emerald-50"
+      title="Activar Estadía: el huésped ha llegado al hotel (pasa a ACTIVA)"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </button>
+  }
+
+  <!-- BOTÓN: PAGAR CUENTA (SE LIMPIA LA CUENTA DEL CLIENTE) -->
+  @if (!reservation().paid && reservation().status !== 'CANCELLED') {
+    <button
+      type="button"
+      (click)="payClicked.emit()"
+      class="p-1.5 text-amber-800 hover:text-white hover:bg-amber-600 rounded-[2px] transition cursor-pointer border border-amber-300 bg-amber-50"
+      title="Pagar Cuenta de la Estadía: se salda y limpia la cuenta del cliente"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+    </button>
+  }
+
+  <!-- BOTÓN: ACABAR ESTADÍA DEL CLIENTE (CHECK-OUT -> INACTIVO) -->
+  @if (reservation().status === 'ACTIVE') {
+    <button
+      type="button"
+      (click)="finishClicked.emit()"
+      class="p-1.5 rounded-[2px] transition cursor-pointer border"
+      [ngClass]="reservation().paid
+        ? 'text-indigo-700 hover:text-white hover:bg-indigo-600 border-indigo-300 bg-indigo-50'
+        : 'text-amber-700 bg-amber-50 border-amber-300 hover:bg-amber-100'"
+      [title]="reservation().paid
+        ? 'Acabar Estadía: el cliente se retira (pasa a INACTIVO)'
+        : 'Atención: Debe pagar la cuenta antes de finalizar la estadía'"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+    </button>
+  }
+
+  <!-- VER DETALLE -->
   <button
     type="button"
     (click)="viewClicked.emit()"
@@ -19,33 +67,51 @@
     </svg>
   </button>
 
-  <button
-    type="button"
-    (click)="editClicked.emit()"
-    class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
-    title="Editar Reserva"
-  >
-    <svg
-      class="w-4 h-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+  <!-- EDITAR (SOLO CONFIRMED) -->
+  @if (reservation().status === 'CONFIRMED') {
+    <button
+      type="button"
+      (click)="editClicked.emit()"
+      class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
+      title="Editar Reserva"
     >
-      <path
-        d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-      ></path>
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-    </svg>
-  </button>
+      <svg
+        class="w-4 h-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+        ></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </svg>
+    </button>
+  }
 
+  <!-- CANCELAR RESERVA -->
+  @if (reservation().status === 'CONFIRMED') {
+    <button
+      type="button"
+      (click)="cancelClicked.emit()"
+      class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-[2px] transition cursor-pointer"
+      title="Cancelar Reserva (se mantiene en historial)"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+      </svg>
+    </button>
+  }
+
+  <!-- ELIMINAR / PURGAR (CONFIRMAR BORRADO) -->
   <button
     type="button"
     (click)="deleteClicked.emit()"
     class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
-    title="Eliminar Reserva"
+    title="Eliminar de la lista"
   >
     <svg
       class="w-4 h-4"

@@ -1,9 +1,8 @@
-import { NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-reservation-header',
-  imports: [NgClass],
+  imports: [],
   templateUrl: './reservation-header.component.html',
   styleUrl: './reservation-header.component.scss',
   standalone: true,
@@ -11,4 +10,5 @@ import { Component, input } from '@angular/core';
 export class ReservationHeaderComponent {
   reservationId = input.required<number>();
   status = input.required<string>();
+  paid = input<boolean>(false);
 }

@@ -11,7 +11,6 @@ import { RoomType } from '../../models/roomType.model';
 import { RoomTypeFormHeaderComponent } from './components/room-type-form-header/room-type-form-header.component';
 import { RoomTypeFieldsComponent } from './components/room-type-fields/room-type-fields.component';
 import { RoomTypeFormActionsComponent } from './components/room-type-form-actions/room-type-form-actions.component';
-import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-room-type-form',
@@ -20,7 +19,6 @@ import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-mo
     RoomTypeFormHeaderComponent,
     RoomTypeFieldsComponent,
     RoomTypeFormActionsComponent,
-    ConfirmModalComponent,
   ],
   templateUrl: './room-type-form.component.html',
   styleUrl: './room-type-form.component.scss',

@@ -21,6 +21,7 @@
   }
   <app-reservation-filters
     [(selectedStatus)]="selectedStatus"
+    [(selectedPayment)]="selectedPayment"
     [total]="filteredReservations.length"
   ></app-reservation-filters>
 
@@ -28,21 +29,21 @@
     [reservations]="filteredReservations"
     (viewRequested)="onViewReservation($event)"
     (editRequested)="onEditReservation($event)"
+    (activateRequested)="requestActivate($event)"
+    (payRequested)="requestPay($event)"
+    (finishRequested)="requestFinish($event)"
+    (cancelRequested)="requestCancel($event)"
     (deleteRequested)="confirmDelete($event)"
   ></app-reservations-table>
 
-  @if (reservationToDelete) {
+  @if (activeAction) {
     <app-confirm-modal
-      title="Confirmar Cancelación de Reserva"
-      confirmLabel="Eliminar Reserva"
-      (confirmed)="executeDelete()"
-      (cancelled)="cancelDelete()"
+      [title]="activeAction.title"
+      [confirmLabel]="activeAction.confirmLabel"
+      (confirmed)="executeModalAction()"
+      (cancelled)="cancelModal()"
     >
-      ¿Estás seguro de que deseas eliminar permanentemente la reserva de
-      <strong class="text-woodsmoke">
-        {{ reservationToDelete.clientFirstName }}
-        {{ reservationToDelete.clientLastName }} </strong
-      >? La habitación asociada volverá a estar disponible para el inventario.
+      {{ activeAction.description }}
     </app-confirm-modal>
   }
 </section>

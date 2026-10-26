@@ -191,8 +191,8 @@ export class AdminReservationFormComponent implements OnInit {
         this.originalCheckInDate = existing.checkInDate;
 
         this.reservationForm.patchValue({
-          clientId: existing.client.id,
-          roomTypeId: currentRoom?.roomType?.id ?? null,
+          clientId: existing.client?.id || existing.clientId || null,
+          roomTypeId: currentRoom?.roomType?.id ?? existing.roomTypeId ?? null,
           checkInDate: existing.checkInDate,
           checkOutDate: existing.checkOutDate,
           numberOfPeople: existing.numberOfPeople,
@@ -200,14 +200,22 @@ export class AdminReservationFormComponent implements OnInit {
 
         this.selectedServiceIds.clear();
 
-        reservationRoom?.acquiredServices?.forEach((acquired) => {
-          if (
-            acquired.service?.id != null &&
-            (acquired.service.price ?? 0) > 0
-          ) {
-            this.selectedServiceIds.add(acquired.service.id);
-          }
-        });
+        if (existing.services && existing.services.length > 0) {
+          existing.services.forEach((s) => {
+            if (s.id != null) {
+              this.selectedServiceIds.add(s.id);
+            }
+          });
+        } else if (reservationRoom?.acquiredServices) {
+          reservationRoom.acquiredServices.forEach((acquired: any) => {
+            if (
+              acquired.service?.id != null &&
+              (acquired.service.price ?? 0) > 0
+            ) {
+              this.selectedServiceIds.add(acquired.service.id);
+            }
+          });
+        }
       },
       error: () => {
         this.router.navigate(['/admin/reservations']);

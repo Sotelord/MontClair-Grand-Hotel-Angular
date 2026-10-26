@@ -34,7 +34,30 @@
       }}</span>
     </div>
 
-    <p class="text-[10px] text-woodsmoke/50 text-right">
+    <!-- ESTADO FINANCIERO DE LA CUENTA -->
+    <div class="pt-2 border-t border-[#E8E2DA] space-y-1 text-[11px]">
+      <div class="flex justify-between items-center">
+        <span class="text-woodsmoke/60">Estado de Cuenta:</span>
+        @if (paid()) {
+          <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[2px] border border-emerald-200">
+            ✓ Cuenta Pagada
+          </span>
+        } @else {
+          <span class="font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-[2px] border border-amber-300">
+            ⚠ Pendiente de Pago
+          </span>
+        }
+      </div>
+
+      <div class="flex justify-between items-center text-xs font-bold">
+        <span class="text-woodsmoke/80">Saldo Pendiente:</span>
+        <span class="font-mono" [class.text-emerald-700]="paid()" [class.text-amber-800]="!paid()">
+          {{ paid() ? "0,00 €" : formatPrice(pendingBalance() || grandTotal()) }}
+        </span>
+      </div>
+    </div>
+
+    <p class="text-[10px] text-woodsmoke/50 text-right pt-1">
       Impuestos y tasas de estancia incluidos.
     </p>
   </div>

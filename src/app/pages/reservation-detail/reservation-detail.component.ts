@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
 import { AuthService } from '../../service/auth.service';
-import { Reservation } from '../../models/reservation.model';
+import { ReservationDTO } from '../../models/reservation.model';
 import { DetailToolbarComponent } from './components/detail-toolbar/detail-toolbar.component';
 import { DetailLoadingComponent } from './components/detail-loading/detail-loading.component';
 import { DetailNotFoundComponent } from './components/detail-not-found/detail-not-found.component';
@@ -38,7 +38,7 @@ export class ReservationDetailComponent implements OnInit {
   private authService = inject(AuthService);
   private location = inject(Location);
 
-  reservation: Reservation | null = null;
+  reservation: ReservationDTO | null = null;
   isLoading = true;
   errorMessage: string | null = null;
 

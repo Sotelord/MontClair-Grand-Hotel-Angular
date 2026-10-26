@@ -22,8 +22,8 @@ export class ReservationService {
   private static readonly MAX_GUESTS = 10;
 
   //Lista todas las reservas con su detalle completo.
-  findAll(): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(this.apiUrl);
+  findAll(): Observable<ReservationDTO[]> {
+    return this.http.get<ReservationDTO[]>(this.apiUrl);
   }
 
   //Lista las reservas en formato resumido (DTO plano), usado en el panel de administración.
@@ -31,27 +31,47 @@ export class ReservationService {
     return this.http.get<ReservationDTO[]>(`${this.apiUrl}/summary`);
   }
 
-  //Busca una reserva por su id.
-  findById(id: number): Observable<Reservation> {
-    return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
+  //Busca una reserva por su id (devuelve el DTO plano sin objetos anidados circulares).
+  findById(id: number): Observable<ReservationDTO> {
+    return this.http.get<ReservationDTO>(`${this.apiUrl}/${id}`);
   }
 
-  //Lista las reservas de un cliente (perfil del huésped).
-  findByClientId(clientId: number): Observable<Reservation[]> {
-    return this.http.get<Reservation[]>(`${this.apiUrl}/client/${clientId}`);
+  //Lista las reservas de un cliente para su historial (perfil del huésped).
+  findByClientId(clientId: number): Observable<ReservationDTO[]> {
+    return this.http.get<ReservationDTO[]>(`${this.apiUrl}/client/${clientId}`);
   }
 
   //Crea una reserva. Recibe el DTO de solicitud, no la entidad completa.
-  add(data: ReservationRequestDTO): Observable<Reservation> {
-    return this.http.post<Reservation>(this.apiUrl, data);
+  add(data: ReservationRequestDTO): Observable<ReservationDTO> {
+    return this.http.post<ReservationDTO>(this.apiUrl, data);
   }
 
   //Actualiza una reserva existente (PUT).
-  update(id: number, data: ReservationRequestDTO): Observable<Reservation> {
-    return this.http.put<Reservation>(`${this.apiUrl}/${id}`, data);
+  update(id: number, data: ReservationRequestDTO): Observable<ReservationDTO> {
+    return this.http.put<ReservationDTO>(`${this.apiUrl}/${id}`, data);
   }
 
-  //Elimina una reserva; el backend libera la habitación asociada.
+  //Cancela una reserva lógicamente (cambia su estado a CANCELLED y preserva el historial).
+  cancel(id: number): Observable<ReservationDTO> {
+    return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/cancel`, {});
+  }
+
+  //Activa la estadía de un cliente cuando este llega al hotel (estado pasa a ACTIVE).
+  activate(id: number): Observable<ReservationDTO> {
+    return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/activate`, {});
+  }
+
+  //Finaliza la estadía de un cliente (estado pasa a INACTIVE; solo permitido si ya pagó).
+  finish(id: number): Observable<ReservationDTO> {
+    return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/finish`, {});
+  }
+
+  //Paga la cuenta de una estadía. Se limpia la cuenta del cliente (paid = true, saldo = 0).
+  pay(id: number): Observable<ReservationDTO> {
+    return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/pay`, {});
+  }
+
+  //Elimina una reserva (en backend ejecuta la cancelación lógica para conservar historial).
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
@@ -156,10 +176,11 @@ export class ReservationService {
   }
 
   //Subtotal de la estancia: noches × tarifa por noche.
-  calculateRoomSubtotal(res: Reservation): number {
+  calculateRoomSubtotal(res: Reservation | ReservationDTO): number {
     const nights = this.calculateNights(res.checkInDate, res.checkOutDate);
 
     const roomPrice =
+      (res as any).pricePerNight ||
       res.reservationRooms?.[0]?.pricePerNight ||
       res.reservationRooms?.[0]?.room?.pricePerNight ||
       0;
@@ -168,17 +189,22 @@ export class ReservationService {
   }
 
   //Subtotal de servicios: suma de cantidad × precio unitario de cada servicio contratado.
-  calculateServicesSubtotal(res: Reservation): number {
+  calculateServicesSubtotal(res: Reservation | ReservationDTO): number {
+    const dtoServices = (res as ReservationDTO).services;
+    if (dtoServices && dtoServices.length > 0) {
+      return dtoServices.reduce((acc: number, curr: any) => acc + (curr.subtotal ?? curr.quantity * curr.unitPrice), 0);
+    }
+
     const services = res.reservationRooms?.[0]?.acquiredServices || [];
 
     return services.reduce(
-      (acc, curr) => acc + curr.quantity * curr.unitPrice,
+      (acc: number, curr: any) => acc + curr.quantity * curr.unitPrice,
       0,
     );
   }
 
   //Total de la reserva: estancia + servicios.
-  calculateGrandTotal(res: Reservation): number {
+  calculateGrandTotal(res: Reservation | ReservationDTO): number {
     return (
       this.calculateRoomSubtotal(res) + this.calculateServicesSubtotal(res)
     );

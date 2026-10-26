@@ -12,6 +12,8 @@ export class AccountSummaryComponent {
   roomSubtotal = input.required<number>();
   servicesSubtotal = input.required<number>();
   grandTotal = input.required<number>();
+  paid = input<boolean>(false);
+  pendingBalance = input<number>(0);
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-ES', {

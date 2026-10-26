@@ -23,6 +23,10 @@ export class ReservationsTableComponent {
   reservations = input.required<ReservationDTO[]>();
   viewRequested = output<number>();
   editRequested = output<number>();
+  activateRequested = output<ReservationDTO>();
+  payRequested = output<ReservationDTO>();
+  finishRequested = output<ReservationDTO>();
+  cancelRequested = output<ReservationDTO>();
   deleteRequested = output<ReservationDTO>();
 
   formatId(id: number): string {

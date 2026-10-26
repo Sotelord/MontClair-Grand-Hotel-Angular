@@ -12,6 +12,15 @@
         (logoutClicked)="logout()"
       ></app-profile-header>
 
+      @if (successMessage) {
+        <div class="mt-6">
+          <app-success-alert
+            [message]="successMessage"
+            [dismissible]="true"
+            (closed)="successMessage = null"
+          />
+        </div>
+      }
       @if (errorMessage) {
         <div class="mt-6">
           <app-error-alert
@@ -29,8 +38,8 @@
     <app-reservations-list
       [reservations]="reservations"
       [clientId]="client.id"
-      [deletingIds]="deletingReservationIds"
-      (deleteRequested)="deleteReservation($event)"
+      [cancellingIds]="cancellingReservationIds"
+      (cancelRequested)="cancelReservation($event)"
     ></app-reservations-list>
 
     <app-danger-zone

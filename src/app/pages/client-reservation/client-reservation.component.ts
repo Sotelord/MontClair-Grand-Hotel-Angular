@@ -170,14 +170,22 @@ export class ClientReservationComponent implements OnInit {
           null;
 
         this.selectedServiceIds.clear();
-        reservationRoom?.acquiredServices?.forEach((acquired) => {
-          if (
-            acquired.service?.id != null &&
-            (acquired.service.price ?? 0) > 0
-          ) {
-            this.selectedServiceIds.add(acquired.service.id);
-          }
-        });
+        if (existing.services && existing.services.length > 0) {
+          existing.services.forEach((s) => {
+            if (s.id != null) {
+              this.selectedServiceIds.add(s.id);
+            }
+          });
+        } else if (reservationRoom?.acquiredServices) {
+          reservationRoom.acquiredServices.forEach((acquired: any) => {
+            if (
+              acquired.service?.id != null &&
+              (acquired.service.price ?? 0) > 0
+            ) {
+              this.selectedServiceIds.add(acquired.service.id);
+            }
+          });
+        }
       },
       error: () => {
         this.errorMessage = 'No se pudo cargar la reserva solicitada.';
