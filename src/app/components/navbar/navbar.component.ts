@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { Client } from '../../models/client.model';
 
@@ -12,8 +12,14 @@ import { Client } from '../../models/client.model';
 })
 export class NavbarComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   get currentClient(): Client | null {
     return this.authService.getSession();
+  }
+
+  logout(): void {
+    this.authService.clearSession();
+    this.router.navigate(['/login']);
   }
 }

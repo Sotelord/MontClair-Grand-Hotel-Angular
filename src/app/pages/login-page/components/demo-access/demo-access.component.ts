@@ -8,5 +8,5 @@ import { Component, output } from '@angular/core';
   standalone: true,
 })
 export class DemoAccessComponent {
-  selected = output<'admin' | 'demo'>();
+  selected = output<'admin' | 'operario' | 'demo'>();
 }

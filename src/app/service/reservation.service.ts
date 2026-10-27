@@ -71,12 +71,24 @@ export class ReservationService {
     return this.http.patch<ReservationDTO>(`${this.apiUrl}/${id}/pay`, {});
   }
 
-  //Asigna un servicio consumido a una habitacion (REGLA 5: requiere reserva activa en la habitacion).
-  assignServiceToRoom(roomId: number, serviceId: number, quantity: number = 1): Observable<ReservationDTO> {
-    return this.http.post<ReservationDTO>(`${this.apiUrl}/rooms/${roomId}/services`, {
-      serviceId,
-      quantity,
-    });
+  //Asigna un servicio consumido a una habitacion (REGLA 5: requiere reserva activa en la habitacion). Permite especificar reservationId si hay varias.
+  assignServiceToRoom(
+    roomId: number,
+    serviceId: number,
+    quantity: number = 1,
+    reservationId?: number,
+  ): Observable<ReservationDTO> {
+    const payload: any = { serviceId, quantity };
+    if (reservationId != null) {
+      payload.reservationId = reservationId;
+    }
+    return this.http.post<ReservationDTO>(`${this.apiUrl}/rooms/${roomId}/services`, payload);
+  }
+
+  //Busca la estadía activa asociada a un número de habitación (Regla de negocio: máx. 1 activa por habitación).
+  findActiveByRoomNumber(roomNumber: string): Observable<ReservationDTO> {
+    const clean = encodeURIComponent((roomNumber || '').trim());
+    return this.http.get<ReservationDTO>(`${this.apiUrl}/room/${clean}/active`);
   }
 
   //Elimina un servicio contratado de la cuenta de una reserva.

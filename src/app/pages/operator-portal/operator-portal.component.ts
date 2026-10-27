@@ -55,6 +55,14 @@ export class OperatorPortalComponent implements OnInit {
   serviceQuantity: number = 1;
   processingService: boolean = false;
 
+  // Flujo: Contratar servicio pidiendo número de habitación
+  showRoomContractModal: boolean = false;
+  roomSearchQuery: string = '';
+  isSearchingRoom: boolean = false;
+  roomSearchResults: ReservationDTO[] = [];
+  selectedRoomReservation: ReservationDTO | null = null;
+  roomSearchError: string | null = null;
+
   ngOnInit(): void {
     this.loadReservations();
     this.loadCatalogServices();
@@ -220,6 +228,7 @@ export class OperatorPortalComponent implements OnInit {
         roomId,
         Number(this.selectedServiceId),
         Number(this.serviceQuantity) || 1,
+        res.id,
       )
       .subscribe({
         next: (updated) => {
@@ -235,6 +244,97 @@ export class OperatorPortalComponent implements OnInit {
             err?.error?.message ||
             'No se pudo contratar el servicio. Verifique que la estadía esté ACTIVA.';
           setTimeout(() => (this.errorMessage = null), 6000);
+        },
+      });
+  }
+
+  openRoomContractModal(): void {
+    this.showRoomContractModal = true;
+    this.roomSearchQuery = '';
+    this.roomSearchResults = [];
+    this.selectedRoomReservation = null;
+    this.roomSearchError = null;
+    this.serviceQuantity = 1;
+    if (this.availableServices.length > 0) {
+      this.selectedServiceId = this.availableServices[0].id;
+    }
+  }
+
+  closeRoomContractModal(): void {
+    this.showRoomContractModal = false;
+    this.roomSearchResults = [];
+    this.selectedRoomReservation = null;
+    this.roomSearchError = null;
+  }
+
+  searchReservationsByRoom(): void {
+    const query = (this.roomSearchQuery || '').trim();
+    if (!query) {
+      this.roomSearchError = 'Por favor ingresa el número de habitación.';
+      return;
+    }
+
+    this.isSearchingRoom = true;
+    this.roomSearchError = null;
+    this.selectedRoomReservation = null;
+
+    this.reservationService.findActiveByRoomNumber(query).subscribe({
+      next: (reservation) => {
+        this.isSearchingRoom = false;
+        if (!reservation) {
+          this.roomSearchError = `No se encontró ninguna estadía activa para la habitación #${query}.`;
+          return;
+        }
+        this.selectedRoomReservation = reservation;
+      },
+      error: (err) => {
+        this.isSearchingRoom = false;
+        this.roomSearchError =
+          err?.error?.message ||
+          `No se encontró ninguna estadía activa en la habitación #${query}.`;
+      },
+    });
+  }
+
+  selectActiveReservation(res: ReservationDTO): void {
+    this.selectedRoomReservation = res;
+  }
+
+  get selectedServicePrice(): number {
+    const s = this.availableServices.find((item) => item.id === Number(this.selectedServiceId));
+    return s?.price || 0;
+  }
+
+  contractServiceForSelectedRoom(): void {
+    const res = this.selectedRoomReservation;
+    const roomId = res?.roomId ?? res?.reservationRooms?.[0]?.room?.id;
+    if (!res || !roomId || !this.selectedServiceId) {
+      return;
+    }
+
+    this.processingService = true;
+    this.roomSearchError = null;
+
+    this.reservationService
+      .assignServiceToRoom(
+        roomId,
+        Number(this.selectedServiceId),
+        Number(this.serviceQuantity) || 1,
+        res.id,
+      )
+      .subscribe({
+        next: (updated) => {
+          this.processingService = false;
+          this.successMessage = `Servicio cargado con éxito a la cuenta de la habitación #${res.roomNumber} (Huésped: ${res.clientFirstName} ${res.clientLastName}).`;
+          this.loadReservations();
+          this.closeRoomContractModal();
+          setTimeout(() => (this.successMessage = null), 5000);
+        },
+        error: (err) => {
+          this.processingService = false;
+          this.roomSearchError =
+            err?.error?.message ||
+            'No se pudo contratar el servicio. Verifique los datos e intente nuevamente.';
         },
       });
   }

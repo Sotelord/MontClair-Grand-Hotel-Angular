@@ -43,22 +43,20 @@ describe('ServicesService', () => {
       name: 'Spa Premium',
     };
 
-    service.services$.subscribe();
+    service.findAll().subscribe((items) => {
+      expect(items.length).toBe(1);
+    });
 
     const initialRequest = httpMock.expectOne('http://localhost:8080/api/services');
     initialRequest.flush([initialService]);
 
-    const emissions: any[] = [];
-    service.services$.subscribe((items) => emissions.push(items));
-
-    service.update(1, updatedService).subscribe();
+    service.update(1, updatedService).subscribe((updated) => {
+      expect(updated.name).toBe('Spa Premium');
+    });
 
     const updateRequest = httpMock.expectOne(
       'http://localhost:8080/api/services/1',
     );
     updateRequest.flush(updatedService);
-
-    expect(emissions.length).toBeGreaterThan(0);
-    expect(emissions.at(-1)?.[0].name).toBe('Spa Premium');
   });
 });

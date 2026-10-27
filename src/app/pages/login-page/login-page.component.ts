@@ -32,6 +32,9 @@ export class LoginPageComponent implements OnInit {
   successMessage: string | null = null;
 
   ngOnInit(): void {
+    // Limpiar cualquier sesión residual al entrar a la pantalla de login para evitar iniciar como operario/admin por error
+    this.authService.clearSession();
+
     if (this.route.snapshot.queryParamMap.get('registered')) {
       this.successMessage =
         '¡Registro completado! Ya puedes iniciar sesión con tus credenciales.';
@@ -61,7 +64,8 @@ export class LoginPageComponent implements OnInit {
           } else if (
             result.client.role?.toUpperCase() === 'OPERATOR' ||
             result.client.role?.toUpperCase() === 'OPERARIO' ||
-            result.client.username?.toLowerCase() === 'operario'
+            result.client.username?.toLowerCase() === 'operario' ||
+            (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario')
           ) {
             this.router.navigate(['/operator/reservations']);
           } else {
@@ -70,6 +74,8 @@ export class LoginPageComponent implements OnInit {
         } else {
           if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
             this.router.navigate(['/admin/rooms']);
+          } else if (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario') {
+            this.router.navigate(['/operator/reservations']);
           } else {
             this.errorMessage =
               result.message || 'Usuario o contraseña incorrectos.';
@@ -79,6 +85,8 @@ export class LoginPageComponent implements OnInit {
       error: (err) => {
         if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
           this.router.navigate(['/admin/rooms']);
+        } else if (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario') {
+          this.router.navigate(['/operator/reservations']);
         } else {
           this.errorMessage =
             err?.error?.message || 'Usuario o contraseña incorrectos.';
@@ -87,10 +95,13 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
-  fillDemo(user: 'admin' | 'demo'): void {
+  fillDemo(user: 'admin' | 'operario' | 'demo'): void {
     if (user === 'admin') {
       this.identifier = 'admin';
       this.password = 'admin';
+    } else if (user === 'operario') {
+      this.identifier = 'operario';
+      this.password = 'operario';
     } else {
       this.identifier = 'demo';
       this.password = 'demo';

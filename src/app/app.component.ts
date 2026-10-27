@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -12,6 +12,7 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterLink,
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
@@ -30,12 +31,18 @@ export class AppComponent {
   isLogin = signal<boolean>(false);
 
   constructor() {
+    const updateRoutes = (url: string) => {
+      this.isAdmin.set(url.startsWith('/admin'));
+      this.isOperator.set(url.startsWith('/operator'));
+      this.isLogin.set(url.startsWith('/login'));
+    };
+
+    updateRoutes(this.router.url);
+
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
-        this.isAdmin.set(e.urlAfterRedirects.startsWith('/admin'));
-        this.isOperator.set(e.urlAfterRedirects.startsWith('/operator'));
-        this.isLogin.set(e.urlAfterRedirects.startsWith('/login'));
+        updateRoutes(e.urlAfterRedirects);
       });
   }
 }

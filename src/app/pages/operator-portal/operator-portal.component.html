@@ -20,11 +20,24 @@
     ></app-error-alert>
   }
 
-  <app-reservation-filters
-    [(selectedStatus)]="selectedStatus"
-    [(selectedPayment)]="selectedPayment"
-    [total]="filteredReservations.length"
-  ></app-reservation-filters>
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-2">
+    <app-reservation-filters
+      [(selectedStatus)]="selectedStatus"
+      [(selectedPayment)]="selectedPayment"
+      [total]="filteredReservations.length"
+    ></app-reservation-filters>
+
+    <button
+      type="button"
+      (click)="openRoomContractModal()"
+      class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-5 rounded-[2px] transition shadow-xs inline-flex items-center justify-center gap-2 cursor-pointer mb-6 shrink-0"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Contratar Servicio por Habitación
+    </button>
+  </div>
 
   <app-reservations-table
     [reservations]="filteredReservations"
@@ -201,6 +214,216 @@
           <button
             type="button"
             (click)="closeAddServiceModal()"
+            class="px-4 py-2 text-[10px] uppercase tracking-[1.5px] font-bold border border-[#E8E2DA] text-woodsmoke hover:bg-pampas rounded-[2px] transition cursor-pointer"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL: CONTRATAR SERVICIO POR NÚMERO DE HABITACIÓN (FLUJO RECEPCIÓN) -->
+  @if (showRoomContractModal) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-woodsmoke/60 backdrop-blur-[2px] p-4"
+    >
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-2xl max-w-lg w-full p-6 sm:p-8 relative overflow-hidden max-h-[90vh] overflow-y-auto"
+      >
+        <div
+          class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+        ></div>
+
+        <!-- ENCABEZADO -->
+        <div class="flex items-start justify-between border-b border-[#E8E2DA] pb-4 mb-5">
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-[2px] text-twine-dark font-bold block"
+            >
+              RECEPCIÓN & CONCIERGE
+            </span>
+            <h3 class="font-serif text-lg font-bold text-woodsmoke mt-0.5">
+              Contratar Servicio para Habitación
+            </h3>
+            <p class="text-xs text-woodsmoke/60 mt-0.5">
+              Pide el número de habitación del cliente y confirma su información antes de contratar.
+            </p>
+          </div>
+          <button
+            type="button"
+            (click)="closeRoomContractModal()"
+            class="text-woodsmoke/40 hover:text-woodsmoke p-1 transition cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+
+        @if (roomSearchError) {
+          <div class="mb-4">
+            <app-error-alert
+              [message]="roomSearchError"
+              (closed)="roomSearchError = null"
+            ></app-error-alert>
+          </div>
+        }
+
+        <!-- PASO 1: PEDIR NÚMERO DE HABITACIÓN -->
+        <div class="bg-pampas/40 border border-[#E8E2DA] rounded-[2px] p-4 mb-5">
+          <label
+            class="block text-[10px] uppercase tracking-wider font-semibold text-woodsmoke/80 mb-1.5"
+          >
+            1. Número de Habitación del Huésped
+          </label>
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              [(ngModel)]="roomSearchQuery"
+              (keyup.enter)="searchReservationsByRoom()"
+              placeholder="Ej: 101, 205..."
+              class="flex-1 py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none font-mono"
+            />
+            <button
+              type="button"
+              (click)="searchReservationsByRoom()"
+              [disabled]="isSearchingRoom"
+              class="bg-mirage hover:bg-woodsmoke text-white text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-4 rounded-[2px] transition cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shrink-0"
+            >
+              @if (isSearchingRoom) {
+                <span>Buscando...</span>
+              } @else {
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>Buscar</span>
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 2: CONFIRMAR DATOS DEL CLIENTE PARA EVITAR EQUIVOCACIONES -->
+        @if (selectedRoomReservation; as activeRes) {
+          <div class="bg-emerald-50/50 border border-emerald-200 rounded-[2px] p-4 mb-5">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-emerald-200/70">
+              <span class="text-[10px] uppercase tracking-[1.5px] font-bold text-emerald-900 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                2. Confirmación de Datos del Huésped
+              </span>
+              <span class="text-[10px] font-mono font-bold text-twine-dark">
+                Hab. #{{ activeRes.roomNumber }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div>
+                <span class="text-[10px] uppercase text-woodsmoke/50 block font-semibold">Huésped Titular</span>
+                <span class="font-bold text-woodsmoke text-sm">
+                  {{ activeRes.clientFirstName }} {{ activeRes.clientLastName }}
+                </span>
+              </div>
+
+              <div>
+                <span class="text-[10px] uppercase text-woodsmoke/50 block font-semibold">Reserva ID</span>
+                <span class="font-mono text-twine-dark font-bold">
+                  #{{ activeRes.id }}
+                </span>
+              </div>
+
+              <div>
+                <span class="text-[10px] uppercase text-woodsmoke/50 block font-semibold">Correo / Teléfono</span>
+                <span class="text-woodsmoke/70 text-[11px] block truncate">
+                  {{ activeRes.clientEmail || 'Sin email registrado' }}
+                </span>
+                <span class="text-woodsmoke/70 text-[11px] block font-mono">
+                  {{ activeRes.clientPhone || 'Sin teléfono' }}
+                </span>
+              </div>
+
+              <div>
+                <span class="text-[10px] uppercase text-woodsmoke/50 block font-semibold">Estadía</span>
+                <span class="font-mono text-woodsmoke/80 text-[11px] block">
+                  {{ activeRes.checkInDate }} → {{ activeRes.checkOutDate }}
+                </span>
+                <span class="text-[10px] text-woodsmoke/60">
+                  ({{ activeRes.nights }} noches)
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-emerald-200/60 flex items-center gap-1.5 text-[10px] text-emerald-900 bg-white/70 p-2 rounded-[2px]">
+              <svg class="w-3.5 h-3.5 text-emerald-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Verifica con el huésped su nombre y habitación para confirmar que no haya equivocaciones.</span>
+            </div>
+          </div>
+
+          <!-- PASO 3: SELECCIONAR SERVICIO Y AGREGAR A LA CUENTA -->
+          <div class="bg-pampas/40 border border-[#E8E2DA] rounded-[2px] p-4 mb-5">
+            <span class="text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke block mb-3">
+              3. Seleccionar Servicio a Cargar en Cuenta
+            </span>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label class="block text-[10px] uppercase tracking-wider font-semibold text-woodsmoke/70 mb-1">
+                  Servicio
+                </label>
+                <select
+                  [(ngModel)]="selectedServiceId"
+                  class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
+                >
+                  @for (srv of availableServices; track srv.id) {
+                    <option [ngValue]="srv.id">
+                      {{ srv.name }} — {{ formatPrice(srv.price) }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider font-semibold text-woodsmoke/70 mb-1">
+                  Cantidad
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  [(ngModel)]="serviceQuantity"
+                  class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none"
+                />
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-[#E8E2DA] flex items-center justify-between">
+              <span class="text-xs text-woodsmoke/70">
+                Subtotal Servicio:
+                <strong class="font-mono text-twine-dark">
+                  {{ formatPrice(selectedServicePrice * (serviceQuantity || 1)) }}
+                </strong>
+              </span>
+
+              <button
+                type="button"
+                [disabled]="processingService || !selectedServiceId"
+                (click)="contractServiceForSelectedRoom()"
+                style="background-color: #bf925a; color: #ffffff"
+                class="hover:opacity-90 disabled:opacity-40 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-4 rounded-[2px] transition shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+              >
+                @if (processingService) {
+                  <span>Cargando...</span>
+                } @else {
+                  <span>Confirmar y Cargar a Cuenta</span>
+                }
+              </button>
+            </div>
+          </div>
+        }
+
+        <div class="flex items-center justify-end pt-3 border-t border-[#E8E2DA]">
+          <button
+            type="button"
+            (click)="closeRoomContractModal()"
             class="px-4 py-2 text-[10px] uppercase tracking-[1.5px] font-bold border border-[#E8E2DA] text-woodsmoke hover:bg-pampas rounded-[2px] transition cursor-pointer"
           >
             Cerrar
