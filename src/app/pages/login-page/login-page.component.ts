@@ -58,6 +58,12 @@ export class LoginPageComponent implements OnInit {
             (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin')
           ) {
             this.router.navigate(['/admin/rooms']);
+          } else if (
+            result.client.role?.toUpperCase() === 'OPERATOR' ||
+            result.client.role?.toUpperCase() === 'OPERARIO' ||
+            result.client.username?.toLowerCase() === 'operario'
+          ) {
+            this.router.navigate(['/operator/reservations']);
           } else {
             this.router.navigate(['/profile', result.client.id]);
           }

@@ -13,6 +13,7 @@ export class AccountSummaryComponent {
   servicesSubtotal = input.required<number>();
   grandTotal = input.required<number>();
   paid = input<boolean>(false);
+  paidAmount = input<number>(0);
   pendingBalance = input<number>(0);
 
   formatPrice(price: number): string {

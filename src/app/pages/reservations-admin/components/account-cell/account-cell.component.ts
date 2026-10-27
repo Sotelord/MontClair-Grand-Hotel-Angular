@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ReservationDTO } from '../../../../models/reservation.model';
 
 @Component({
@@ -10,6 +10,8 @@ import { ReservationDTO } from '../../../../models/reservation.model';
 })
 export class AccountCellComponent {
   reservation = input.required<ReservationDTO>();
+  allowRemoveService = input<boolean>(false);
+  removeServiceClicked = output<{ id: number; name: string }>();
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-ES', {

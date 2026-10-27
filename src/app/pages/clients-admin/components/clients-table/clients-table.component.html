@@ -43,7 +43,9 @@
                     {{
                       c.role === "ADMIN"
                         ? "Personal Administrativo"
-                        : "Huésped Registrado"
+                        : c.role === "OPERATOR" || c.role === "OPERARIO"
+                          ? "Personal Operativo"
+                          : "Huésped Registrado"
                     }}
                   </span>
                 </div>

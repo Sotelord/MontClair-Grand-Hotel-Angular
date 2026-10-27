@@ -13,6 +13,20 @@
     </button>
   }
 
+  <!-- BOTÓN: CONTRATAR SERVICIO (OPERADOR) -->
+  @if (isOperatorMode() && reservation().status !== 'CANCELLED' && reservation().status !== 'INACTIVE') {
+    <button
+      type="button"
+      (click)="addServiceClicked.emit()"
+      class="p-1.5 text-twine-dark hover:text-white hover:bg-twine rounded-[2px] transition cursor-pointer border border-twine/40 bg-pampas/70"
+      title="Contratar Servicio: agregar o gestionar servicios de la cuenta"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+    </button>
+  }
+
   <!-- BOTÓN: PAGAR CUENTA (SE LIMPIA LA CUENTA DEL CLIENTE) -->
   @if (!reservation().paid && reservation().status !== 'CANCELLED') {
     <button
@@ -67,8 +81,8 @@
     </svg>
   </button>
 
-  <!-- EDITAR (SOLO CONFIRMED) -->
-  @if (reservation().status === 'CONFIRMED') {
+  <!-- EDITAR (SOLO CONFIRMED Y NO EN MODO OPERADOR) -->
+  @if (reservation().status === 'CONFIRMED' && !isOperatorMode()) {
     <button
       type="button"
       (click)="editClicked.emit()"
@@ -93,7 +107,7 @@
   }
 
   <!-- CANCELAR RESERVA (REGLA 4: SOLO SI TODAVÍA NO ESTÁ ACTIVA Y FECHA INICIO ES POSTERIOR A HOY) -->
-  @if (reservation().status === 'CONFIRMED') {
+  @if (reservation().status === 'CONFIRMED' && !isOperatorMode()) {
     @if (isCancelable) {
       <button
         type="button"
@@ -117,12 +131,12 @@
     }
   }
 
-  <!-- ELIMINAR / PURGAR (CONFIRMAR BORRADO) -->
+  <!-- ELIMINAR RESERVA -->
   <button
     type="button"
     (click)="deleteClicked.emit()"
     class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
-    title="Eliminar de la lista"
+    title="Eliminar Reserva"
   >
     <svg
       class="w-4 h-4"

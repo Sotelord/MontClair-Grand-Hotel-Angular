@@ -32,7 +32,17 @@
             <td class="py-4 px-5"><app-room-cell [reservation]="res" /></td>
             <td class="py-4 px-5"><app-dates-cell [reservation]="res" /></td>
             <td class="py-4 px-5 min-w-[240px]">
-              <app-account-cell [reservation]="res" />
+              <app-account-cell
+                [reservation]="res"
+                [allowRemoveService]="isOperatorMode()"
+                (removeServiceClicked)="
+                  removeServiceRequested.emit({
+                    reservation: res,
+                    serviceId: $event.id,
+                    serviceName: $event.name
+                  })
+                "
+              />
             </td>
 
             <td class="py-4 px-5">
@@ -75,9 +85,11 @@
             <td class="py-4 px-5 text-right">
               <app-row-actions
                 [reservation]="res"
+                [isOperatorMode]="isOperatorMode()"
                 (viewClicked)="viewRequested.emit(res.id)"
                 (editClicked)="editRequested.emit(res.id)"
                 (activateClicked)="activateRequested.emit(res)"
+                (addServiceClicked)="addServiceRequested.emit(res)"
                 (payClicked)="payRequested.emit(res)"
                 (finishClicked)="finishRequested.emit(res)"
                 (cancelClicked)="cancelRequested.emit(res)"

@@ -49,6 +49,13 @@
         }
       </div>
 
+      @if (paidAmount() > 0 && !paid()) {
+        <div class="flex justify-between items-center text-[11px] font-semibold text-emerald-700">
+          <span>Monto Abonado:</span>
+          <span class="font-mono">-{{ formatPrice(paidAmount()) }}</span>
+        </div>
+      }
+
       <div class="flex justify-between items-center text-xs font-bold">
         <span class="text-woodsmoke/80">Saldo Pendiente:</span>
         <span class="font-mono" [class.text-emerald-700]="paid()" [class.text-amber-800]="!paid()">

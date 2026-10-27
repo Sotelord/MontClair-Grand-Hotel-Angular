@@ -1,38 +1,41 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
-
+import { Component, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
+import { OperatorNavbarComponent } from './components/operator-navbar/operator-navbar.component';
 import { AdminFooterComponent } from './components/admin-footer/admin-footer.component';
-import { AuthService } from './service/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
+    OperatorNavbarComponent,
     AdminFooterComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  router = inject(Router);
-  authService = inject(AuthService);
+  title = 'MontClair-Grand-Hotel-Angular';
 
-  isAdmin(): boolean {
-    return (
-      this.router.url.startsWith('/admin') &&
-      this.authService.getSession()?.role?.toUpperCase() === 'ADMIN'
-    );
-  }
+  private router = inject(Router);
+  isAdmin = signal<boolean>(false);
+  isOperator = signal<boolean>(false);
+  isLogin = signal<boolean>(false);
 
-  isLoginPage(): boolean {
-    return this.router.url.startsWith('/login');
+  constructor() {
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        this.isAdmin.set(e.urlAfterRedirects.startsWith('/admin'));
+        this.isOperator.set(e.urlAfterRedirects.startsWith('/operator'));
+        this.isLogin.set(e.urlAfterRedirects.startsWith('/login'));
+      });
   }
 }

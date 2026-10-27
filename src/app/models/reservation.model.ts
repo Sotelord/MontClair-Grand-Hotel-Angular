@@ -22,6 +22,7 @@ export interface Reservation {
   numberOfPeople: number;
   status: string;
   paid?: boolean;
+  paidAmount?: number;
   pendingBalance?: number;
   reservationRooms?: ReservationRoom[];
 }
@@ -77,7 +78,12 @@ export interface ReservationDTO {
   paid: boolean;
 
   /**
-   * Saldo pendiente de pago (0 si paid es true; de lo contrario igual a totalPrice).
+   * Monto acumulado ya abonado por el cliente.
+   */
+  paidAmount?: number;
+
+  /**
+   * Saldo pendiente de pago (0 si paid es true; de lo contrario igual a totalPrice - paidAmount).
    */
   pendingBalance: number;
 

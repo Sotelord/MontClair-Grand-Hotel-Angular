@@ -1,0 +1,212 @@
+<section class="max-w-[90rem] w-full mx-auto p-6 sm:p-8 lg:p-12">
+  <app-admin-page-header
+    superiorText="PORTAL OPERADOR & RECEPCIÓN"
+    title="Reservas del Hotel"
+    description="Visualización completa de reservas del hotel, activación y finalización de estadías, contratación o eliminación de servicios y liquidación de cuentas."
+  />
+
+  @if (successMessage) {
+    <app-success-alert
+      [message]="successMessage"
+      [dismissible]="true"
+      (closed)="successMessage = null"
+    ></app-success-alert>
+  }
+
+  @if (errorMessage) {
+    <app-error-alert
+      [message]="errorMessage"
+      (closed)="errorMessage = null"
+    ></app-error-alert>
+  }
+
+  <app-reservation-filters
+    [(selectedStatus)]="selectedStatus"
+    [(selectedPayment)]="selectedPayment"
+    [total]="filteredReservations.length"
+  ></app-reservation-filters>
+
+  <app-reservations-table
+    [reservations]="filteredReservations"
+    [isOperatorMode]="true"
+    (viewRequested)="onViewReservation($event)"
+    (activateRequested)="requestActivate($event)"
+    (addServiceRequested)="openAddServiceModal($event)"
+    (removeServiceRequested)="requestRemoveService($event)"
+    (payRequested)="requestPay($event)"
+    (finishRequested)="requestFinish($event)"
+    (cancelRequested)="requestCancel($event)"
+    (deleteRequested)="confirmDelete($event)"
+  ></app-reservations-table>
+
+  @if (activeAction) {
+    <app-confirm-modal
+      [title]="activeAction.title"
+      [confirmLabel]="activeAction.confirmLabel"
+      (confirmed)="executeModalAction()"
+      (cancelled)="cancelModal()"
+    >
+      {{ activeAction.description }}
+    </app-confirm-modal>
+  }
+
+  @if (selectedReservationForService; as res) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-woodsmoke/60 backdrop-blur-[2px] p-4"
+    >
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-2xl max-w-lg w-full p-6 sm:p-8 relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+        ></div>
+
+        <div class="flex items-start justify-between border-b border-[#E8E2DA] pb-4 mb-5">
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-[2px] text-twine-dark font-bold block"
+            >
+              Reserva #{{ res.id }} • Habitación #{{ res.roomNumber }}
+            </span>
+            <h3 class="font-serif text-lg font-bold text-woodsmoke mt-0.5">
+              Contratar Servicio & Gestionar Cuenta
+            </h3>
+            <p class="text-xs text-woodsmoke/60 mt-0.5">
+              Huésped: {{ res.clientFirstName }} {{ res.clientLastName }}
+            </p>
+          </div>
+          <button
+            type="button"
+            (click)="closeAddServiceModal()"
+            class="text-woodsmoke/40 hover:text-woodsmoke p-1 transition cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+
+        @if (res.status !== 'ACTIVE') {
+          <div
+            class="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-[2px] text-xs text-amber-900 flex items-center justify-between gap-3"
+          >
+            <div>
+              <p class="font-bold uppercase text-[10px] tracking-wider">
+                Estadía en estado {{ res.status === 'CONFIRMED' ? 'CONFIRMADA' : res.status }}
+              </p>
+              <p class="text-[11px] mt-0.5">
+                Para cargar nuevos servicios a la habitación, la estadía debe estar en estado <strong>ACTIVA</strong>.
+              </p>
+            </div>
+          </div>
+        }
+
+        <div class="bg-pampas/40 border border-[#E8E2DA] rounded-[2px] p-4 mb-5">
+          <p class="text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke mb-3">
+            Contratar Servicio Adicional
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <label
+                class="block text-[10px] uppercase tracking-wider font-semibold text-woodsmoke/70 mb-1"
+              >
+                Servicio
+              </label>
+              <select
+                [(ngModel)]="selectedServiceId"
+                class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
+              >
+                @for (srv of availableServices; track srv.id) {
+                  <option [ngValue]="srv.id">
+                    {{ srv.name }} — {{ formatPrice(srv.price) }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label
+                class="block text-[10px] uppercase tracking-wider font-semibold text-woodsmoke/70 mb-1"
+              >
+                Cantidad
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="20"
+                [(ngModel)]="serviceQuantity"
+                class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none"
+              />
+            </div>
+          </div>
+
+          <div class="mt-3 flex justify-end">
+            <button
+              type="button"
+              [disabled]="processingService || res.status !== 'ACTIVE'"
+              (click)="contractService()"
+              style="background-color: #bf925a; color: #ffffff"
+              class="hover:opacity-90 disabled:opacity-40 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-4 rounded-[2px] transition shadow-xs cursor-pointer"
+            >
+              Contratar Servicio
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke">
+              Servicios en la Cuenta
+            </span>
+            <span class="text-xs font-mono font-bold text-twine-dark">
+              Subtotal: {{ formatPrice(res.servicesSubtotal) }}
+            </span>
+          </div>
+
+          @if (res.services.length > 0) {
+            <ul class="divide-y divide-[#E8E2DA] border border-[#E8E2DA] rounded-[2px] max-h-44 overflow-y-auto">
+              @for (s of res.services; track s.id) {
+                <li class="flex items-center justify-between px-3 py-2 text-xs bg-white">
+                  <div>
+                    <span class="font-semibold text-twine-dark">{{ s.quantity }}x</span>
+                    <span class="text-woodsmoke ml-1">{{ s.name }}</span>
+                    <span class="font-mono text-woodsmoke/60 ml-2">({{ formatPrice(s.subtotal) }})</span>
+                  </div>
+                  @if (s.id) {
+                    <button
+                      type="button"
+                      (click)="removeServiceDirect(res, s.id, s.name)"
+                      class="p-1 text-rose-600 hover:text-white hover:bg-rose-600 rounded-[2px] transition cursor-pointer"
+                      title="Eliminar servicio de la cuenta"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  }
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="text-xs italic text-woodsmoke/50 bg-pampas/30 border border-[#E8E2DA] rounded-[2px] p-3 text-center">
+              Sin servicios extra contratados en la cuenta.
+            </p>
+          }
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-[#E8E2DA]">
+          <div class="text-xs">
+            <span class="text-woodsmoke/70">Total Cuenta: </span>
+            <strong class="font-mono text-sm text-twine-dark">{{ formatPrice(res.totalPrice) }}</strong>
+          </div>
+          <button
+            type="button"
+            (click)="closeAddServiceModal()"
+            class="px-4 py-2 text-[10px] uppercase tracking-[1.5px] font-bold border border-[#E8E2DA] text-woodsmoke hover:bg-pampas rounded-[2px] transition cursor-pointer"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

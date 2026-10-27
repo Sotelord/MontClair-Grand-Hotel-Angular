@@ -8,10 +8,22 @@
 
       <div class="flex items-center space-x-3 md:order-2 shrink-0">
         @if (currentClient) {
-        <a [routerLink]="['/profile', currentClient.id]"
-          class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
-          Mi Perfil
-        </a>
+          @if (currentClient.role.toUpperCase() === 'ADMIN') {
+          <a routerLink="/admin/rooms"
+            class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
+            Panel Admin
+          </a>
+          } @else if (currentClient.role.toUpperCase() === 'OPERATOR' || currentClient.role.toUpperCase() === 'OPERARIO') {
+          <a routerLink="/operator/reservations"
+            class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
+            Portal Operador
+          </a>
+          } @else {
+          <a [routerLink]="['/profile', currentClient.id]"
+            class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">
+            Mi Perfil
+          </a>
+          }
         } @else {
         <a routerLink="/login"
           class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer whitespace-nowrap">

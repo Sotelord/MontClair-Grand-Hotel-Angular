@@ -21,9 +21,17 @@ import { RowActionsComponent } from '../row-actions/row-actions.component';
 })
 export class ReservationsTableComponent {
   reservations = input.required<ReservationDTO[]>();
+  isOperatorMode = input<boolean>(false);
+
   viewRequested = output<number>();
   editRequested = output<number>();
   activateRequested = output<ReservationDTO>();
+  addServiceRequested = output<ReservationDTO>();
+  removeServiceRequested = output<{
+    reservation: ReservationDTO;
+    serviceId: number;
+    serviceName: string;
+  }>();
   payRequested = output<ReservationDTO>();
   finishRequested = output<ReservationDTO>();
   cancelRequested = output<ReservationDTO>();

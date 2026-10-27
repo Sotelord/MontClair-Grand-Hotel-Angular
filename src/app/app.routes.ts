@@ -19,7 +19,9 @@ import { ClientReservationComponent } from './pages/client-reservation/client-re
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
+import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
 import { adminGuard } from './guards/admin.guard';
+import { operatorGuard } from './guards/operator.guard';
 
 export const routes: Routes = [
   {
@@ -148,6 +150,21 @@ export const routes: Routes = [
     path: 'admin/reservations/:id',
     component: ReservationDetailComponent,
     canActivate: [adminGuard],
+  },
+  {
+    path: 'operator',
+    redirectTo: 'operator/reservations',
+    pathMatch: 'full',
+  },
+  {
+    path: 'operator/reservations',
+    component: OperatorPortalComponent,
+    canActivate: [operatorGuard],
+  },
+  {
+    path: 'operator/reservations/:id',
+    component: ReservationDetailComponent,
+    canActivate: [operatorGuard],
   },
   {
     path: 'reservations/book',

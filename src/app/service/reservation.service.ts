@@ -78,6 +78,12 @@ export class ReservationService {
       quantity,
     });
   }
+
+  //Elimina un servicio contratado de la cuenta de una reserva.
+  removeServiceFromReservation(reservationId: number, acquiredServiceId: number): Observable<ReservationDTO> {
+    return this.http.delete<ReservationDTO>(`${this.apiUrl}/${reservationId}/services/${acquiredServiceId}`);
+  }
+
   //Elimina una reserva (en backend ejecuta la cancelación lógica para conservar historial).
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);

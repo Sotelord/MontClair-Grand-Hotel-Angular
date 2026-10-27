@@ -1,6 +1,6 @@
 <section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
   <app-detail-toolbar
-    [reservationId]="reservation?.id ?? null"
+    [reservationId]="isOperatorView ? null : (reservation?.id ?? null)"
     [isAdminView]="isAdminView"
     (backClicked)="goBack()"
   ></app-detail-toolbar>
@@ -63,6 +63,7 @@
           [servicesSubtotal]="servicesSubtotal"
           [grandTotal]="grandTotal"
           [paid]="reservation.paid"
+          [paidAmount]="reservation.paidAmount || 0"
           [pendingBalance]="reservation.pendingBalance"
         ></app-account-summary>
       </div>

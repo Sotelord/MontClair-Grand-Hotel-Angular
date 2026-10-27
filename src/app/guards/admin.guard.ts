@@ -7,8 +7,13 @@ export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
   const session = authService.getSession();
 
-  if (session && session.role?.toUpperCase() === 'ADMIN') {
+  const role = session?.role?.toUpperCase();
+  if (session && role === 'ADMIN') {
     return true;
+  }
+
+  if (session && (role === 'OPERATOR' || role === 'OPERARIO')) {
+    return router.createUrlTree(['/operator/reservations']);
   }
 
   if (session && session.id) {
@@ -17,4 +22,3 @@ export const adminGuard: CanActivateFn = () => {
 
   return router.createUrlTree(['/login']);
 };
-

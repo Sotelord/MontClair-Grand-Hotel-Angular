@@ -4,6 +4,12 @@
   >
     ADMIN
   </span>
+} @else if (role() === "OPERATOR" || role() === "OPERARIO") {
+  <span
+    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+  >
+    OPERARIO
+  </span>
 } @else {
   <span
     class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"

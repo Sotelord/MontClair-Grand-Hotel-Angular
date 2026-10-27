@@ -49,6 +49,15 @@ export class ReservationDetailComponent implements OnInit {
     );
   }
 
+  get isOperatorView(): boolean {
+    const role = this.authService.getSession()?.role?.toUpperCase();
+    return (
+      this.router.url.startsWith('/operator') ||
+      role === 'OPERATOR' ||
+      role === 'OPERARIO'
+    );
+  }
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = Number(idParam);
