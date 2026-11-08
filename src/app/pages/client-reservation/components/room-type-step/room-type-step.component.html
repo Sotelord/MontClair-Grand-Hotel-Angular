@@ -57,6 +57,26 @@
         </div>
 
         <p class="text-[11px] text-woodsmoke/60">{{ selected.description }}</p>
+
+        @if (roomsOfSelectedType.length > 0) {
+          <div class="pt-2 flex flex-wrap gap-1.5">
+            @for (room of roomsOfSelectedType; track room.id) {
+              @if (isRoomAvailable(room)) {
+                <span
+                  class="room-available-badge px-2 py-0.5 rounded-[2px] text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200"
+                >
+                  Hab. {{ room.number }}: Disponible
+                </span>
+              } @else {
+                <span
+                  class="room-unavailable-badge px-2 py-0.5 rounded-[2px] text-[10px] font-mono bg-rose-50 text-rose-700 border border-rose-200"
+                >
+                  Hab. {{ room.number }}: No disponible
+                </span>
+              }
+            }
+          </div>
+        }
       </div>
     </div>
   }
