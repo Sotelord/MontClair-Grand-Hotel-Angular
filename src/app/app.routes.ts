@@ -20,6 +20,10 @@ import { ClientReservationComponent } from './pages/client-reservation/client-re
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
+import { GoogleCallbackComponent } from './pages/google-callback/google-callback.component';
+import { adminGuard } from './guards/admin.guard';
+import { operatorGuard } from './guards/operator.guard';
+import { clientGuard } from './guards/client.guard';
 
 export const routes: Routes = [
   {
@@ -43,6 +47,10 @@ export const routes: Routes = [
     component: LoginPageComponent,
   },
   {
+    path: 'auth/google/callback',
+    component: GoogleCallbackComponent,
+  },
+  {
     path: 'profile',
     redirectTo: 'login',
     pathMatch: 'full',
@@ -50,6 +58,7 @@ export const routes: Routes = [
   {
     path: 'profile/edit/:id',
     component: ProfileEditComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'profile/edit',
@@ -59,10 +68,12 @@ export const routes: Routes = [
   {
     path: 'profile/:id',
     component: ClientProfileComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'clients',
     component: ClientsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'clients/add',
@@ -71,6 +82,7 @@ export const routes: Routes = [
   {
     path: 'clients/edit/:id',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin',
@@ -80,18 +92,22 @@ export const routes: Routes = [
   {
     path: 'admin/rooms',
     component: RoomsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms/add',
     component: RoomFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms/edit/:id',
     component: RoomFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/rooms-types',
     component: RoomTypesAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/room-types',
@@ -101,46 +117,62 @@ export const routes: Routes = [
   {
     path: 'admin/room-types/add',
     component: RoomTypeFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/room-types/edit/:id',
     component: RoomTypeFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients',
     component: ClientsAdminComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients/add',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/clients/edit/:id',
     component: ClientFormComponent,
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/reservations',
     component: ReservationsAdminComponent,
+    canActivate: [operatorGuard],
   },
   {
     path: 'admin/reservations/new',
     component: AdminReservationFormComponent,
+    canActivate: [operatorGuard],
   },
   {
     path: 'admin/reservations/edit/:id',
     component: AdminReservationFormComponent,
+    canActivate: [operatorGuard],
   },
   {
     path: 'admin/reservations/:id',
     component: ReservationDetailComponent,
+    canActivate: [operatorGuard],
+  },
+  {
+    path: 'operator/reservations',
+    component: ReservationsAdminComponent,
+    canActivate: [operatorGuard],
   },
   {
     path: 'reservations/book',
     component: ClientReservationComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'reservations/book/:roomId',
     component: ClientReservationComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'reservations/new',
@@ -171,6 +203,7 @@ export const routes: Routes = [
       import('./pages/services-admin/services-admin.component').then(
         (m) => m.ServicesAdminComponent,
       ),
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/services/add',
@@ -178,6 +211,7 @@ export const routes: Routes = [
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
       ),
+    canActivate: [adminGuard],
   },
   {
     path: 'admin/services/edit/:id',
@@ -185,6 +219,7 @@ export const routes: Routes = [
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
       ),
+    canActivate: [adminGuard],
   },
   {
     path: 'book',

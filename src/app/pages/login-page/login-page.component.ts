@@ -22,6 +22,8 @@ export class LoginPageComponent implements OnInit {
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  isLoading = false;
+  isGoogleLoading = false;
 
   ngOnInit(): void {
     if (this.route.snapshot.queryParamMap.get('registered')) {
@@ -41,34 +43,41 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     this.authService.login(cleanId, cleanPass).subscribe({
       next: (result) => {
+        this.isLoading = false;
         if (result.success && result.client) {
-          if (
-            result.client.role?.toUpperCase() === 'ADMIN' ||
-            result.client.username?.toLowerCase() === 'admin' ||
-            (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin')
-          ) {
-            this.router.navigate(['/admin/rooms']);
-          } else {
-            this.router.navigate(['/profile', result.client.id]);
-          }
+          this.router.navigate(this.authService.getRedirectForClient(result.client));
         } else {
-          if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
-            this.router.navigate(['/admin/rooms']);
-          } else {
-            this.errorMessage =
-              result.message || 'Usuario o contraseña incorrectos.';
-          }
+          this.errorMessage =
+            result.message || 'Usuario o contraseña incorrectos.';
         }
       },
       error: (err) => {
-        if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
-          this.router.navigate(['/admin/rooms']);
-        } else {
-          this.errorMessage =
-            err?.error?.message || 'Usuario o contraseña incorrectos.';
+        this.isLoading = false;
+        this.errorMessage =
+          err?.error?.message || 'Usuario o contraseña incorrectos.';
+      },
+    });
+  }
+
+  onGoogleLogin(): void {
+    this.errorMessage = null;
+    this.isGoogleLoading = true;
+    this.authService.getGoogleStartUrl().subscribe({
+      next: (result) => {
+        if (!result.authorizationUrl) {
+          this.isGoogleLoading = false;
+          this.errorMessage = 'No se pudo iniciar el acceso con Google.';
+          return;
         }
+        window.location.assign(result.authorizationUrl);
+      },
+      error: (err) => {
+        this.isGoogleLoading = false;
+        this.errorMessage =
+          err?.error?.message || 'No se pudo iniciar el acceso con Google.';
       },
     });
   }

@@ -6,6 +6,7 @@ import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
 import { Client } from '../../models/client.model';
 import { Reservation } from '../../models/reservation.model';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-client-profile',
@@ -19,6 +20,7 @@ export class ClientProfileComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
 
   client: Client | null = null;
   reservations: Reservation[] = [];
@@ -55,7 +57,10 @@ export class ClientProfileComponent implements OnInit {
   }
 
   logout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login']),
+    });
   }
 
   deleteProfile(): void {

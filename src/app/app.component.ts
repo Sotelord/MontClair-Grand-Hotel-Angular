@@ -6,6 +6,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
 import { AdminFooterComponent } from './components/admin-footer/admin-footer.component';
+import { AuthService } from './service/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,11 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
 })
 export class AppComponent {
   router = inject(Router);
+  private auth = inject(AuthService);
+
+  constructor() {
+    this.auth.restoreSession().subscribe();
+  }
 
   isAdmin(): boolean {
     return this.router.url.startsWith('/admin');
