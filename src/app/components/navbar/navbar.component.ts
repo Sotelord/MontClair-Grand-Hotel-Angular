@@ -14,11 +14,22 @@ export class NavbarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  isMenuOpen = false;
+
   get currentClient(): Client | null {
     return this.authService.getSession();
   }
 
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
   logout(): void {
+    this.closeMenu();
     this.authService.clearSession();
     this.router.navigate(['/login']);
   }

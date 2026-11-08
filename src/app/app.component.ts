@@ -6,6 +6,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
 import { OperatorNavbarComponent } from './components/operator-navbar/operator-navbar.component';
 import { AdminFooterComponent } from './components/admin-footer/admin-footer.component';
+import { ChatBubbleComponent } from './components/chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
     AdminNavbarComponent,
     OperatorNavbarComponent,
     AdminFooterComponent,
+    ChatBubbleComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

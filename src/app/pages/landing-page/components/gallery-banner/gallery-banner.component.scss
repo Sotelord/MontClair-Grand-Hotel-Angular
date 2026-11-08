@@ -1,10 +1,15 @@
 .gallery-banner {
   position: relative;
+  min-height: 480px;
   height: 600px;
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .gallery-overlay {
@@ -23,8 +28,11 @@
 }
 
 .gallery-content {
+  width: 100%;
   max-width: 700px;
   color: white;
+  position: relative;
+  z-index: 10;
 }
 
 .gallery-subtitle {
@@ -35,7 +43,7 @@
 }
 
 .gallery-subtitle span {
-  font-size: 25px;
+  font-size: clamp(18px, 3vw, 25px);
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -44,13 +52,13 @@
 
 .gallery-content h2 {
   font-family: var(--font-serif);
-  font-size: 40px;
+  font-size: clamp(26px, 4vw, 40px);
   font-weight: normal;
   margin-bottom: 20px;
 }
 
 .gallery-content p {
-  font-size: 18px;
+  font-size: clamp(14px, 2vw, 18px);
   font-weight: 300;
   line-height: 1.6;
   color: var(--pampas);
