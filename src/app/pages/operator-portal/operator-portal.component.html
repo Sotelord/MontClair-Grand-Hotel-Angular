@@ -125,6 +125,7 @@
                 Servicio
               </label>
               <select
+                id="select-service-modal"
                 [(ngModel)]="selectedServiceId"
                 class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
               >
@@ -144,6 +145,7 @@
               </label>
               <input
                 type="number"
+                id="input-service-quantity"
                 min="1"
                 max="20"
                 [(ngModel)]="serviceQuantity"
@@ -155,6 +157,7 @@
           <div class="mt-3 flex justify-end">
             <button
               type="button"
+              id="btn-confirm-add-service"
               [disabled]="processingService || res.status !== 'ACTIVE'"
               (click)="contractService()"
               style="background-color: #bf925a; color: #ffffff"
@@ -209,10 +212,11 @@
         <div class="flex items-center justify-between pt-4 border-t border-[#E8E2DA]">
           <div class="text-xs">
             <span class="text-woodsmoke/70">Total Cuenta: </span>
-            <strong class="font-mono text-sm text-twine-dark">{{ formatPrice(res.totalPrice) }}</strong>
+            <strong id="modal-total-account-price" class="font-mono text-sm text-twine-dark">{{ formatPrice(res.totalPrice) }}</strong>
           </div>
           <button
             type="button"
+            id="btn-close-service-modal"
             (click)="closeAddServiceModal()"
             class="px-4 py-2 text-[10px] uppercase tracking-[1.5px] font-bold border border-[#E8E2DA] text-woodsmoke hover:bg-pampas rounded-[2px] transition cursor-pointer"
           >

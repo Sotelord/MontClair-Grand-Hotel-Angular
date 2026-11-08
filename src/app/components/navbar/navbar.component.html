@@ -15,17 +15,20 @@
       <div class="flex items-center space-x-2 sm:space-x-3 md:order-2 shrink-0">
         @if (currentClient) {
           <a [routerLink]="['/profile', currentClient.id]"
+            id="nav-profile-link"
             class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap">
             Mi Perfil
           </a>
         } @else {
           <a routerLink="/login"
+            id="nav-login-link"
             class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap">
             Login
           </a>
         }
 
         <a routerLink="/reservations/book"
+          id="nav-reservar-link"
           class="font-sans text-[11px] sm:text-xs font-bold uppercase tracking-widest bg-twine text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-sm shadow-sm transition-colors duration-300 hover:bg-twine-hover inline-block whitespace-nowrap">
           Reservar
         </a>

@@ -20,6 +20,7 @@
       </label>
       <input
         type="date"
+        id="booking-checkInDate"
         formControlName="checkInDate"
         [attr.min]="isEditMode() ? null : todayDate()"
         max="9999-12-31"
@@ -35,6 +36,7 @@
       </label>
       <input
         type="date"
+        id="booking-checkOutDate"
         formControlName="checkOutDate"
         [attr.min]="minCheckOutDate()"
         max="9999-12-31"
@@ -50,6 +52,7 @@
       </label>
       <input
         type="number"
+        id="booking-numberOfPeople"
         formControlName="numberOfPeople"
         min="1"
         max="10"

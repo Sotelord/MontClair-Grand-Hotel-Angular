@@ -4,7 +4,7 @@
     <button
       type="button"
       (click)="activateClicked.emit()"
-      class="p-1.5 text-emerald-700 hover:text-white hover:bg-emerald-600 rounded-[2px] transition cursor-pointer border border-emerald-300 bg-emerald-50"
+      class="btn-activar-estadia p-1.5 text-emerald-700 hover:text-white hover:bg-emerald-600 rounded-[2px] transition cursor-pointer border border-emerald-300 bg-emerald-50"
       title="Activar Estadía: el huésped ha llegado al hotel (pasa a ACTIVA)"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -18,7 +18,7 @@
     <button
       type="button"
       (click)="addServiceClicked.emit()"
-      class="p-1.5 text-twine-dark hover:text-white hover:bg-twine rounded-[2px] transition cursor-pointer border border-twine/40 bg-pampas/70"
+      class="btn-contratar-servicio p-1.5 text-twine-dark hover:text-white hover:bg-twine rounded-[2px] transition cursor-pointer border border-twine/40 bg-pampas/70"
       title="Contratar Servicio: agregar o gestionar servicios de la cuenta"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,7 +32,7 @@
     <button
       type="button"
       (click)="payClicked.emit()"
-      class="p-1.5 text-amber-800 hover:text-white hover:bg-amber-600 rounded-[2px] transition cursor-pointer border border-amber-300 bg-amber-50"
+      class="btn-pagar-cuenta p-1.5 text-amber-800 hover:text-white hover:bg-amber-600 rounded-[2px] transition cursor-pointer border border-amber-300 bg-amber-50"
       title="Pagar Cuenta de la Estadía: se salda y limpia la cuenta del cliente"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,7 +46,7 @@
     <button
       type="button"
       (click)="finishClicked.emit()"
-      class="p-1.5 rounded-[2px] transition cursor-pointer border"
+      class="btn-finalizar-estadia p-1.5 rounded-[2px] transition cursor-pointer border"
       [ngClass]="reservation().paid
         ? 'text-indigo-700 hover:text-white hover:bg-indigo-600 border-indigo-300 bg-indigo-50'
         : 'text-amber-700 bg-amber-50 border-amber-300 hover:bg-amber-100'"

@@ -19,10 +19,10 @@
       class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scroll-smooth scrollbar-hide max-w-full"
       style="scrollbar-width: none; -ms-overflow-style: none;"
     >
-      @for (roomType of roomTypesArray(); track roomType.id) {
+      @for (room of roomsArray(); track room.id) {
         <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] flex">
           <app-room-card
-            [roomType]="roomType"
+            [room]="room"
             [showFeatures]="false"
             actionText="Reservar"
             [linkToDetail]="false"

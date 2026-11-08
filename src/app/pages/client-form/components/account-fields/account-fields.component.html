@@ -8,6 +8,7 @@
       </label>
       <input
         type="text"
+        id="client-username"
         formControlName="username"
         placeholder="ej. amorales"
         class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
@@ -28,13 +29,14 @@
       </label>
       <input
         type="email"
+        id="client-email"
         formControlName="email"
         placeholder="ej. amorales@example.com"
         class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
         [class.border-red-400]="isInvalid('email')"
       />
       @if (isInvalid("email")) {
-        <span class="text-[10px] text-red-500 mt-1 block"
+        <span id="client-email-error" class="text-[10px] text-red-500 mt-1 block"
           >Ingresa un correo electrónico válido.</span
         >
       }
@@ -50,6 +52,7 @@
       </label>
       <input
         type="password"
+        id="client-password"
         formControlName="password"
         placeholder="••••••••"
         class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
@@ -70,6 +73,7 @@
       </label>
       <input
         type="tel"
+        id="client-phone"
         formControlName="phone"
         placeholder="ej. +34 600 123 456"
         class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"

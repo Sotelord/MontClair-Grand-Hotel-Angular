@@ -1,4 +1,3 @@
-import { Component, inject } from '@angular/core';
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,12 +6,10 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-booking-bar',
   standalone: true,
-  imports: [],
   imports: [CommonModule, FormsModule],
   templateUrl: './booking-bar.component.html',
   styleUrl: './booking-bar.component.scss',
 })
-export class BookingBarComponent {
 export class BookingBarComponent implements OnInit {
   private router = inject(Router);
 
@@ -119,7 +116,6 @@ export class BookingBarComponent implements OnInit {
   }
 
   consultarDisponibilidad(): void {
-    this.router.navigate(['/rooms/cards']);
     let numGuests = 2;
     const parsed = parseInt(this.guests, 10);
     if (!isNaN(parsed) && parsed > 0) {

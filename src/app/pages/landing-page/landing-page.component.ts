@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 
 import { Service } from '../../models/service.model';
-import { RoomType } from '../../models/roomType.model';
+import { Room } from '../../models/room.model';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { BookingBarComponent } from './components/booking-bar/booking-bar.component';
@@ -10,7 +10,7 @@ import { RoomSectionComponent } from './components/room-section/room-section.com
 import { GalleryBannerComponent } from './components/gallery-banner/gallery-banner.component';
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
-import { RoomTypeService } from '../../service/room-type.service';
+import { RoomService } from '../../service/room.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -30,10 +30,10 @@ export class LandingPageComponent implements OnInit {
   title: string = 'MontClairGrandHotel';
 
   private serviceService = inject(ServicesService);
-  private roomTypeService = inject(RoomTypeService);
+  private roomService = inject(RoomService);
 
   serviceArray: Service[] = [];
-  roomTypesArray: RoomType[] = [];
+  roomsArray: Room[] = [];
 
   ngOnInit(): void {
     this.serviceService.findNotHidden().subscribe({
@@ -45,12 +45,12 @@ export class LandingPageComponent implements OnInit {
       },
     });
 
-    this.roomTypeService.findAll().subscribe({
-      next: (types) => {
-        this.roomTypesArray = types || [];
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.roomsArray = rooms || [];
       },
       error: () => {
-        this.roomTypesArray = [];
+        this.roomsArray = [];
       },
     });
   }

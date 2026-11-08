@@ -1,5 +1,5 @@
 <div
-  class="border rounded-[2px] p-5 transition relative overflow-hidden"
+  class="reservation-card-item border rounded-[2px] p-5 transition relative overflow-hidden"
   [ngClass]="{
     'border-[#E8E2DA] bg-pampas/20 hover:border-twine': reservation().status === 'CONFIRMED',
     'border-emerald-300 bg-emerald-50/20 hover:border-emerald-400': reservation().status === 'ACTIVE',
@@ -11,7 +11,7 @@
     class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]"
   >
     <div>
-      <span class="font-mono text-twine-dark font-semibold text-xs"
+      <span class="font-mono text-twine-dark font-semibold text-xs res-card-id"
         >#{{ reservation().id }}</span
       >
 
@@ -20,7 +20,7 @@
       >
         {{ roomName }}
         @if (roomNumber) {
-          (Hab. {{ roomNumber }})
+          <span class="res-card-room-number">(Hab. {{ roomNumber }})</span>
         }
       </h3>
       <span class="text-[11px] text-woodsmoke/60">{{ roomTypeName }}</span>
@@ -32,7 +32,7 @@
       @switch (reservation().status) {
         @case ('ACTIVE') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-emerald-50 text-emerald-800 border-emerald-300 flex items-center gap-1.5"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-emerald-50 text-emerald-800 border-emerald-300 flex items-center gap-1.5"
           >
             <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
             En Estadía (Activa)
@@ -40,21 +40,21 @@
         }
         @case ('INACTIVE') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-slate-100 text-slate-700 border-slate-300"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-slate-100 text-slate-700 border-slate-300"
           >
             Estadía Finalizada
           </span>
         }
         @case ('CANCELLED') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-rose-50 text-rose-700 border-rose-300"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-rose-50 text-rose-700 border-rose-300"
           >
             Cancelada
           </span>
         }
         @default {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-twine/10 text-twine-dark border-twine/40"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-twine/10 text-twine-dark border-twine/40"
           >
             Confirmada
           </span>
@@ -64,14 +64,14 @@
       <!-- ESTADO DE LA CUENTA (PAGADA / PENDIENTE) -->
       @if (reservation().paid) {
         <span
-          class="px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200"
+          class="res-card-paid-badge px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200"
           title="La cuenta de la estadía ha sido pagada en su totalidad"
         >
           ✓ Cuenta Pagada
         </span>
       } @else {
         <span
-          class="px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-amber-50 text-amber-800 border-amber-300"
+          class="res-card-paid-badge px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-amber-50 text-amber-800 border-amber-300"
           title="Pendiente de pago al check-out"
         >
           Pendiente de Pago

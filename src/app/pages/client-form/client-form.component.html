@@ -7,10 +7,12 @@
     ></div>
     <app-client-form-header [isEditMode]="isEditMode"></app-client-form-header>
     @if (errorMessage) {
-      <app-error-alert
-        [message]="errorMessage"
-        (closed)="errorMessage = null"
-      ></app-error-alert>
+      <div id="client-error-alert">
+        <app-error-alert
+          [message]="errorMessage"
+          (closed)="errorMessage = null"
+        ></app-error-alert>
+      </div>
     }
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="space-y-4">

@@ -4,7 +4,6 @@
     class="booking-bar"
     (submit)="$event.preventDefault(); consultarDisponibilidad()"
   >
-    <div class="booking-group">
     <!-- CHECK-IN -->
     <div
       class="booking-group date-group"
@@ -15,20 +14,15 @@
       aria-label="Seleccionar fecha de check-in"
     >
       <div class="booking-item">
-        <img src="images/Calendario.png" alt="" class="icon" />
         <img src="images/Calendario.png" alt="" class="icon" aria-hidden="true" />
         <div class="booking-info">
           <label for="booking-check-in">Check-In</label>
-          <label for="booking-check-in">CHECK-IN</label>
           <div class="date-display">{{ formatDisplayDate(checkIn) }}</div>
           <input
-            type="text"
             #checkInInput
             type="date"
             id="booking-check-in"
             name="checkIn"
-            value="24 Mayo 2027"
-            readonly
             [(ngModel)]="checkIn"
             (change)="onCheckInChange()"
             [min]="todayDate"
@@ -40,10 +34,8 @@
       <span class="arrow-down" aria-hidden="true">v</span>
     </div>
 
-    <div class="divider"></div>
     <div class="divider" aria-hidden="true"></div>
 
-    <div class="booking-group">
     <!-- CHECK-OUT -->
     <div
       class="booking-group date-group"
@@ -54,20 +46,15 @@
       aria-label="Seleccionar fecha de check-out"
     >
       <div class="booking-item">
-        <img src="images/Calendario.png" alt="" class="icon" />
         <img src="images/Calendario.png" alt="" class="icon" aria-hidden="true" />
         <div class="booking-info">
           <label for="booking-check-out">Check-Out</label>
-          <label for="booking-check-out">CHECK-OUT</label>
           <div class="date-display">{{ formatDisplayDate(checkOut) }}</div>
           <input
-            type="text"
             #checkOutInput
             type="date"
             id="booking-check-out"
             name="checkOut"
-            value="26 Mayo 2027"
-            readonly
             [(ngModel)]="checkOut"
             (change)="onCheckOutChange()"
             [min]="minCheckOutDate"
@@ -79,23 +66,14 @@
       <span class="arrow-down" aria-hidden="true">v</span>
     </div>
 
-    <div class="divider"></div>
     <div class="divider" aria-hidden="true"></div>
 
-    <div class="booking-group">
     <!-- HUÉSPEDES -->
     <div class="booking-group guests-group">
       <div class="booking-item">
-        <img src="images/Num Persona.png" alt="" class="icon" />
         <img src="images/Num Persona.png" alt="" class="icon" aria-hidden="true" />
         <div class="booking-info">
           <label for="booking-huespedes">Huéspedes</label>
-          <select id="booking-huespedes" name="huespedes">
-            <option value="2 Adultos, 1 Niño" selected>
-              2 Adultos, 1 Niño
-            </option>
-            <option value="2 Adultos">2 Adultos</option>
-          <label for="booking-huespedes">HUÉSPEDES</label>
           <select
             id="booking-huespedes"
             name="huespedes"
@@ -118,7 +96,6 @@
     <!-- BOTÓN CONSULTAR -->
     <button type="submit" class="btn btn-primary submit-btn">
       Ver Disponibilidad
-      VER DISPONIBILIDAD
     </button>
   </form>
 </section>
