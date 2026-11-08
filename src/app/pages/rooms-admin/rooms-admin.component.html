@@ -1,209 +1,47 @@
 <section class="max-w-7xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-  <app-admin-page-header superiorText="PANEL DE GESTIÓN" title="Habitaciones"
+  <app-admin-page-header
+    superiorText="PANEL DE GESTIÓN"
+    title="Habitaciones"
     description="Gestión del inventario, características y asignación de todas las estancias del hotel."
-    buttonText="Añadir Habitación" (buttonClick)="onAddRoom()" />
+    buttonText="Añadir Habitación"
+    (buttonClick)="onAddRoom()"
+  />
   @if (successMessage) {
-  <div
-    class="mb-6 p-4 rounded-[4px] bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between animate-fadeIn">
-    <div class="flex items-center gap-2">
-      <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-      <span>{{ successMessage }}</span>
-    </div>
-    <button (click)="successMessage = null" class="text-emerald-600 hover:text-emerald-800 text-sm">
-      ✕
-    </button>
-  </div>
+    <app-success-alert
+      [message]="successMessage"
+      [dismissible]="true"
+      (closed)="successMessage = null"
+    ></app-success-alert>
   }
 
   @if (errorMessage) {
-  <div
-    class="mb-6 p-4 rounded-[4px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between animate-fadeIn">
-    <div class="flex items-center gap-2">
-      <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-      <span>{{ errorMessage }}</span>
-    </div>
-    <button (click)="errorMessage = null" class="text-red-600 hover:text-red-800 text-sm">
-      ✕
-    </button>
-  </div>
+    <app-error-alert
+      [message]="errorMessage"
+      (closed)="errorMessage = null"
+    ></app-error-alert>
   }
-  <div
-    class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-    <div class="flex flex-wrap items-center gap-3">
-      <select [(ngModel)]="selectedTypeId"
-        class="py-2.5 px-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer">
-        <option value="ALL">Todas las Categorías</option>
-        @for (type of roomTypes; track type.id) {
-        <option [value]="type.id">{{ type.name }}</option>
-        }
-      </select>
-
-      <select [(ngModel)]="selectedStatus"
-        class="py-2.5 px-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer">
-        <option value="ALL">Todos los Estados</option>
-        <option value="AVAILABLE">Disponible</option>
-        <option value="MAINTENANCE">En mantenimiento</option>
-      </select>
-
-      <span
-        class="text-[11px] font-mono text-twine-dark font-semibold whitespace-nowrap bg-pampas px-3 py-2 rounded-[2px] border border-[#E8E2DA]">
-        Total: {{ filteredRooms.length }}
-      </span>
-
-      <a routerLink="/admin/rooms-types"
-        class="text-[10px] uppercase tracking-wider font-bold text-woodsmoke hover:text-twine border border-[#E8E2DA] bg-white px-3 py-2.5 rounded-[2px] transition">
-        Categorías →
-      </a>
-    </div>
-  </div>
-
-  <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden">
-    <div class="overflow-x-auto max-h-[700px] overflow-y-auto">
-      <table class="w-full text-left border-collapse text-xs">
-        <thead class="sticky top-0 z-10 shadow-sm">
-          <tr class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10">
-            <th class="py-4 px-5 font-semibold">ID</th>
-            <th class="py-4 px-5 font-semibold">Imagen</th>
-            <th class="py-4 px-5 font-semibold">Habitación / Nombre</th>
-            <th class="py-4 px-5 font-semibold">Categoría</th>
-            <th class="py-4 px-5 font-semibold">Piso & Capacidad</th>
-            <th class="py-4 px-5 font-semibold">Tarifa / Noche</th>
-            <th class="py-4 px-5 font-semibold">Estado</th>
-            <th class="py-4 px-5 font-semibold text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-[#E8E2DA]">
-          @for (r of filteredRooms; track r.id) {
-          <tr class="hover:bg-pampas/60 transition group">
-            <td class="py-3.5 px-5 font-mono text-twine-dark font-semibold text-[11px]">
-              {{ formatId(r.id) }}
-            </td>
-
-            <td class="py-3.5 px-5">
-              <div class="w-14 h-11 rounded-[2px] overflow-hidden border border-[#E8E2DA] shadow-xs bg-pampas">
-                <img [src]="
-                      r.secondaryImageUrl ||
-                      r.roomType.imageUrl ||
-                      'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=400&q=80'
-                    " [alt]="r.name || r.number"
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-              </div>
-            </td>
-
-            <td class="py-3.5 px-5">
-              <div class="flex flex-col">
-                <span class="font-serif font-semibold text-woodsmoke text-[13px]">
-                  {{ r.name || "Habitación " + r.number }}
-                </span>
-                <span class="text-[11px] text-woodsmoke/60 font-mono">
-                  Hab. {{ r.number }}
-                </span>
-              </div>
-            </td>
-
-            <td class="py-3.5 px-5">
-              <span
-                class="text-[11px] font-medium text-woodsmoke/90 bg-pampas border border-[#E8E2DA] px-2 py-0.5 rounded-[2px]">
-                {{ r.roomType.name || "Sin Categoría" }}
-              </span>
-            </td>
-
-            <td class="py-3.5 px-5">
-              <div class="flex flex-col text-[11px] text-woodsmoke/80 space-y-0.5">
-                <span>Piso
-                  <strong class="text-woodsmoke">{{ r.floor }}</strong></span>
-                <span class="text-woodsmoke/60">{{ r.capacity }} Huéspedes •
-                  {{ r.bedType || "Cama King" }}</span>
-              </div>
-            </td>
-
-            <td class="py-3.5 px-5 font-semibold text-twine-dark text-[12px]">
-              <span>{{ formatPrice(r.pricePerNight) }}</span>
-              <span class="text-[10px] text-woodsmoke/50 font-normal block">por noche</span>
-            </td>
-
-            <td class="py-3.5 px-5">
-              @if (r.status === "AVAILABLE") {
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                Disponible
-              </span>
-              } @else {
-              <span
-                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
-                En mantenimiento
-              </span>
-              }
-            </td>
-
-            <td class="py-3.5 px-5 text-right">
-              <div class="inline-flex items-center gap-2">
-                <button type="button" (click)="onEditRoom(r.id)"
-                  class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
-                  title="Editar Habitación">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </button>
-
-                <button type="button" (click)="confirmDelete(r)"
-                  class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
-                  title="Eliminar Habitación">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-          } @empty {
-          <tr>
-            <td colspan="8" class="py-12 text-center text-woodsmoke/50 italic text-sm">
-              No se encontraron habitaciones registradas o que coincidan con
-              la búsqueda.
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
-
+  <app-room-filters
+    [roomTypes]="roomTypes"
+    [total]="filteredRooms.length"
+    [(selectedTypeId)]="selectedTypeId"
+    [(selectedStatus)]="selectedStatus"
+  ></app-room-filters>
+  <app-rooms-table
+    [rooms]="filteredRooms"
+    (editRequested)="onEditRoom($event)"
+    (deleteRequested)="confirmDelete($event)"
+  ></app-rooms-table>
   @if (roomToDelete) {
-  <div class="fixed inset-0 bg-mirage/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-    <div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-2xl max-w-md w-full p-6 relative">
-      <h3 class="font-serif text-lg text-woodsmoke uppercase tracking-wider mb-2">
-        Confirmar Eliminación
-      </h3>
-      <p class="text-xs text-woodsmoke/70 mb-6 leading-relaxed">
-        ¿Estás seguro de que deseas eliminar permanentemente la habitación
-        <strong class="text-woodsmoke">#{{ roomToDelete.number }} - {{ roomToDelete.name }}</strong>? Esta acción no se
-        puede deshacer.
-      </p>
-
-      <div class="flex justify-end gap-3">
-        <button type="button" (click)="cancelDelete()"
-          class="px-4 py-2 border border-[#E8E2DA] hover:bg-pampas text-xs uppercase tracking-wider font-semibold text-woodsmoke rounded-[2px] transition cursor-pointer">
-          Cancelar
-        </button>
-        <button type="button" (click)="executeDelete()"
-          class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs uppercase tracking-wider font-semibold rounded-[2px] transition cursor-pointer">
-          Eliminar
-        </button>
-      </div>
-    </div>
-  </div>
+    <app-confirm-modal
+      title="Confirmar Eliminación"
+      confirmLabel="Eliminar"
+      (confirmed)="executeDelete()"
+      (cancelled)="cancelDelete()"
+    >
+      ¿Estás seguro de que deseas eliminar permanentemente la habitación
+      <strong class="text-woodsmoke"
+        >#{{ roomToDelete.number }} - {{ roomToDelete.name }}</strong
+      >? Esta acción no se puede deshacer.
+    </app-confirm-modal>
   }
 </section>

@@ -41,7 +41,7 @@
           {{ actionText() || 'Ver habitaciones' }}
         </button>
       } @else {
-        <a [routerLink]="getBookingLink()" class="btn btn-outline">
+        <a [routerLink]="getBookingLink()" [queryParams]="getBookingQueryParams()" class="btn btn-outline">
           {{ actionText() || 'Reservar' }}
         </a>
       }

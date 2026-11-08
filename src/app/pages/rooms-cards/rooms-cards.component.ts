@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 import { IntroductionComponent } from './components/introduction/introduction.component';
 import { RoomsCarouselComponent } from './components/rooms-carousel/rooms-carousel.component';
 import { BanerReservaComponent } from './components/baner-reserva/baner-reserva.component';
-import { RoomTypeService } from '../../service/room-type.service';
-import { RoomType } from '../../models/roomType.model';
+import { RoomService } from '../../service/room.service';
+import { Room } from '../../models/room.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,25 +18,27 @@ import { Router } from '@angular/router';
   templateUrl: './rooms-cards.component.html',
   styleUrl: './rooms-cards.component.scss',
 })
-export class RoomsCardsComponent {
+export class RoomsCardsComponent implements OnInit {
   router = inject(Router);
 
-  private roomTypeService = inject(RoomTypeService);
+  private roomService = inject(RoomService);
 
-  roomTypesArray: RoomType[] = [];
+  roomsArray: Room[] = [];
 
   ngOnInit(): void {
-    this.roomTypeService.findAll().subscribe({
-      next: (types) => {
-        this.roomTypesArray = types || [];
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.roomsArray = rooms || [];
       },
       error: () => {
-        this.roomTypesArray = [];
+        this.roomsArray = [];
       },
     });
   }
 
-  verDetalleRoomType(roomType: RoomType): void {
-    this.router.navigate(['/rooms/type', roomType.id]);
+  verDetalleRoom(room: Room): void {
+    if (room.roomType?.id) {
+      this.router.navigate(['/rooms/type', room.roomType.id]);
+    }
   }
 }

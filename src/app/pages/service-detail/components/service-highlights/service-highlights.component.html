@@ -1,0 +1,21 @@
+<div
+  class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 border border-[#E8E2DA] bg-white/50 p-8 rounded-[2px]"
+>
+  @for (highlight of highlights(); track $index) {
+    <div class="flex gap-3">
+      <div class="mt-1 flex-shrink-0">
+        <div class="w-1.5 h-1.5 rotate-45 bg-twine"></div>
+      </div>
+      <div>
+        <h5
+          class="font-sans text-[10px] tracking-[1.5px] text-woodsmoke uppercase font-bold mb-2"
+        >
+          {{ highlight.title }}
+        </h5>
+        <p class="text-xs text-woodsmoke/60 leading-relaxed">
+          {{ highlight.description }}
+        </p>
+      </div>
+    </div>
+  }
+</div>

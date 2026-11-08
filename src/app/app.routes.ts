@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { RoomsCardsComponent } from './pages/rooms-cards/rooms-cards.component';
@@ -24,6 +23,7 @@ import { GoogleCallbackComponent } from './pages/google-callback/google-callback
 import { adminGuard } from './guards/admin.guard';
 import { operatorGuard } from './guards/operator.guard';
 import { clientGuard } from './guards/client.guard';
+import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
 
 export const routes: Routes = [
   {
@@ -160,8 +160,18 @@ export const routes: Routes = [
     canActivate: [operatorGuard],
   },
   {
+    path: 'operator',
+    redirectTo: 'operator/reservations',
+    pathMatch: 'full',
+  },
+  {
     path: 'operator/reservations',
-    component: ReservationsAdminComponent,
+    component: OperatorPortalComponent,
+    canActivate: [operatorGuard],
+  },
+  {
+    path: 'operator/reservations/:id',
+    component: ReservationDetailComponent,
     canActivate: [operatorGuard],
   },
   {
@@ -173,6 +183,10 @@ export const routes: Routes = [
     path: 'reservations/book/:roomId',
     component: ClientReservationComponent,
     canActivate: [clientGuard],
+  },
+  {
+    path: 'reservations/edit/:id',
+    component: ClientReservationComponent,
   },
   {
     path: 'reservations/new',
@@ -199,27 +213,27 @@ export const routes: Routes = [
   },
   {
     path: 'admin/services',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/services-admin/services-admin.component').then(
         (m) => m.ServicesAdminComponent,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'admin/services/add',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'admin/services/edit/:id',
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./pages/service-form/service-form.component').then(
         (m) => m.ServiceFormComponent,
       ),
-    canActivate: [adminGuard],
   },
   {
     path: 'book',

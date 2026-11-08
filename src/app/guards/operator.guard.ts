@@ -8,8 +8,8 @@ export const operatorGuard: CanActivateFn = () => {
   const router = inject(Router);
   return auth.restoreSession().pipe(map((client) => {
     const role = client?.role?.toUpperCase();
-    return role === 'OPERATOR' || role === 'ADMIN'
-      ? true
-      : router.createUrlTree(['/login']);
+    if (role === 'OPERATOR' || role === 'OPERARIO') return true;
+    if (role === 'ADMIN') return router.createUrlTree(['/admin/rooms']);
+    return router.createUrlTree(['/login']);
   }));
 };

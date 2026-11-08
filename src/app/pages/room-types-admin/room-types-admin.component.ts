@@ -1,10 +1,11 @@
-
 import { Component, inject, OnInit } from '@angular/core';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
 import { RoomTypesTableComponent } from './components/room-types-table/room-types-table.component';
 import { RoomTypeService } from '../../service/room-type.service';
 import { Router } from '@angular/router';
 import { RoomType } from '../../models/roomType.model';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 
 @Component({
   selector: 'app-room-types-admin',
@@ -12,6 +13,8 @@ import { RoomType } from '../../models/roomType.model';
   imports: [
     AdminPageHeaderComponent,
     RoomTypesTableComponent,
+    SuccessAlertComponent,
+    ErrorAlertComponent,
   ],
   templateUrl: './room-types-admin.component.html',
   styleUrl: './room-types-admin.component.scss',
@@ -44,10 +47,7 @@ export class RoomTypesAdminComponent implements OnInit {
   }
 
   onEdit(roomType: RoomType): void {
-    this.router.navigate([
-      'admin/room-types/edit',
-      roomType.id,
-    ]);
+    this.router.navigate(['admin/room-types/edit', roomType.id]);
   }
 
   onDelete(roomType: RoomType): void {
@@ -56,26 +56,19 @@ export class RoomTypesAdminComponent implements OnInit {
 
     this.roomTypeService.delete(roomType.id).subscribe({
       next: () => {
-        this.successMessage =
-          `Categoría '${roomType.name}' eliminada correctamente.`;
+        this.successMessage = `Categoría '${roomType.name}' eliminada correctamente.`;
 
         this.loadRoomTypes();
 
-        setTimeout(
-          () => (this.successMessage = null),
-          4000,
-        );
+        setTimeout(() => (this.successMessage = null), 4000);
       },
       error: (err) => {
         this.errorMessage =
           err.error?.message ||
           `No se pudo eliminar la categoría '${roomType.name}'. ` +
-          'Verifica que no tenga habitaciones asociadas.';
+            'Verifica que no tenga habitaciones asociadas.';
 
-        setTimeout(
-          () => (this.errorMessage = null),
-          6000,
-        );
+        setTimeout(() => (this.errorMessage = null), 6000);
       },
     });
   }

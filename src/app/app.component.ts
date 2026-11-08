@@ -1,12 +1,13 @@
-
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
-
+import { Component, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet, RouterLink } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
+import { OperatorNavbarComponent } from './components/operator-navbar/operator-navbar.component';
 import { AdminFooterComponent } from './components/admin-footer/admin-footer.component';
 import { AuthService } from './service/auth.service';
+import { ChatBubbleComponent } from './components/chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-root',
@@ -17,24 +18,37 @@ import { AuthService } from './service/auth.service';
     NavbarComponent,
     FooterComponent,
     AdminNavbarComponent,
+    OperatorNavbarComponent,
     AdminFooterComponent,
+    ChatBubbleComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  router = inject(Router);
   private auth = inject(AuthService);
+  title = 'MontClair-Grand-Hotel-Angular';
+
+  private router = inject(Router);
+  isAdmin = signal<boolean>(false);
+  isOperator = signal<boolean>(false);
+  isLogin = signal<boolean>(false);
 
   constructor() {
     this.auth.restoreSession().subscribe();
-  }
 
-  isAdmin(): boolean {
-    return this.router.url.startsWith('/admin');
-  }
+    const updateRoutes = (url: string) => {
+      this.isAdmin.set(url.startsWith('/admin'));
+      this.isOperator.set(url.startsWith('/operator'));
+      this.isLogin.set(url.startsWith('/login'));
+    };
 
-  isLoginPage(): boolean {
-    return this.router.url.startsWith('/login');
+    updateRoutes(this.router.url);
+
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        updateRoutes(e.urlAfterRedirects);
+      });
   }
 }

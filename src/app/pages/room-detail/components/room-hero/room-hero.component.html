@@ -1,0 +1,29 @@
+<div class="relative h-96 sm:h-[480px] w-full overflow-hidden bg-mirage">
+  <img
+    [src]="room().secondaryImageUrl || room().roomType.imageUrl"
+    [alt]="room().name"
+    class="w-full h-full object-cover opacity-90"
+  />
+
+  <div
+    class="absolute inset-0 bg-gradient-to-t from-mirage via-mirage/30 to-transparent"
+  ></div>
+
+  <div class="absolute bottom-8 left-8 right-8 text-white">
+    <span
+      class="text-[10px] tracking-[4px] font-sans uppercase font-bold text-twine mb-2 block"
+    >
+      {{ room().roomType.name }}
+    </span>
+
+    <h1 class="font-serif text-3xl sm:text-4xl uppercase tracking-[2px] mb-2">
+      {{ room().name }}
+    </h1>
+
+    <p class="text-sm text-white/80 max-w-2xl font-light">
+      {{
+        room().headline || room().heroDescription || room().roomType.description
+      }}
+    </p>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,15 +7,22 @@ import { RoomTypeService } from '../../service/room-type.service';
 import { Room, RoomStatus } from '../../models/room.model';
 import { RoomType } from '../../models/roomType.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { RoomFiltersComponent } from './components/room-filters/room-filters.component';
+import { RoomsTableComponent } from './components/rooms-table/rooms-table.component';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-rooms-admin',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    AdminPageHeaderComponent
+    AdminPageHeaderComponent,
+    SuccessAlertComponent,
+    ErrorAlertComponent,
+    RoomFiltersComponent,
+    RoomsTableComponent,
+    ConfirmModalComponent,
   ],
   templateUrl: './rooms-admin.component.html',
   styleUrl: './rooms-admin.component.scss',
@@ -48,8 +54,7 @@ export class RoomsAdminComponent implements OnInit {
       },
       error: () => {
         this.rooms = [];
-        this.errorMessage =
-          'No se pudieron cargar las habitaciones.';
+        this.errorMessage = 'No se pudieron cargar las habitaciones.';
       },
     });
 
@@ -59,8 +64,7 @@ export class RoomsAdminComponent implements OnInit {
       },
       error: () => {
         this.roomTypes = [];
-        this.errorMessage =
-          'No se pudieron cargar los tipos de habitación.';
+        this.errorMessage = 'No se pudieron cargar los tipos de habitación.';
       },
     });
   }
@@ -72,8 +76,7 @@ export class RoomsAdminComponent implements OnInit {
         room.roomType?.id === Number(this.selectedTypeId);
 
       const matchStatus =
-        this.selectedStatus === 'ALL' ||
-        room.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' || room.status === this.selectedStatus;
 
       return matchType && matchStatus;
     });
@@ -108,8 +111,7 @@ export class RoomsAdminComponent implements OnInit {
 
     this.roomService.delete(roomId).subscribe({
       next: () => {
-        this.successMessage =
-          `Habitación #${roomNumber} eliminada con éxito.`;
+        this.successMessage = `Habitación #${roomNumber} eliminada con éxito.`;
 
         this.loadData();
 
@@ -127,16 +129,5 @@ export class RoomsAdminComponent implements OnInit {
         }, 6000);
       },
     });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
-  }
-
-  formatId(id: number): string {
-    return '#' + String(id).padStart(3, '0');
   }
 }

@@ -1,0 +1,28 @@
+<div
+  class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E8E2DA] text-xs"
+>
+  <div>
+    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+      >Teléfono</span
+    >
+    <span class="font-semibold text-woodsmoke font-mono">
+      {{ client().phone || "No registrado" }}
+    </span>
+  </div>
+
+  <div>
+    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+      >Rol en Plataforma</span
+    >
+    <span class="font-semibold text-woodsmoke">{{ client().role }}</span>
+  </div>
+
+  <div>
+    <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+      >Reservas Registradas</span
+    >
+    <span class="font-semibold text-twine-dark font-mono">{{
+      reservationsCount()
+    }}</span>
+  </div>
+</div>

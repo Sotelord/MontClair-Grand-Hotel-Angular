@@ -1,0 +1,26 @@
+<div
+  class="bg-white p-8 sm:p-12 border border-[#E8E2DA] rounded-[3px] shadow-sm"
+>
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <span
+      class="text-[9px] uppercase tracking-[4px] font-bold text-twine block mb-2"
+    >
+      ENTORNO PRIVILEGIADO
+    </span>
+    <h2
+      class="font-serif text-2xl sm:text-3xl text-woodsmoke uppercase tracking-[1.5px] mb-3"
+    >
+      A Pocos Pasos de lo Inolvidable
+    </h2>
+    <p class="text-xs text-woodsmoke/60 font-light">
+      Ubicado en el epicentro de Monte-Carlo, el hotel brinda acceso peatonal
+      inmediato a las experiencias más codiciadas del principado.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @for (poi of points(); track poi.name) {
+      <app-poi-card [poi]="poi" />
+    }
+  </div>
+</div>

@@ -1,15 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
 import { AdminPageHeaderComponent } from '../../components/admin-page-header/admin-page-header.component';
+import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
+import { ClientFiltersComponent } from './components/client-filters/client-filters.component';
+import { ClientsTableComponent } from './components/clients-table/clients-table.component';
 
 @Component({
   selector: 'app-clients-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminPageHeaderComponent],
+  imports: [
+    AdminPageHeaderComponent,
+    SuccessAlertComponent,
+    ErrorAlertComponent,
+    ConfirmModalComponent,
+    ClientFiltersComponent,
+    ClientsTableComponent,
+  ],
   templateUrl: './clients-admin.component.html',
   styleUrl: './clients-admin.component.scss',
 })
@@ -78,7 +88,8 @@ export class ClientsAdminComponent implements OnInit {
         setTimeout(() => (this.successMessage = null), 4000);
       },
       error: (err) => {
-        this.errorMessage = err?.error?.message || 'Error al eliminar el cliente.';
+        this.errorMessage =
+          err?.error?.message || 'Error al eliminar el cliente.';
         setTimeout(() => (this.errorMessage = null), 6000);
       },
     });

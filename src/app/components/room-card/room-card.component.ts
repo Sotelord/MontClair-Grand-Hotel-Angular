@@ -82,14 +82,18 @@ export class RoomCardComponent {
   }
 
   getBookingLink(): (string | number)[] {
+    return ['/reservations/book'];
+  }
+
+  getBookingQueryParams(): { roomTypeId?: number } {
     const r = this.getDbRoom();
-    if (r?.id) {
-      return ['/reservations/book', r.id];
+    if (r?.roomType?.id) {
+      return { roomTypeId: r.roomType.id };
     }
     const rt = this.roomType();
     if (rt?.id) {
-      return ['/rooms/type', rt.id];
+      return { roomTypeId: rt.id };
     }
-    return ['/reservations/book'];
+    return {};
   }
 }

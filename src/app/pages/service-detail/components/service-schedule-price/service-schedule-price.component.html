@@ -1,0 +1,31 @@
+<div class="bg-mirage text-white flex flex-col md:flex-row">
+  <div
+    class="flex-1 p-6 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-white/10"
+  >
+    <span
+      class="font-sans text-[8px] tracking-[2px] text-twine uppercase font-bold mb-2"
+      >HORARIO</span
+    >
+    <span class="font-serif font-bold text-lg tracking-[1px] mb-1">{{
+      service().schedule
+    }}</span>
+    @if (service().scheduleNote) {
+      <span class="text-[10px] text-white/50">{{
+        service().scheduleNote
+      }}</span>
+    }
+  </div>
+
+  <div class="flex-1 p-6 flex flex-col items-center justify-center text-center">
+    <span
+      class="font-sans text-[8px] tracking-[2px] text-twine uppercase font-bold mb-2"
+      >EXPERIENCIA</span
+    >
+    <span class="font-serif font-bold text-lg tracking-[1px] mb-1">
+      {{ service().priceLabel || "CONSULTAR" }}
+    </span>
+    @if (service().priceNote) {
+      <span class="text-[10px] text-white/50">{{ service().priceNote }}</span>
+    }
+  </div>
+</div>

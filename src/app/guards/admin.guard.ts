@@ -7,6 +7,11 @@ export const adminGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   return auth.restoreSession().pipe(map((client) => {
-    return client?.role?.toUpperCase() === 'ADMIN' || router.createUrlTree(['/login']);
+    const role = client?.role?.toUpperCase();
+    if (role === 'ADMIN') return true;
+    if (role === 'OPERATOR' || role === 'OPERARIO') {
+      return router.createUrlTree(['/operator/reservations']);
+    }
+    return router.createUrlTree(['/login']);
   }));
 };

@@ -7,20 +7,10 @@
     (buttonClick)="onAdd()"
   />
   @if (errorMessage) {
-    <div
-      class="mb-6 p-4 rounded-[4px] bg-red-50 border border-red-200 text-red-800 text-xs font-semibold flex items-center justify-between"
-      role="alert"
-    >
-      <span>{{ errorMessage }}</span>
-      <button
-        type="button"
-        (click)="errorMessage = null"
-        class="text-red-600 hover:text-red-800 text-sm"
-        aria-label="Cerrar mensaje de error"
-      >
-        ✕
-      </button>
-    </div>
+    <app-error-alert
+      [message]="errorMessage"
+      (closed)="errorMessage = null"
+    ></app-error-alert>
   }
   <app-services-table
     [services]="services"

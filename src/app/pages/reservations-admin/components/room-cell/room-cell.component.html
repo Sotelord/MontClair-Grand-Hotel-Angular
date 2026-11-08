@@ -1,0 +1,17 @@
+@if (reservation().roomNumber) {
+  <div class="flex flex-col">
+    <span class="font-serif font-semibold text-woodsmoke text-[12px]">
+      {{ reservation().roomName }}
+    </span>
+    <span class="text-[11px] text-twine-dark font-mono font-medium">
+      Hab. #{{ reservation().roomNumber }} ({{
+        reservation().roomTypeName || "Habitación"
+      }})
+    </span>
+    <span class="text-[10px] text-woodsmoke/50">
+      {{ formatPrice(reservation().pricePerNight) }} / noche
+    </span>
+  </div>
+} @else {
+  <span class="text-woodsmoke/50 italic">Sin habitación asignada</span>
+}

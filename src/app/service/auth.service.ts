@@ -1,16 +1,17 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { Client } from '../models/client.model';
 import { resetMontclairCsrfCache } from '../interceptors/montclair-auth.interceptor';
 
+//Respuesta del endpoint de login. `client` viene solo si el login fue exitoso; `message` trae el motivo si falló.
 export interface LoginResponse {
   success: boolean;
   client?: Client;
   message?: string;
 }
 
+//Maneja la autenticación y la sesión del usuario. No usa tokens: la sesión es el objeto Client guardado en localStorage.
 @Injectable({
   providedIn: 'root',
 })
@@ -28,6 +29,11 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  //Clave con la que se guarda el cliente en localStorage.
+  private readonly SESSION_KEY = 'currentClient';
+
+  /*Envía las credenciales al backend (POST /api/auth/login). Si el login es exitoso, guarda la sesión automáticamente con `tap`,
+  sin alterar lo que recibe quien se suscriba.*/
   login(identifier: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, {
       identifier: identifier.trim(),
@@ -39,6 +45,18 @@ export class AuthService {
       }
       resetMontclairCsrfCache();
     }));
+  }
+
+  saveSession(client: Client): void {
+    this.setCurrentUser(client);
+  }
+
+  getSession(): Client | null {
+    return this.currentUserSubject.value;
+  }
+
+  clearSession(): void {
+    this.clearCurrentUser();
   }
 
   getGoogleStartUrl(): Observable<{ authorizationUrl: string }> {

@@ -1,9 +1,8 @@
-
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Room, RoomStatus } from '../../../../models/room.model';
+import { Room } from '../../../../models/room.model';
 import { RoomType } from '../../../../models/roomType.model';
 import { RoomItemCardComponent } from '../room-item-card/room-item-card.component';
 
@@ -23,57 +22,35 @@ export class RoomListCardComponent {
   rooms = input.required<Room[]>();
   roomType = input<RoomType | undefined>();
 
-  filterAvailability: RoomStatus | 'ALL' = 'ALL';
   filterFloor: number | 'ALL' = 'ALL';
-
   searchQuery = '';
+  sortBy: 'number' | 'priceAsc' | 'priceDesc' | 'floor' = 'number';
 
-  sortBy: 'number' | 'priceAsc' | 'priceDesc' | 'floor' =
-    'number';
-
-  get totalCount(): number {
-    return this.rooms().length;
+  get availableRooms(): Room[] {
+    return this.rooms().filter((room) => room.status === 'AVAILABLE');
   }
 
   get availableCount(): number {
-    return this.rooms().filter(
-      (room) => room.status === 'AVAILABLE'
-    ).length;
-  }
-
-  get maintenanceCount(): number {
-    return this.rooms().filter(
-      (room) => room.status === 'MAINTENANCE'
-    ).length;
+    return this.availableRooms.length;
   }
 
   get floors(): number[] {
     const floorSet = new Set<number>();
 
-    this.rooms().forEach((room) => {
+    this.availableRooms.forEach((room) => {
       if (room.floor != null) {
         floorSet.add(room.floor);
       }
     });
 
-    return Array.from(floorSet).sort(
-      (a, b) => a - b
-    );
+    return Array.from(floorSet).sort((a, b) => a - b);
   }
 
   get filteredRooms(): Room[] {
-    let list = [...this.rooms()];
-
-    if (this.filterAvailability !== 'ALL') {
-      list = list.filter(
-        (room) => room.status === this.filterAvailability
-      );
-    }
+    let list = [...this.availableRooms];
 
     if (this.filterFloor !== 'ALL') {
-      list = list.filter(
-        (room) => room.floor === this.filterFloor
-      );
+      list = list.filter((room) => room.floor === this.filterFloor);
     }
 
     const query = this.searchQuery.trim().toLowerCase();
@@ -89,20 +66,14 @@ export class RoomListCardComponent {
 
     if (this.sortBy === 'number') {
       list.sort((a, b) =>
-        (a.number || '').localeCompare(
-          b.number || '',
-          undefined,
-          { numeric: true }
-        )
+        (a.number || '').localeCompare(b.number || '', undefined, {
+          numeric: true,
+        })
       );
     } else if (this.sortBy === 'priceAsc') {
-      list.sort(
-        (a, b) => a.pricePerNight - b.pricePerNight
-      );
+      list.sort((a, b) => a.pricePerNight - b.pricePerNight);
     } else if (this.sortBy === 'priceDesc') {
-      list.sort(
-        (a, b) => b.pricePerNight - a.pricePerNight
-      );
+      list.sort((a, b) => b.pricePerNight - a.pricePerNight);
     } else if (this.sortBy === 'floor') {
       list.sort((a, b) => a.floor - b.floor);
     }
@@ -110,19 +81,11 @@ export class RoomListCardComponent {
     return list;
   }
 
-  setAvailability(
-    status: RoomStatus | 'ALL'
-  ): void {
-    this.filterAvailability = status;
-  }
-
   setFloor(floor: number | 'ALL'): void {
     this.filterFloor = floor;
   }
 
-  setSort(
-    sort: 'number' | 'priceAsc' | 'priceDesc' | 'floor'
-  ): void {
+  setSort(sort: 'number' | 'priceAsc' | 'priceDesc' | 'floor'): void {
     this.sortBy = sort;
   }
 
@@ -132,7 +95,6 @@ export class RoomListCardComponent {
   }
 
   resetFilters(): void {
-    this.filterAvailability = 'ALL';
     this.filterFloor = 'ALL';
     this.searchQuery = '';
     this.sortBy = 'number';

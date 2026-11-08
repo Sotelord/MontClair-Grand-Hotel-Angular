@@ -1,0 +1,24 @@
+<div class="text-center mb-8">
+  <span
+    class="font-sans text-[9px] tracking-[4px] text-twine uppercase font-bold block mb-2"
+  >
+    {{ isEditMode() ? "ADMINISTRACIÓN DE CUENTA" : "MEMBRESÍA & ACCESO" }}
+  </span>
+  <h1
+    class="font-serif text-2xl sm:text-3xl text-woodsmoke tracking-[2px] uppercase"
+  >
+    {{ isEditMode() ? "Modificar Cliente" : "Crear Nueva Cuenta" }}
+  </h1>
+  <div class="flex items-center justify-center gap-3 mt-3">
+    <div class="h-[1px] w-8 bg-twine/40"></div>
+    <div class="w-1.5 h-1.5 rotate-45 border border-twine"></div>
+    <div class="h-[1px] w-8 bg-twine/40"></div>
+  </div>
+  <p class="text-xs text-woodsmoke/60 mt-3 max-w-md mx-auto">
+    {{
+      isEditMode()
+        ? "Actualiza la información y credenciales asociadas a este cliente."
+        : "Ingresa los datos para registrar un huésped y disfrutar de la experiencia Montclair Grand Hotel."
+    }}
+  </p>
+</div>

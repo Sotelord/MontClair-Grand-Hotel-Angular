@@ -1,0 +1,16 @@
+<div class="pt-6 border-t border-[#E8E2DA] flex items-center justify-end gap-4">
+  <a
+    [routerLink]="['/profile', clientId()]"
+    class="px-6 py-3 border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold rounded-[2px] transition"
+  >
+    Cancelar
+  </a>
+
+  <button
+    type="submit"
+    [disabled]="isSubmitting()"
+    class="px-8 py-3 bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold rounded-[2px] transition shadow-sm cursor-pointer disabled:opacity-50"
+  >
+    {{ isSubmitting() ? "Guardando..." : "Guardar Cambios" }}
+  </button>
+</div>

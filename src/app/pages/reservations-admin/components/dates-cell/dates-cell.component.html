@@ -1,0 +1,20 @@
+<div class="flex flex-col text-[11px] text-woodsmoke/80 space-y-0.5 font-mono">
+  <span>
+    <strong
+      class="text-twine-dark font-sans text-[9px] uppercase tracking-wider"
+      >IN:</strong
+    >
+    {{ reservation().checkInDate }}
+  </span>
+  <span>
+    <strong
+      class="text-twine-dark font-sans text-[9px] uppercase tracking-wider"
+      >OUT:</strong
+    >
+    {{ reservation().checkOutDate }}
+  </span>
+  <span class="text-[10px] text-woodsmoke/60 font-sans pt-0.5">
+    {{ reservation().nights }} Noche(s) •
+    {{ reservation().numberOfPeople }} Huéspedes
+  </span>
+</div>

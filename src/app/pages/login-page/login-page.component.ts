@@ -1,14 +1,22 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
+import { LoginHeaderComponent } from './components/login-header/login-header.component';
+import { LoginAlertComponent } from './components/login-alert/login-alert.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { DemoAccessComponent } from './components/demo-access/demo-access.component';
+import { RegisterPromptComponent } from './components/register-prompt/register-prompt.component';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [
+    LoginHeaderComponent,
+    LoginAlertComponent,
+    LoginFormComponent,
+    DemoAccessComponent,
+    RegisterPromptComponent,
+  ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
 })
@@ -26,6 +34,9 @@ export class LoginPageComponent implements OnInit {
   isGoogleLoading = false;
 
   ngOnInit(): void {
+    // Limpiar cualquier sesión residual al entrar a la pantalla de login para evitar iniciar como operario/admin por error
+    this.authService.clearSession();
+
     if (this.route.snapshot.queryParamMap.get('registered')) {
       this.successMessage =
         '¡Registro completado! Ya puedes iniciar sesión con tus credenciales.';
@@ -82,10 +93,13 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
-  fillDemo(user: 'admin' | 'demo'): void {
+  fillDemo(user: 'admin' | 'operario' | 'demo'): void {
     if (user === 'admin') {
       this.identifier = 'admin';
       this.password = 'admin';
+    } else if (user === 'operario') {
+      this.identifier = 'operario';
+      this.password = 'operario';
     } else {
       this.identifier = 'demo';
       this.password = 'demo';

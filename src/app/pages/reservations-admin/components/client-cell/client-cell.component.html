@@ -1,0 +1,11 @@
+<div class="flex flex-col">
+  <span class="font-semibold text-woodsmoke text-[13px]">
+    {{ reservation().clientFirstName }} {{ reservation().clientLastName || "" }}
+  </span>
+  <span class="text-[11px] text-woodsmoke/60">{{
+    reservation().clientEmail
+  }}</span>
+  <span class="text-[11px] text-woodsmoke/60 font-mono">
+    {{ reservation().clientPhone || "Sin teléfono" }}
+  </span>
+</div>

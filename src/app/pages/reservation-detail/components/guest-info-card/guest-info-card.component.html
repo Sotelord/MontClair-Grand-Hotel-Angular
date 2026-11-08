@@ -1,0 +1,40 @@
+<div
+  class="p-5 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-3 h-full"
+>
+  <span
+    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block"
+  >
+    1. INFORMACIÓN DEL HUÉSPED
+  </span>
+  <div class="space-y-1.5 text-xs text-woodsmoke">
+    <div class="flex justify-between">
+      <span class="text-woodsmoke/60">Nombre Completo:</span>
+      <span class="font-semibold uppercase">
+        {{ reservation().client.firstName }}
+        {{ reservation().client.lastName || "" }}
+      </span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-woodsmoke/60">Correo Electrónico:</span>
+      <span class="font-mono">{{ reservation().client.email }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-woodsmoke/60">Teléfono:</span>
+      <span class="font-mono">{{
+        reservation().client.phone || "No especificado"
+      }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="text-woodsmoke/60">Número de Huéspedes:</span>
+      <span class="font-semibold"
+        >{{ reservation().numberOfPeople }} Huéspedes</span
+      >
+    </div>
+    <div class="flex justify-between pt-1 border-t border-[#E8E2DA]/60">
+      <span class="text-woodsmoke/60">Código de Cliente:</span>
+      <span class="font-mono text-twine-dark font-semibold"
+        >#CLI-{{ reservation().client.id }}</span
+      >
+    </div>
+  </div>
+</div>

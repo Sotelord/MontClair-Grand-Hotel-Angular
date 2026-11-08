@@ -1,13 +1,33 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
-import { Reservation } from '../../models/reservation.model';
+import { AuthService } from '../../service/auth.service';
+import { ReservationDTO } from '../../models/reservation.model';
+import { DetailToolbarComponent } from './components/detail-toolbar/detail-toolbar.component';
+import { DetailLoadingComponent } from './components/detail-loading/detail-loading.component';
+import { DetailNotFoundComponent } from './components/detail-not-found/detail-not-found.component';
+import { ReservationHeaderComponent } from './components/reservation-header/reservation-header.component';
+import { GuestInfoCardComponent } from './components/guest-info-card/guest-info-card.component';
+import { StayDatesCardComponent } from './components/stay-dates-card/stay-dates-card.component';
+import { RoomSectionComponent } from './components/room-section/room-section.component';
+import { ServicesSectionComponent } from './components/services-section/services-section.component';
+import { AccountSummaryComponent } from './components/account-summary/account-summary.component';
 
 @Component({
   selector: 'app-reservation-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [
+    DetailToolbarComponent,
+    DetailLoadingComponent,
+    DetailNotFoundComponent,
+    ReservationHeaderComponent,
+    GuestInfoCardComponent,
+    StayDatesCardComponent,
+    RoomSectionComponent,
+    ServicesSectionComponent,
+    AccountSummaryComponent,
+  ],
   templateUrl: './reservation-detail.component.html',
   styleUrl: './reservation-detail.component.scss',
 })
@@ -15,11 +35,28 @@ export class ReservationDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reservationService = inject(ReservationService);
+  private authService = inject(AuthService);
   private location = inject(Location);
 
-  reservation: Reservation | null = null;
+  reservation: ReservationDTO | null = null;
   isLoading = true;
   errorMessage: string | null = null;
+
+  get isAdminView(): boolean {
+    return (
+      this.router.url.startsWith('/admin') &&
+      this.authService.getSession()?.role?.toUpperCase() === 'ADMIN'
+    );
+  }
+
+  get isOperatorView(): boolean {
+    const role = this.authService.getSession()?.role?.toUpperCase();
+    return (
+      this.router.url.startsWith('/operator') ||
+      role === 'OPERATOR' ||
+      role === 'OPERARIO'
+    );
+  }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -37,7 +74,8 @@ export class ReservationDetailComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'No se encontró la reserva solicitada o hubo un error al cargarla.';
+        this.errorMessage =
+          'No se encontró la reserva solicitada o hubo un error al cargarla.';
         this.isLoading = false;
       },
     });
@@ -63,7 +101,7 @@ export class ReservationDetailComponent implements OnInit {
     if (!this.reservation) return 1;
     return this.reservationService.calculateNights(
       this.reservation.checkInDate,
-      this.reservation.checkOutDate
+      this.reservation.checkOutDate,
     );
   }
 
@@ -84,12 +122,5 @@ export class ReservationDetailComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price || 0);
   }
 }

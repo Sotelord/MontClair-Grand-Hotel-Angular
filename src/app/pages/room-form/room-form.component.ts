@@ -1,22 +1,36 @@
-
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
 import { RoomType } from '../../models/roomType.model';
 import { Room, RoomStatus } from '../../models/room.model';
+import { RoomFormHeaderComponent } from './components/room-form-header/room-form-header.component';
+import { IdentityFieldsComponent } from './components/identity-fields/identity-fields.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { CategoryFieldsComponent } from './components/category-fields/category-fields.component';
+import { SpecsFieldsComponent } from './components/specs-fields/specs-fields.component';
+import { MediaFieldsComponent } from './components/media-fields/media-fields.component';
+import { RoomFormActionsComponent } from './components/room-form-actions/room-form-actions.component';
 
 @Component({
   selector: 'app-room-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    RoomFormHeaderComponent,
+    IdentityFieldsComponent,
+    ErrorAlertComponent,
+    CategoryFieldsComponent,
+    SpecsFieldsComponent,
+    MediaFieldsComponent,
+    RoomFormActionsComponent,
+  ],
   templateUrl: './room-form.component.html',
   styleUrl: './room-form.component.scss',
 })
@@ -61,8 +75,7 @@ export class RoomFormComponent implements OnInit {
       },
       error: () => {
         this.roomTypes = [];
-        this.errorMessage =
-          'No se pudieron cargar los tipos de habitación.';
+        this.errorMessage = 'No se pudieron cargar los tipos de habitación.';
       },
     });
 
@@ -99,64 +112,48 @@ export class RoomFormComponent implements OnInit {
 
   private initForm(): void {
     this.roomForm = this.fb.group({
-      name: [
-        '',
-        [Validators.required, Validators.minLength(2)]
-      ],
+      name: ['', [Validators.required, Validators.minLength(2)]],
       number: [
         '',
-        [
-          Validators.required,
-          Validators.pattern(/^[0-9A-Za-z-]+$/)
-        ]
+        [Validators.required, Validators.pattern(/^[0-9A-Za-z-]+$/)],
       ],
       typeId: [null, Validators.required],
       floor: [1, [Validators.required, Validators.min(1)]],
       status: ['AVAILABLE', Validators.required],
-      pricePerNight: [
-        100,
-        [Validators.required, Validators.min(1)]
-      ],
-      capacity: [
-        2,
-        [Validators.required, Validators.min(1)]
-      ],
+      pricePerNight: [100, [Validators.required, Validators.min(1)]],
+      capacity: [2, [Validators.required, Validators.min(1)]],
       bedType: ['King Size', Validators.required],
       area: [30, [Validators.required, Validators.min(10)]],
       secondaryImageUrl: [''],
       heroDescription: [''],
     });
 
-    this.roomForm.get('typeId')?.valueChanges.subscribe(
-      (typeId) => {
-        if (this.isEditMode) {
-          return;
-        }
+    this.roomForm.get('typeId')?.valueChanges.subscribe((typeId) => {
+      if (this.isEditMode) {
+        return;
+      }
 
-        const selectedType = this.roomTypes.find(
-          (type) => type.id === Number(typeId)
-        );
+      const selectedType = this.roomTypes.find(
+        (type) => type.id === Number(typeId),
+      );
 
-        if (selectedType) {
-          const currentName = this.roomForm.get('name')?.value;
+      if (selectedType) {
+        const currentName = this.roomForm.get('name')?.value;
 
-          if (
-            !currentName ||
-            this.roomTypes.some(
-              (type) => type.name === currentName
-            )
-          ) {
-            this.roomForm.patchValue({
-              name: selectedType.name
-            });
-          }
-
+        if (
+          !currentName ||
+          this.roomTypes.some((type) => type.name === currentName)
+        ) {
           this.roomForm.patchValue({
-            pricePerNight: selectedType.pricePerNight,
+            name: selectedType.name,
           });
         }
+
+        this.roomForm.patchValue({
+          pricePerNight: selectedType.pricePerNight,
+        });
       }
-    );
+    });
   }
 
   onSubmit(): void {
@@ -173,28 +170,19 @@ export class RoomFormComponent implements OnInit {
     const val = this.roomForm.value;
 
     const selectedType = this.roomTypes.find(
-      (type) => type.id === Number(val.typeId)
+      (type) => type.id === Number(val.typeId),
     );
 
     if (!selectedType) {
-      this.errorMessage =
-        'Por favor selecciona una categoría válida.';
+      this.errorMessage = 'Por favor selecciona una categoría válida.';
       return;
     }
 
     const status: RoomStatus =
-      val.status === 'MAINTENANCE'
-        ? 'MAINTENANCE'
-        : 'AVAILABLE';
+      val.status === 'MAINTENANCE' ? 'MAINTENANCE' : 'AVAILABLE';
 
-    const {
-      type,
-      imageUrl,
-      description,
-      priceLabel,
-      typeId,
-      ...base
-    } = (this.currentRoom ?? {}) as any;
+    const { type, imageUrl, description, priceLabel, typeId, ...base } = (this
+      .currentRoom ?? {}) as any;
 
     const roomData: Omit<Room, 'id'> & { id?: number } = {
       highlights: [],
@@ -211,13 +199,9 @@ export class RoomFormComponent implements OnInit {
       bedType: val.bedType,
       area: Number(val.area),
 
-      secondaryImageUrl:
-        val.secondaryImageUrl?.trim() ||
-        selectedType.imageUrl,
+      secondaryImageUrl: val.secondaryImageUrl?.trim() || selectedType.imageUrl,
 
-      heroDescription:
-        val.heroDescription ||
-        selectedType.description,
+      heroDescription: val.heroDescription || selectedType.description,
     };
 
     if (this.isEditMode && this.roomId) {
@@ -250,15 +234,5 @@ export class RoomFormComponent implements OnInit {
         },
       });
     }
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.roomForm.get(fieldName);
-
-    return !!(
-      field &&
-      field.invalid &&
-      (field.dirty || field.touched)
-    );
   }
 }

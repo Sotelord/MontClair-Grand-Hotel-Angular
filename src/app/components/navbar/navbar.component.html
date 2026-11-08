@@ -1,69 +1,145 @@
-<header>
+<header class="w-full max-w-full">
   <nav class="bg-pampas sticky top-0 z-40 w-full border-b border-[rgba(202,198,198,0.5)] shadow-sm"
     aria-label="Navegación principal">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-6 py-3 relative">
-      <a routerLink="/" fragment="inicio" class="flex items-center">
-        <img src="images/Logo.jpg" class="h-[70px] w-[200px] object-cover" alt="Montclair Grand Hotel" />
+    <div class="max-w-screen-xl flex items-center justify-between mx-auto px-4 sm:px-6 py-2.5 sm:py-3">
+      <!-- Logo Grande y Legible -->
+      <a routerLink="/" fragment="inicio" (click)="closeMenu()" class="flex items-center shrink-0 py-0.5">
+        <img
+          src="images/Logo_cropped.png"
+          class="h-[46px] sm:h-[58px] w-auto max-w-[200px] sm:max-w-[240px] object-contain transition-transform hover:scale-[1.02]"
+          alt="Montclair Grand Hotel"
+        />
       </a>
 
-      <div class="flex items-center space-x-3">
-        <a routerLink="/login"
-          class="font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white inline-block cursor-pointer">
-          Login
+      <!-- Acciones de escritorio y botón menú móvil -->
+      <div class="flex items-center space-x-2 sm:space-x-3 md:order-2 shrink-0">
+        @if (currentClient) {
+          <a [routerLink]="['/profile', currentClient.id]"
+            id="nav-profile-link"
+            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap">
+            Mi Perfil
+          </a>
+        } @else {
+          <a routerLink="/login"
+            id="nav-login-link"
+            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap">
+            Login
+          </a>
+        }
+
+        <a routerLink="/reservations/book"
+          id="nav-reservar-link"
+          class="font-sans text-[11px] sm:text-xs font-bold uppercase tracking-widest bg-twine text-white px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-sm shadow-sm transition-colors duration-300 hover:bg-twine-hover inline-block whitespace-nowrap">
+          Reservar
         </a>
 
-        <a routerLink="/rooms/cards"
-          class="font-sans text-xs font-bold uppercase tracking-widest bg-twine text-white px-5 py-2.5 rounded-sm shadow-sm transition-colors duration-300 hover:bg-twine-hover inline-block">
-          Reservar Ahora
-        </a>
-
-        <button type="button"
-          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-woodsmoke rounded-sm md:hidden hover:bg-[#F0EBE3] focus:outline-none focus:ring-2 focus:ring-twine/30"
-          aria-controls="navbar-index" aria-expanded="false">
-          <span class="sr-only">Abrir menú principal</span>
-          <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-            viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
-          </svg>
+        <!-- Botón Hamburguesa Móvil -->
+        <button
+          type="button"
+          (click)="toggleMenu()"
+          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-woodsmoke rounded-sm md:hidden hover:bg-[#F0EBE3] focus:outline-none focus:ring-2 focus:ring-twine/40 transition cursor-pointer"
+          [attr.aria-expanded]="isMenuOpen"
+          aria-label="Abrir menú de navegación"
+        >
+          @if (isMenuOpen) {
+            <svg class="w-6 h-6 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          } @else {
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          }
         </button>
       </div>
 
-      <div
-        class="items-center justify-between hidden w-full md:flex md:w-auto md:absolute md:left-1/2 md:-translate-x-1/2"
-        id="navbar-index">
-        <ul
-          class="flex flex-col p-4 md:p-0 mt-4 font-sans text-xs font-semibold uppercase tracking-widest border border-[#E3DDD4] rounded-sm bg-white md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-transparent">
+      <!-- Menú de Enlaces para Escritorio -->
+      <div class="items-center justify-center hidden md:flex md:w-auto md:order-1" id="navbar-desktop">
+        <ul class="flex flex-row space-x-5 lg:space-x-8 font-sans text-xs font-semibold uppercase tracking-widest">
           <li>
-            <a routerLink="/" fragment="inicio" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/" fragment="inicio" class="py-2 text-woodsmoke hover:text-twine transition whitespace-nowrap">
               Inicio
             </a>
           </li>
-
           <li>
-            <a routerLink="/rooms/cards" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/rooms/cards" class="py-2 text-woodsmoke hover:text-twine transition whitespace-nowrap">
               Habitaciones
             </a>
           </li>
-
           <li>
-            <a routerLink="/services" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/services" class="py-2 text-woodsmoke hover:text-twine transition whitespace-nowrap">
               Servicios
             </a>
           </li>
-
           <li>
-            <a routerLink="/gallery" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/gallery" class="py-2 text-woodsmoke hover:text-twine transition whitespace-nowrap">
               Galería
             </a>
           </li>
-
           <li>
-            <a routerLink="/location" class="block py-2 px-3 text-woodsmoke rounded hover:text-twine md:p-0">
+            <a routerLink="/location" class="py-2 text-woodsmoke hover:text-twine transition whitespace-nowrap">
               Ubicación & Contacto
             </a>
           </li>
         </ul>
       </div>
     </div>
+
+    <!-- Menú Desplegable Móvil -->
+    @if (isMenuOpen) {
+      <div class="md:hidden bg-white border-t border-[rgba(202,198,198,0.5)] shadow-lg animate-fade-in px-4 py-5">
+        <ul class="flex flex-col space-y-3 font-sans text-xs font-semibold uppercase tracking-widest pb-4 border-b border-[rgba(202,198,198,0.4)]">
+          <li>
+            <a routerLink="/" fragment="inicio" (click)="closeMenu()" class="block py-2 text-woodsmoke hover:text-twine transition">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a routerLink="/rooms/cards" (click)="closeMenu()" class="block py-2 text-woodsmoke hover:text-twine transition">
+              Habitaciones
+            </a>
+          </li>
+          <li>
+            <a routerLink="/services" (click)="closeMenu()" class="block py-2 text-woodsmoke hover:text-twine transition">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a routerLink="/gallery" (click)="closeMenu()" class="block py-2 text-woodsmoke hover:text-twine transition">
+              Galería
+            </a>
+          </li>
+          <li>
+            <a routerLink="/location" (click)="closeMenu()" class="block py-2 text-woodsmoke hover:text-twine transition">
+              Ubicación & Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Acciones en Móvil -->
+        <div class="pt-4 flex flex-col gap-2.5">
+          @if (currentClient) {
+            <a [routerLink]="['/profile', currentClient.id]" (click)="closeMenu()"
+              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine py-2.5 rounded-sm hover:bg-twine hover:text-white transition">
+              Mi Perfil ({{ currentClient.firstName || currentClient.username }})
+            </a>
+            <button type="button" (click)="logout()"
+              class="w-full text-center font-sans text-xs font-semibold uppercase tracking-widest text-woodsmoke/60 py-2 hover:text-red-600 transition">
+              Cerrar Sesión
+            </button>
+          } @else {
+            <a routerLink="/login" (click)="closeMenu()"
+              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine py-2.5 rounded-sm hover:bg-twine hover:text-white transition">
+              Iniciar Sesión / Login
+            </a>
+          }
+
+          <a routerLink="/reservations/book" (click)="closeMenu()"
+            class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest bg-twine text-white py-2.5 rounded-sm hover:bg-twine-hover transition shadow-sm">
+            Reservar Ahora
+          </a>
+        </div>
+      </div>
+    }
   </nav>
 </header>

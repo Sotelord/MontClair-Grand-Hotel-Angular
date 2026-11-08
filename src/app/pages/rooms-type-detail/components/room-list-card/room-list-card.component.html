@@ -18,35 +18,31 @@
         </h2>
 
         <p class="text-xs text-woodsmoke/60 mt-2">
-          Consulta las habitaciones habilitadas y en mantenimiento.
           La disponibilidad para una estancia se comprueba por fechas
           al confirmar la reserva.
         </p>
       </div>
 
-      <a routerLink="/rooms/cards"
-        class="text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer flex items-center gap-1.5">
-        <span>&larr; Volver a Categorías</span>
-      </a>
+      <div class="flex items-center gap-4">
+        @if (roomType()?.id) {
+        <a routerLink="/reservations/book" [queryParams]="{ roomTypeId: roomType()?.id }"
+          class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 rounded-[2px] transition shadow-sm">
+          Reservar esta Categoría
+        </a>
+        }
+        <a routerLink="/rooms/cards"
+          class="text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer flex items-center gap-1.5">
+          <span>&larr; Volver a Categorías</span>
+        </a>
+      </div>
     </div>
 
     <!-- FILTROS -->
     <div class="flex items-center justify-between flex-wrap gap-4 mb-10 text-xs">
       <div class="flex items-center gap-6">
-        <button type="button" (click)="setAvailability('ALL')" class="filter-link"
-          [class.active]="filterAvailability === 'ALL'">
-          Todas ({{ totalCount }})
-        </button>
-
-        <button type="button" (click)="setAvailability('AVAILABLE')" class="filter-link"
-          [class.active]="filterAvailability === 'AVAILABLE'">
-          Habilitadas ({{ availableCount }})
-        </button>
-
-        <button type="button" (click)="setAvailability('MAINTENANCE')" class="filter-link"
-          [class.active]="filterAvailability === 'MAINTENANCE'">
-          En mantenimiento ({{ maintenanceCount }})
-        </button>
+        <span class="filter-link active">
+          Disponibles ({{ availableCount }})
+        </span>
       </div>
 
       @if (floors.length > 1) {

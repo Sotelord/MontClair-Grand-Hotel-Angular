@@ -1,0 +1,98 @@
+<div class="pb-8 border-b border-[#E8E2DA]">
+  <span
+    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block mb-4"
+  >
+    3. HABITACIÓN RESERVADA
+  </span>
+
+  @if (room(); as r) {
+    <div
+      class="border border-[#E8E2DA] rounded-[2px] p-5 bg-white flex flex-col md:flex-row gap-6 items-start"
+    >
+      <img
+        [src]="
+          r.secondaryImageUrl ||
+          r.imageUrl ||
+          r.roomType.imageUrl ||
+          fallbackImage
+        "
+        [alt]="r.name"
+        class="w-full md:w-48 h-36 object-cover rounded-[2px] border border-[#E8E2DA] flex-shrink-0"
+      />
+
+      <div class="flex-grow space-y-3 w-full">
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+        >
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-wider font-semibold text-twine"
+            >
+              {{ r.roomType.name || "Categoría Premium" }}
+            </span>
+            <h3
+              class="font-sans font-bold text-xl uppercase tracking-wide text-woodsmoke"
+            >
+              {{ r.name || "Habitación " + r.number }}
+            </h3>
+          </div>
+
+          <div class="text-left sm:text-right">
+            <span class="text-[10px] uppercase text-woodsmoke/50 block"
+              >Tarifa Aplicada</span
+            >
+            <span class="font-mono text-lg font-bold text-twine-dark">
+              {{ formatPrice(pricePerNight()) }}
+              <span class="text-xs font-normal text-woodsmoke/50">/ noche</span>
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#E8E2DA] text-xs text-woodsmoke"
+        >
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+              >Número</span
+            >
+            <span class="font-mono font-bold text-woodsmoke text-sm"
+              >#{{ r.number }}</span
+            >
+          </div>
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+              >Planta / Piso</span
+            >
+            <span class="font-semibold text-woodsmoke">Piso {{ r.floor }}</span>
+          </div>
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+              >Capacidad</span
+            >
+            <span class="font-semibold text-woodsmoke"
+              >{{ r.capacity }} Huéspedes</span
+            >
+          </div>
+          <div>
+            <span
+              class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block"
+              >Superficie</span
+            >
+            <span class="font-semibold text-woodsmoke"
+              >{{ r.area || 30 }} m²</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div
+      class="p-6 bg-pampas/50 border border-dashed border-[#E8E2DA] text-center text-xs text-woodsmoke/60"
+    >
+      No se encontraron datos detallados de la habitación asociada.
+    </div>
+  }
+</div>
