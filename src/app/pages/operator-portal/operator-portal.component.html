@@ -130,7 +130,7 @@
                 class="w-full py-2 px-3 text-xs bg-white border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
               >
                 @for (srv of availableServices; track srv.id) {
-                  <option [ngValue]="srv.id">
+                  <option class="service-option" [ngValue]="srv.id">
                     {{ srv.name }} — {{ formatPrice(srv.price) }}
                   </option>
                 }
@@ -181,7 +181,7 @@
           @if (res.services.length > 0) {
             <ul class="divide-y divide-[#E8E2DA] border border-[#E8E2DA] rounded-[2px] max-h-44 overflow-y-auto">
               @for (s of res.services; track s.id) {
-                <li class="flex items-center justify-between px-3 py-2 text-xs bg-white">
+                <li class="service-account-item flex items-center justify-between px-3 py-2 text-xs bg-white">
                   <div>
                     <span class="font-semibold text-twine-dark">{{ s.quantity }}x</span>
                     <span class="text-woodsmoke ml-1">{{ s.name }}</span>
