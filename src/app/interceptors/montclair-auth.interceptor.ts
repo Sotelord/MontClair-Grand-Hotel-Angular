@@ -1,8 +1,9 @@
 import { HttpBackend, HttpClient, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, catchError, firstValueFrom, from, map, shareReplay, switchMap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-const BACKEND_ORIGIN = 'http://localhost:8080';
+const BACKEND_ORIGIN = new URL(environment.apiUrl).origin;
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 let csrfToken: string | null = null;

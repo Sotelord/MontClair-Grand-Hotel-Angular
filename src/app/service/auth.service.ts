@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { Client } from '../models/client.model';
 import { resetMontclairCsrfCache } from '../interceptors/montclair-auth.interceptor';
+import { environment } from '../../environments/environment';
 
 //Respuesta del endpoint de login. `client` viene solo si el login fue exitoso; `message` trae el motivo si falló.
 export interface LoginResponse {
@@ -17,7 +18,7 @@ export interface LoginResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private readonly storageKey = 'montclair_current_user';
   private currentUserSubject = new BehaviorSubject<Client | null>(this.readStoredUser());
   private restoredSession$?: Observable<Client | null>;
