@@ -3,7 +3,8 @@ import { inject } from '@angular/core';
 import { Observable, catchError, firstValueFrom, from, map, shareReplay, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-const BACKEND_ORIGIN = new URL(environment.apiUrl).origin;
+const FALLBACK_ORIGIN = globalThis.location?.origin || 'http://localhost:4200';
+const BACKEND_ORIGIN = new URL(environment.apiUrl, FALLBACK_ORIGIN).origin;
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 let csrfToken: string | null = null;
@@ -15,8 +16,11 @@ export function resetMontclairCsrfCache(): void {
 }
 
 function isBackendRequest(url: string): boolean {
+  if (url.startsWith('/api') || url.startsWith(environment.apiUrl)) {
+    return true;
+  }
   try {
-    return new URL(url, globalThis.location?.origin).origin === BACKEND_ORIGIN;
+    return new URL(url, globalThis.location?.origin || FALLBACK_ORIGIN).origin === BACKEND_ORIGIN;
   } catch {
     return url.startsWith(BACKEND_ORIGIN);
   }
@@ -44,7 +48,7 @@ export const montclairAuthInterceptor: HttpInterceptorFn = (request, next) => {
   if (!csrfRequest$) {
     const backend = inject(HttpBackend);
     const rawHttp = new HttpClient(backend);
-    csrfRequest$ = rawHttp.get<unknown>(`${BACKEND_ORIGIN}/api/auth/csrf`, {
+    csrfRequest$ = rawHttp.get<unknown>(`${environment.apiUrl}/auth/csrf`, {
       withCredentials: true,
     }).pipe(
       map((response) => {

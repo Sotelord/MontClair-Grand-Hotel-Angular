@@ -5,9 +5,10 @@ const isLocalhost =
 
 export const environment = {
   production: true,
-  apiUrl: isLocalhost
-    ? 'http://localhost:8080/api'
-    : 'https://supabase-camilo-web.mmzlot.easypanel.host/api',
+  apiUrl: isLocalhost ? 'http://localhost:8080/api' : '/api',
+  backendBaseUrl: isLocalhost
+    ? 'http://localhost:8080'
+    : 'https://supabase-camilo-web.mmzlot.easypanel.host',
   // URL del Webhook de n8n para producción
   n8nChatWebhookUrl: 'https://primary-production-4cb5.up.railway.app/webhook/chat-montclair',
 };

@@ -86,8 +86,18 @@ export class AuthService {
   }
 
   me(): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/me`).pipe(
-      tap((client) => this.setCurrentUser(client)),
+    return this.http.get<LoginResponse | Client>(`${this.apiUrl}/me`).pipe(
+      map((result) => {
+        const client =
+          result && typeof result === 'object' && 'client' in result && result.client
+            ? result.client
+            : this.profileFromResponse(result);
+        if (!client) {
+          throw new Error('No hay una sesión activa.');
+        }
+        this.setCurrentUser(client);
+        return client;
+      }),
       catchError((error) => {
         this.clearCurrentUser();
         return throwError(() => error);
@@ -97,10 +107,18 @@ export class AuthService {
 
   restoreSession(): Observable<Client | null> {
     if (!this.restoredSession$) {
-      this.restoredSession$ = this.http.get<Client>(`${this.apiUrl}/me`).pipe(
-        map((client) => {
-          this.setCurrentUser(client);
-          return client;
+      this.restoredSession$ = this.http.get<LoginResponse | Client>(`${this.apiUrl}/me`).pipe(
+        map((result) => {
+          const client =
+            result && typeof result === 'object' && 'client' in result && result.client
+              ? result.client
+              : this.profileFromResponse(result);
+          if (client) {
+            this.setCurrentUser(client);
+            return client;
+          }
+          this.clearCurrentUser();
+          return null;
         }),
         catchError(() => {
           this.clearCurrentUser();
