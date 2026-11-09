@@ -9,11 +9,13 @@ export const clientGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   return auth.restoreSession().pipe(map((client) => {
     if (!client) return router.createUrlTree(['/login']);
     const role = client.role?.toUpperCase();
-    if (role !== 'CLIENT' && role !== 'ADMIN' && role !== 'OPERATOR') {
+    if (role !== 'CLIENT' && role !== 'ADMIN' && role !== 'OPERATOR' && role !== 'OPERARIO') {
       return router.createUrlTree(['/login']);
     }
     const id = route.paramMap.get('id');
-    if (id && Number(id) !== client.id) return router.createUrlTree(['/login']);
+    if (id && role === 'CLIENT' && Number(id) !== client.id) {
+      return router.createUrlTree(['/login']);
+    }
     return true;
   }));
 };

@@ -58,7 +58,9 @@ export class ClientProfileComponent implements OnInit {
     this.clientService.findById(clientId).subscribe({
       next: (client) => {
         this.client = client;
-        this.authService.saveSession(client);
+        if (!sessionClient || sessionClient.id === client.id) {
+          this.authService.saveSession(client);
+        }
       },
       error: () => {
         this.authService.clearSession();
