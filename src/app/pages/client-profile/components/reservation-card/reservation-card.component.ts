@@ -18,7 +18,9 @@ import { RouterLink } from '@angular/router';
 export class ReservationCardComponent {
   reservation = input.required<ReservationDTO>();
   isCancelling = input.required<boolean>();
+  isPaying = input<boolean>(false);
   cancelRequested = output<ReservationDTO>();
+  payRequested = output<ReservationDTO>();
 
   get roomName(): string {
     const res = this.reservation();
@@ -82,6 +84,7 @@ export class ReservationCardComponent {
       currency: 'EUR',
     }).format(price || 0);
   }
+
   /**
    * REGLA 4: Solo se pueden cancelar reservas que todavia no estan activas,
    * es decir que su fecha de inicio es posterior a la fecha actual.

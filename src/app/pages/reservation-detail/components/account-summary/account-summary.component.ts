@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-account-summary',
@@ -15,6 +15,9 @@ export class AccountSummaryComponent {
   paid = input<boolean>(false);
   paidAmount = input<number>(0);
   pendingBalance = input<number>(0);
+  canPayWithBold = input<boolean>(false);
+  isPayingWithBold = input<boolean>(false);
+  payWithBoldClicked = output<void>();
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('es-ES', {

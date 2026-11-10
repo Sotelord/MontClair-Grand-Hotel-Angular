@@ -102,7 +102,9 @@
         <app-reservation-card
           [reservation]="res"
           [isCancelling]="cancellingIds().has(res.id)"
+          [isPaying]="payingIds().has(res.id)"
           (cancelRequested)="cancelRequested.emit($event)"
+          (payRequested)="payRequested.emit($event)"
         />
       }
     </div>

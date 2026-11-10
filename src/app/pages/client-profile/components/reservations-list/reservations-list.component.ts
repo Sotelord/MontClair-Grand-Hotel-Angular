@@ -19,7 +19,9 @@ export class ReservationsListComponent {
   reservations = input.required<ReservationDTO[]>();
   clientId = input.required<number>();
   cancellingIds = input.required<Set<number>>();
+  payingIds = input<Set<number>>(new Set());
   cancelRequested = output<ReservationDTO>();
+  payRequested = output<ReservationDTO>();
 
   activeTab = signal<'ALL' | 'ACTIVE_OR_CONFIRMED' | 'INACTIVE' | 'CANCELLED'>('ALL');
 

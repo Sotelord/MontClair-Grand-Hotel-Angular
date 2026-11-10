@@ -5,6 +5,25 @@
     (backClicked)="goBack()"
   ></app-detail-toolbar>
 
+  @if (paymentSuccessMessage) {
+    <div class="mb-6">
+      <app-success-alert
+        [message]="paymentSuccessMessage"
+        [dismissible]="true"
+        (closed)="paymentSuccessMessage = null"
+      ></app-success-alert>
+    </div>
+  }
+
+  @if (paymentErrorMessage) {
+    <div class="mb-6">
+      <app-error-alert
+        [message]="paymentErrorMessage"
+        (closed)="paymentErrorMessage = null"
+      ></app-error-alert>
+    </div>
+  }
+
   @if (isLoading) {
     <app-detail-loading></app-detail-loading>
   } @else if (errorMessage || !reservation) {
@@ -65,6 +84,9 @@
           [paid]="reservation.paid"
           [paidAmount]="reservation.paidAmount || 0"
           [pendingBalance]="reservation.pendingBalance"
+          [canPayWithBold]="reservation.status !== 'CANCELLED'"
+          [isPayingWithBold]="isPayingWithBold"
+          (payWithBoldClicked)="payWithBold()"
         ></app-account-summary>
       </div>
 

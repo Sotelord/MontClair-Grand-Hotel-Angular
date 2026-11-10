@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
+import { BoldPaymentService } from '../../service/bold-payment.service';
 import { Client } from '../../models/client.model';
 import { ReservationDTO } from '../../models/reservation.model';
 import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
@@ -35,6 +36,7 @@ export class ClientProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
+  private boldPaymentService = inject(BoldPaymentService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -42,6 +44,7 @@ export class ClientProfileComponent implements OnInit {
   reservations: ReservationDTO[] = [];
   isDeletingProfile = false;
   cancellingReservationIds = new Set<number>();
+  payingReservationIds = new Set<number>();
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
@@ -69,6 +72,7 @@ export class ClientProfileComponent implements OnInit {
     });
 
     this.loadReservations(clientId);
+    this.handleBoldReturnIfPresent(clientId);
   }
 
   loadReservations(clientId: number): void {
@@ -169,6 +173,75 @@ export class ClientProfileComponent implements OnInit {
           err?.error?.message ||
           'No se pudo cancelar la reservación. Intenta nuevamente.';
       },
+    });
+  }
+
+  /**
+   * Inicia el flujo de pago con Bold Checkout (valor simbólico fijo = 1).
+   */
+  payReservationWithBold(reservation: ReservationDTO): void {
+    if (!this.client || !reservation?.id || reservation.paid) {
+      return;
+    }
+
+    this.payingReservationIds.add(reservation.id);
+    this.errorMessage = null;
+
+    const returnPath = `/profile/${this.client.id}`;
+    this.boldPaymentService.openCheckout(reservation.id, returnPath).subscribe({
+      next: () => {
+        this.payingReservationIds.delete(reservation.id);
+      },
+      error: (err) => {
+        this.payingReservationIds.delete(reservation.id);
+        this.errorMessage =
+          err?.error?.message ||
+          err?.message ||
+          'No se pudo inicializar el botón de pagos Bold.';
+      },
+    });
+  }
+
+  private handleBoldReturnIfPresent(clientId: number): void {
+    const orderId = this.route.snapshot.queryParamMap.get('bold-order-id');
+    const txStatus = this.route.snapshot.queryParamMap.get('bold-tx-status');
+    if (!orderId || !txStatus) {
+      return;
+    }
+
+    const reservationId = this.boldPaymentService.extractReservationId(orderId);
+    if (!reservationId) {
+      return;
+    }
+
+    if (txStatus.toLowerCase() === 'approved') {
+      this.boldPaymentService
+        .confirmPayment(reservationId, orderId, txStatus)
+        .subscribe({
+          next: () => {
+            this.successMessage = `¡Pago en Bold aprobado! La cuenta de tu reservación #${reservationId} ha quedado saldada y te enviamos el comprobante por correo.`;
+            this.loadReservations(clientId);
+            this.clearBoldQueryParams();
+          },
+          error: (err) => {
+            this.errorMessage =
+              err?.error?.message ||
+              'El pago fue procesado en Bold pero ocurrió un error al actualizar la reserva.';
+            this.clearBoldQueryParams();
+          },
+        });
+    } else {
+      this.errorMessage = `La transacción en Bold para la reserva #${reservationId} finalizó con estado: ${txStatus}.`;
+      this.clearBoldQueryParams();
+    }
+  }
+
+  private clearBoldQueryParams(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { 'bold-order-id': null, 'bold-tx-status': null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 }
