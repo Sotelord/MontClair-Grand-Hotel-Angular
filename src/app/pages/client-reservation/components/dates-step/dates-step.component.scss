@@ -1,3 +1,18 @@
 :host {
   display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.dates-grid,
+.dates-grid > div {
+  min-width: 0;
+}
+
+.dates-grid input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
