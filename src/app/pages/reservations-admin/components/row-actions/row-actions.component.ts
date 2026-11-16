@@ -1,6 +1,12 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { ReservationDTO } from '../../../../models/reservation.model';
 import { NgClass } from '@angular/common';
+import {
+  downloadReservationPdf,
+  loadReservationPdfRoom,
+} from '../../../../utils/reservation-pdf';
+import { RoomService } from '../../../../service/room.service';
+import { RoomTypeService } from '../../../../service/room-type.service';
 
 @Component({
   selector: 'app-row-actions',
@@ -10,6 +16,9 @@ import { NgClass } from '@angular/common';
   standalone: true,
 })
 export class RowActionsComponent {
+  private roomService = inject(RoomService);
+  private roomTypeService = inject(RoomTypeService);
+
   reservation = input.required<ReservationDTO>();
   isOperatorMode = input<boolean>(false);
 
@@ -21,6 +30,21 @@ export class RowActionsComponent {
   finishClicked = output<void>();
   cancelClicked = output<void>();
   deleteClicked = output<void>();
+
+  async generatePdf(): Promise<void> {
+    const reservation = this.reservation();
+    try {
+      const room = await loadReservationPdfRoom(
+        reservation,
+        this.roomService,
+        this.roomTypeService,
+      );
+      await downloadReservationPdf(reservation, room);
+    } catch (error) {
+      console.error('No fue posible preparar los datos de habitación.', error);
+      await downloadReservationPdf(reservation);
+    }
+  }
 
   get isCancelable(): boolean {
     const res = this.reservation();

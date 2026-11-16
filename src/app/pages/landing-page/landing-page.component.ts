@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Service } from '../../models/service.model';
-import { RoomType } from '../../models/roomType.model';
+import { Room } from '../../models/room.model';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { BookingBarComponent } from './components/booking-bar/booking-bar.component';
@@ -11,9 +11,8 @@ import { RoomSectionComponent } from './components/room-section/room-section.com
 import { GalleryBannerComponent } from './components/gallery-banner/gallery-banner.component';
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
-import { RoomTypeService } from '../../service/room-type.service';
+import { RoomService } from '../../service/room.service';
 import { AuthService } from '../../service/auth.service';
-import { ClientService } from '../../service/client.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -33,13 +32,12 @@ export class LandingPageComponent implements OnInit {
   title: string = 'MontClairGrandHotel';
 
   private serviceService = inject(ServicesService);
-  private roomTypeService = inject(RoomTypeService);
+  private roomService = inject(RoomService);
   private authService = inject(AuthService);
-  private clientService = inject(ClientService);
   private router = inject(Router);
 
   serviceArray: Service[] = [];
-  roomTypesArray: RoomType[] = [];
+  roomsArray: Room[] = [];
 
   ngOnInit(): void {
     this.redirectIfLoggedIn();
@@ -53,37 +51,27 @@ export class LandingPageComponent implements OnInit {
       },
     });
 
-    this.roomTypeService.findAll().subscribe({
-      next: (types) => {
-        this.roomTypesArray = types || [];
+    this.roomService.findAll().subscribe({
+      next: (rooms) => {
+        this.roomsArray = rooms || [];
       },
       error: () => {
-        this.roomTypesArray = [];
+        this.roomsArray = [];
       },
     });
   }
 
+  /*Si hay una sesión (JWT o cookie), el backend confirma quién es y se redirige según su rol.
+  Si no hay sesión o ya no es válida, se queda en el home.*/
   private redirectIfLoggedIn(): void {
-    if (!this.authService.getToken()) {
+    if (!this.authService.getToken() && !this.authService.currentUser) {
       return;
     }
 
-    this.clientService.getMyDetails().subscribe({
-      next: (client) => {
-        this.authService.saveSession(client);
-
-        const role = client.role?.toUpperCase();
-        if (role === 'ADMIN') {
-          this.router.navigate(['/admin/rooms']);
-        } else if (role === 'OPERATOR' || role === 'OPERARIO') {
-          this.router.navigate(['/operator/reservations']);
-        } else {
-          this.router.navigate(['/profile']);
-        }
-      },
-      error: () => {
-        this.authService.clearSession();
-      },
+    this.authService.restoreSession().subscribe((client) => {
+      if (client) {
+        this.router.navigate(this.authService.getRedirectForClient(client));
+      }
     });
   }
 }

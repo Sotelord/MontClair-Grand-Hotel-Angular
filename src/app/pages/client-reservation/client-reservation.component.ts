@@ -74,6 +74,21 @@ export class ClientReservationComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
+    // Cargar parámetros de la barra de disponibilidad (checkIn, checkOut, guests)
+    const queryCheckIn = this.route.snapshot.queryParamMap.get('checkIn');
+    const queryCheckOut = this.route.snapshot.queryParamMap.get('checkOut');
+    const queryGuests = this.route.snapshot.queryParamMap.get('guests');
+
+    if (queryCheckIn) {
+      this.bookingForm.patchValue({ checkInDate: queryCheckIn });
+    }
+    if (queryCheckOut) {
+      this.bookingForm.patchValue({ checkOutDate: queryCheckOut });
+    }
+    if (queryGuests && !isNaN(Number(queryGuests))) {
+      this.bookingForm.patchValue({ numberOfPeople: Number(queryGuests) });
+    }
+
     const editIdParam = this.route.snapshot.paramMap.get('id');
     if (editIdParam) {
       this.isEditMode = true;

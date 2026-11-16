@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
+import { BoldPaymentService } from '../../service/bold-payment.service';
 import { Client } from '../../models/client.model';
 import { ReservationDTO } from '../../models/reservation.model';
 import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
@@ -35,25 +36,39 @@ export class ClientProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
+  private boldPaymentService = inject(BoldPaymentService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   client: Client | null = null;
   reservations: ReservationDTO[] = [];
   isDeletingProfile = false;
   cancellingReservationIds = new Set<number>();
+  payingReservationIds = new Set<number>();
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
   ngOnInit(): void {
-    if (!this.authService.getToken()) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    this.clientService.getMyDetails().subscribe({
+    const sessionClient = this.authService.getSession();
+    const idParam = Number(this.route.snapshot.paramMap.get('id'));
+    const role = sessionClient?.role?.toUpperCase();
+    const isStaff =
+      role === 'ADMIN' || role === 'OPERATOR' || role === 'OPERARIO';
+
+    // El personal puede ver el perfil de otra persona por id; el cliente siempre ve el suyo (lo identifica el JWT)
+    const client$ =
+      isStaff && idParam > 0 && idParam !== sessionClient?.id
+        ? this.clientService.findById(idParam)
+        : this.clientService.getMyDetails();
+
+    client$.subscribe({
       next: (client) => {
         this.client = client;
-        this.authService.saveSession(client);
+        if (!sessionClient || sessionClient.id === client.id) {
+          this.authService.saveSession(client);
+        }
         this.loadReservations(client.id);
+        this.handleBoldReturnIfPresent(client.id);
       },
       error: () => {
         this.authService.clearSession();
@@ -74,8 +89,10 @@ export class ClientProfileComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.clearSession();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login']),
+    });
   }
 
   deleteProfile(): void {
@@ -156,6 +173,75 @@ export class ClientProfileComponent implements OnInit {
           err?.error?.message ||
           'No se pudo cancelar la reservación. Intenta nuevamente.';
       },
+    });
+  }
+
+  /**
+   * Inicia el flujo de pago con Bold Checkout (valor simbólico fijo = 1).
+   */
+  payReservationWithBold(reservation: ReservationDTO): void {
+    if (!this.client || !reservation?.id || reservation.paid) {
+      return;
+    }
+
+    this.payingReservationIds.add(reservation.id);
+    this.errorMessage = null;
+
+    const returnPath = `/profile/${this.client.id}`;
+    this.boldPaymentService.openCheckout(reservation.id, returnPath).subscribe({
+      next: () => {
+        this.payingReservationIds.delete(reservation.id);
+      },
+      error: (err) => {
+        this.payingReservationIds.delete(reservation.id);
+        this.errorMessage =
+          err?.error?.message ||
+          err?.message ||
+          'No se pudo inicializar el botón de pagos Bold.';
+      },
+    });
+  }
+
+  private handleBoldReturnIfPresent(clientId: number): void {
+    const orderId = this.route.snapshot.queryParamMap.get('bold-order-id');
+    const txStatus = this.route.snapshot.queryParamMap.get('bold-tx-status');
+    if (!orderId || !txStatus) {
+      return;
+    }
+
+    const reservationId = this.boldPaymentService.extractReservationId(orderId);
+    if (!reservationId) {
+      return;
+    }
+
+    if (txStatus.toLowerCase() === 'approved') {
+      this.boldPaymentService
+        .confirmPayment(reservationId, orderId, txStatus)
+        .subscribe({
+          next: () => {
+            this.successMessage = `¡Pago en Bold aprobado! La cuenta de tu reservación #${reservationId} ha quedado saldada y te enviamos el comprobante por correo.`;
+            this.loadReservations(clientId);
+            this.clearBoldQueryParams();
+          },
+          error: (err) => {
+            this.errorMessage =
+              err?.error?.message ||
+              'El pago fue procesado en Bold pero ocurrió un error al actualizar la reserva.';
+            this.clearBoldQueryParams();
+          },
+        });
+    } else {
+      this.errorMessage = `La transacción en Bold para la reserva #${reservationId} finalizó con estado: ${txStatus}.`;
+      this.clearBoldQueryParams();
+    }
+  }
+
+  private clearBoldQueryParams(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { 'bold-order-id': null, 'bold-tx-status': null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
   }
 }

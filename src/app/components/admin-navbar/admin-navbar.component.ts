@@ -13,8 +13,21 @@ export class AdminNavbarComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
 
+  isMenuOpen = false;
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
   logout(): void {
-    this.authService.clearSession();
-    this.router.navigate(['/login']);
+    this.closeMenu();
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login']),
+    });
   }
 }

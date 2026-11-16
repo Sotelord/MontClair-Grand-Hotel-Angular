@@ -1,7 +1,13 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { ReservationDTO } from '../../../../models/reservation.model';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {
+  downloadReservationPdf,
+  loadReservationPdfRoom,
+} from '../../../../utils/reservation-pdf';
+import { RoomService } from '../../../../service/room.service';
+import { RoomTypeService } from '../../../../service/room-type.service';
 
 /**
  * Componente de tarjeta de reserva individual dentro del historial del cliente.
@@ -16,9 +22,14 @@ import { RouterLink } from '@angular/router';
   standalone: true,
 })
 export class ReservationCardComponent {
+  private roomService = inject(RoomService);
+  private roomTypeService = inject(RoomTypeService);
+
   reservation = input.required<ReservationDTO>();
   isCancelling = input.required<boolean>();
+  isPaying = input<boolean>(false);
   cancelRequested = output<ReservationDTO>();
+  payRequested = output<ReservationDTO>();
 
   get roomName(): string {
     const res = this.reservation();
@@ -82,6 +93,22 @@ export class ReservationCardComponent {
       currency: 'EUR',
     }).format(price || 0);
   }
+
+  async generatePdf(): Promise<void> {
+    const reservation = this.reservation();
+    try {
+      const room = await loadReservationPdfRoom(
+        reservation,
+        this.roomService,
+        this.roomTypeService,
+      );
+      await downloadReservationPdf(reservation, room);
+    } catch (error) {
+      console.error('No fue posible preparar los datos de habitación.', error);
+      await downloadReservationPdf(reservation);
+    }
+  }
+
   /**
    * REGLA 4: Solo se pueden cancelar reservas que todavia no estan activas,
    * es decir que su fecha de inicio es posterior a la fecha actual.

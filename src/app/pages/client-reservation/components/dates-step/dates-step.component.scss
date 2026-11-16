@@ -1,3 +1,50 @@
 :host {
   display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.dates-grid,
+.dates-grid > div {
+  min-width: 0;
+}
+
+.dates-grid input {
+  display: block;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  box-sizing: border-box;
+}
+
+input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-inline: 0.75rem;
+  text-align: center;
+}
+
+input[type='date']::-webkit-date-and-time-value {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+input[type='date']::-webkit-date-and-time-container {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  flex: 0 0 auto;
+  margin: 0 0 0 0.25rem;
+}
+
+input[type='number'] {
+  text-align: center;
 }

@@ -1,5 +1,5 @@
 <div
-  class="border rounded-[2px] p-5 transition relative overflow-hidden"
+  class="reservation-card-item border rounded-[2px] p-5 transition relative overflow-hidden"
   [ngClass]="{
     'border-[#E8E2DA] bg-pampas/20 hover:border-twine': reservation().status === 'CONFIRMED',
     'border-emerald-300 bg-emerald-50/20 hover:border-emerald-400': reservation().status === 'ACTIVE',
@@ -11,7 +11,7 @@
     class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-[#E8E2DA]"
   >
     <div>
-      <span class="font-mono text-twine-dark font-semibold text-xs"
+      <span class="font-mono text-twine-dark font-semibold text-xs res-card-id"
         >#{{ reservation().id }}</span
       >
 
@@ -20,7 +20,7 @@
       >
         {{ roomName }}
         @if (roomNumber) {
-          (Hab. {{ roomNumber }})
+          <span class="res-card-room-number">(Hab. {{ roomNumber }})</span>
         }
       </h3>
       <span class="text-[11px] text-woodsmoke/60">{{ roomTypeName }}</span>
@@ -32,7 +32,7 @@
       @switch (reservation().status) {
         @case ('ACTIVE') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-emerald-50 text-emerald-800 border-emerald-300 flex items-center gap-1.5"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-emerald-50 text-emerald-800 border-emerald-300 flex items-center gap-1.5"
           >
             <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
             En Estadía (Activa)
@@ -40,21 +40,21 @@
         }
         @case ('INACTIVE') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-slate-100 text-slate-700 border-slate-300"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-slate-100 text-slate-700 border-slate-300"
           >
             Estadía Finalizada
           </span>
         }
         @case ('CANCELLED') {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-rose-50 text-rose-700 border-rose-300"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-rose-50 text-rose-700 border-rose-300"
           >
             Cancelada
           </span>
         }
         @default {
           <span
-            class="px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-twine/10 text-twine-dark border-twine/40"
+            class="res-card-status px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-[1.5px] font-bold border bg-twine/10 text-twine-dark border-twine/40"
           >
             Confirmada
           </span>
@@ -64,14 +64,14 @@
       <!-- ESTADO DE LA CUENTA (PAGADA / PENDIENTE) -->
       @if (reservation().paid) {
         <span
-          class="px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200"
+          class="res-card-paid-badge px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200"
           title="La cuenta de la estadía ha sido pagada en su totalidad"
         >
           ✓ Cuenta Pagada
         </span>
       } @else {
         <span
-          class="px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-amber-50 text-amber-800 border-amber-300"
+          class="res-card-paid-badge px-2 py-0.5 rounded-[2px] text-[9px] uppercase tracking-[1px] font-bold border bg-amber-50 text-amber-800 border-amber-300"
           title="Pendiente de pago al check-out"
         >
           Pendiente de Pago
@@ -161,7 +161,22 @@
       }
     </div>
 
-    <div class="flex items-center gap-2 self-end sm:self-auto">
+    <div class="flex flex-wrap items-center gap-2 self-end sm:self-auto">
+      @if (!reservation().paid && reservation().status !== 'CANCELLED') {
+        <button
+          type="button"
+          (click)="payRequested.emit(reservation())"
+          [disabled]="isPaying()"
+          class="bg-mirage hover:bg-woodsmoke disabled:opacity-50 disabled:cursor-not-allowed text-[#c9a96e] border border-[#c9a96e]/60 text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3.5 rounded-[2px] transition cursor-pointer inline-flex items-center gap-1.5 shadow-xs"
+          title="Pagar en línea con pasarela segura Bold"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+          {{ isPaying() ? "Abriendo Bold..." : "Pagar con Bold" }}
+        </button>
+      }
+
       <a
         [routerLink]="['/reservations', reservation().id]"
         class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer"
@@ -187,6 +202,34 @@
         </svg>
         Ver Detalle
       </a>
+
+      <button
+        type="button"
+        (click)="generatePdf()"
+        class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer"
+        title="Generar PDF"
+      >
+        <svg
+          class="w-3.5 h-3.5 text-twine"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M14 2v6h6M8 13h8M8 17h5"
+          />
+        </svg>
+        Generar PDF
+      </button>
 
       @if (reservation().status === 'CONFIRMED') {
         <a

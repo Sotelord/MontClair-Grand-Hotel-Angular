@@ -1,10 +1,15 @@
 .hero {
+  min-height: 520px;
   height: 600px;
   background-position: center;
   background-size: cover;
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .hero-overlay {
@@ -25,12 +30,16 @@
 .hero-content {
   position: relative;
   z-index: 10;
+  width: 100%;
 }
 
 .hero-text-box {
+  width: 100%;
   max-width: 500px;
   text-align: center;
   color: white;
+  box-sizing: border-box;
+  padding: 0 12px;
 }
 
 .hero-subtitle {
@@ -50,16 +59,17 @@
 }
 
 .hero-subtitle .line {
-  width: 40px;
+  width: 32px;
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: 53px;
+  font-size: clamp(30px, 7vw, 53px);
   font-weight: normal;
-  letter-spacing: 4px;
+  letter-spacing: clamp(2px, 1vw, 4px);
   margin-bottom: 16px;
   line-height: 1.1;
+  word-break: break-word;
 }
 
 .hero-icon {
@@ -69,12 +79,12 @@
 }
 
 .hero-icon img {
-  height: 32px;
+  height: 28px;
   width: auto;
 }
 
 .hero-description {
-  font-size: 16px;
+  font-size: clamp(13px, 2vw, 16px);
   color: var(--pampas);
   line-height: 1.6;
   margin: 0 auto 32px auto;

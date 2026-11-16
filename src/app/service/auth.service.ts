@@ -1,31 +1,50 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  finalize,
+  map,
+  of,
+  shareReplay,
+  tap,
+  throwError,
+} from 'rxjs';
 import { Client } from '../models/client.model';
+import { resetMontclairCsrfCache } from '../interceptors/montclair-auth.interceptor';
+import { environment } from '../../environments/environment';
 
-//Respuesta del endpoint de login. `client` viene solo si el login fue exitoso; `message` trae el motivo si falló.
+//Respuesta del endpoint de login. `client` y `token` vienen solo si el login fue exitoso; `message` trae el motivo si falló.
 export interface LoginResponse {
   success: boolean;
-  token?: string;
+  token?: string; // JWT (Sprint 13)
   client?: Client;
-  role?: string;
-  redirectUrl?: string;
   message?: string;
 }
 
-//Maneja la autenticación y la sesión del usuario. La sesión es el objeto Client guardado en localStorage y el JWT que devuelve el backend.
+//Maneja la autenticación y la sesión del usuario: el JWT del login (localStorage) y la sesión por cookie del backend.
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private readonly storageKey = 'montclair_current_user';
+  private readonly tokenKey = 'token';
+  private currentUserSubject = new BehaviorSubject<Client | null>(
+    this.readStoredUser(),
+  );
+  private restoredSession$?: Observable<Client | null>;
 
-  //Claves con las que se guardan el cliente y el token en localStorage.
-  private readonly SESSION_KEY = 'currentClient';
-  private readonly TOKEN_KEY = 'token';
+  readonly currentUser$ = this.currentUserSubject.asObservable();
+  readonly isAuthenticated$ = this.currentUser$.pipe(map((client) => !!client));
 
-  /*Envía las credenciales al backend (POST /api/auth/login). Si el login es exitoso, guarda la sesión y el token
+  get currentUser(): Client | null {
+    return this.currentUserSubject.value;
+  }
+
+  /*Envía las credenciales al backend (POST /api/auth/login). Si el login es exitoso, guarda la sesión y el JWT
   automáticamente con `tap`, sin alterar lo que recibe quien se suscriba.*/
   login(identifier: string, password: string): Observable<LoginResponse> {
     return this.http
@@ -34,50 +53,193 @@ export class AuthService {
         password: password.trim(),
       })
       .pipe(
-        tap((res) => {
-          if (res.success && res.client) {
-            this.saveSession(res.client);
+        tap((result) => {
+          const client = result.client ?? this.profileFromResponse(result);
+          if (result.success && client) {
+            this.setCurrentUser(client);
           }
-          if (res.success && res.token) {
-            this.saveToken(res.token);
+          if (result.success && result.token) {
+            this.saveToken(result.token);
           }
+          resetMontclairCsrfCache();
         }),
       );
   }
 
-  //Guarda el cliente en localStorage como JSON.
-  saveSession(client: Client): void {
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify(client));
-  }
-
-  //Lee la sesión guardada. @returns el cliente, o null si no hay sesión o el JSON está dañado
-  getSession(): Client | null {
-    const raw = localStorage.getItem(this.SESSION_KEY);
-    if (!raw) {
-      return null;
-    }
-    try {
-      return JSON.parse(raw) as Client;
-    } catch {
-      // El valor guardado no es JSON válido: se trata como "sin sesión".
-      return null;
-    }
-  }
-
-  //Guarda el JWT en localStorage.
+  //JWT (Sprint 13)
   saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.tokenKey, token);
   }
 
-  //Lee el JWT guardado, o null si no hay.
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.tokenKey);
   }
 
-  //Cierra la sesión borrando el cliente de localStorage.
+  clearToken(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  saveSession(client: Client): void {
+    this.setCurrentUser(client);
+  }
+
+  getSession(): Client | null {
+    return this.currentUserSubject.value;
+  }
+
   clearSession(): void {
-    localStorage.removeItem(this.SESSION_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem('montclair_current_user');
+    this.clearCurrentUser();
+  }
+
+  getGoogleStartUrl(): Observable<{ authorizationUrl: string }> {
+    return this.http.get<{ authorizationUrl: string }>(
+      `${this.apiUrl}/google/start`,
+    );
+  }
+
+  startGoogleLogin(): void {
+    this.getGoogleStartUrl().subscribe({
+      next: (result) => {
+        if (result.authorizationUrl) {
+          window.location.assign(result.authorizationUrl);
+        }
+      },
+    });
+  }
+
+  exchangeGoogleCode(code: string): Observable<LoginResponse | Client> {
+    return this.http
+      .post<LoginResponse | Client>(`${this.apiUrl}/google/exchange`, { code })
+      .pipe(
+        tap((result) => {
+          const client =
+            'client' in result
+              ? result.client
+              : this.profileFromResponse(result);
+          if (client) {
+            this.setCurrentUser(client);
+          }
+          resetMontclairCsrfCache();
+        }),
+      );
+  }
+
+  me(): Observable<Client> {
+    return this.http.get<LoginResponse | Client>(`${this.apiUrl}/me`).pipe(
+      map((result) => {
+        const client =
+          result &&
+          typeof result === 'object' &&
+          'client' in result &&
+          result.client
+            ? result.client
+            : this.profileFromResponse(result);
+        if (!client) {
+          throw new Error('No hay una sesión activa.');
+        }
+        this.setCurrentUser(client);
+        return client;
+      }),
+      catchError((error) => {
+        this.clearCurrentUser();
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  restoreSession(): Observable<Client | null> {
+    if (!this.restoredSession$) {
+      this.restoredSession$ = this.http
+        .get<LoginResponse | Client>(`${this.apiUrl}/me`)
+        .pipe(
+          map((result) => {
+            const client =
+              result &&
+              typeof result === 'object' &&
+              'client' in result &&
+              result.client
+                ? result.client
+                : this.profileFromResponse(result);
+            if (client) {
+              this.setCurrentUser(client);
+              return client;
+            }
+            this.clearCurrentUser();
+            return null;
+          }),
+          catchError(() => {
+            this.clearCurrentUser();
+            return of(null);
+          }),
+          finalize(() => {
+            // Allow a later explicit reload after logout/login to perform a new server check.
+          }),
+          shareReplay({ bufferSize: 1, refCount: false }),
+        );
+    }
+    return this.restoredSession$;
+  }
+
+  reloadSession(): Observable<Client | null> {
+    this.restoredSession$ = undefined;
+    return this.restoreSession();
+  }
+
+  //Cierra la sesión: borra la cookie en el backend y, en el front, el cliente guardado y el JWT.
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(
+      finalize(() => {
+        this.clearCurrentUser();
+        this.restoredSession$ = of(null).pipe(shareReplay(1));
+        resetMontclairCsrfCache();
+      }),
+    );
+  }
+
+  //A dónde va cada rol después de entrar (el cliente va a /profile: la misma URL para todos, se identifica por el JWT).
+  getRedirectForClient(client: Client): string[] {
+    const role = client.role?.toUpperCase();
+    if (role === 'ADMIN') return ['/admin/rooms'];
+    if (role === 'OPERATOR' || role === 'OPERARIO')
+      return ['/operator/reservations'];
+    return ['/profile'];
+  }
+
+  setCurrentUser(client: Client): void {
+    const safeClient = this.toNonSensitiveClient(client);
+    this.currentUserSubject.next(safeClient);
+    localStorage.setItem(this.storageKey, JSON.stringify(safeClient));
+    this.restoredSession$ = of(safeClient).pipe(
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
+  clearCurrentUser(): void {
+    this.currentUserSubject.next(null);
+    localStorage.removeItem(this.storageKey);
+    localStorage.removeItem('currentClient'); // clave antigua
+    this.clearToken();
+  }
+
+  private profileFromResponse(response: unknown): Client | undefined {
+    if (!response || typeof response !== 'object') return undefined;
+    const record = response as Record<string, unknown>;
+    return typeof record['id'] === 'number'
+      ? (record as unknown as Client)
+      : undefined;
+  }
+
+  private toNonSensitiveClient(client: Client): Client {
+    const { password: _password, ...safeClient } = client;
+    return safeClient as Client;
+  }
+
+  private readStoredUser(): Client | null {
+    try {
+      const value = localStorage.getItem(this.storageKey);
+      return value ? (JSON.parse(value) as Client) : null;
+    } catch {
+      return null;
+    }
   }
 }

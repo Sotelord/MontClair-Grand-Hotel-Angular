@@ -6,6 +6,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AdminNavbarComponent } from './components/admin-navbar/admin-navbar.component';
 import { OperatorNavbarComponent } from './components/operator-navbar/operator-navbar.component';
 import { AdminFooterComponent } from './components/admin-footer/admin-footer.component';
+import { AuthService } from './service/auth.service';
+import { ChatBubbleComponent } from './components/chat-bubble/chat-bubble.component';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +20,13 @@ import { AdminFooterComponent } from './components/admin-footer/admin-footer.com
     AdminNavbarComponent,
     OperatorNavbarComponent,
     AdminFooterComponent,
+    ChatBubbleComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  private auth = inject(AuthService);
   title = 'MontClair-Grand-Hotel-Angular';
 
   private router = inject(Router);
@@ -31,6 +35,8 @@ export class AppComponent {
   isLogin = signal<boolean>(false);
 
   constructor() {
+    this.auth.restoreSession().subscribe();
+
     const updateRoutes = (url: string) => {
       this.isAdmin.set(url.startsWith('/admin'));
       this.isOperator.set(url.startsWith('/operator'));

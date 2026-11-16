@@ -1,16 +1,21 @@
 .main-footer {
-  padding: 64px 24px 48px 24px;
+  padding: 64px 20px 48px 20px;
   background-color: var(--pampas);
   border-top: 1px solid rgba(202, 198, 198, 0.5);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 48px;
+  gap: 40px;
+  width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -19,6 +24,7 @@
 @media (min-width: 1024px) {
   .footer-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 48px;
   }
 }
 
@@ -61,17 +67,25 @@
   align-items: flex-start;
   gap: 12px;
   line-height: 1.5;
+  word-break: break-word;
 }
 
 .contact-list li img {
   height: 14px;
   width: auto;
   margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .legal-links {
   display: flex;
-  gap: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+
+  @media (min-width: 640px) {
+    gap: 40px;
+  }
 }
 
 .legal-links a:hover {
@@ -88,7 +102,11 @@
 
 .copyright-bar {
   background-color: var(--mirage);
-  padding: 24px;
+  padding: 24px 16px;
   font-size: 11px;
   color: rgba(242, 238, 235, 0.8);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }

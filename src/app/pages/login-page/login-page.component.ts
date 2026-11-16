@@ -30,6 +30,8 @@ export class LoginPageComponent implements OnInit {
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  isLoading = false;
+  isGoogleLoading = false;
 
   ngOnInit(): void {
     // Limpiar cualquier sesión residual al entrar a la pantalla de login para evitar iniciar como operario/admin por error
@@ -52,12 +54,13 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     this.authService.login(cleanId, cleanPass).subscribe({
       next: (result) => {
+        this.isLoading = false;
         if (result.success && result.client) {
-          // El backend indica a qué pantalla ir según el rol (admin, operador o perfil del cliente)
-          this.router.navigateByUrl(
-            result.redirectUrl ?? `/profile/${result.client.id}`,
+          this.router.navigate(
+            this.authService.getRedirectForClient(result.client),
           );
         } else {
           this.errorMessage =
@@ -65,8 +68,29 @@ export class LoginPageComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.isLoading = false;
         this.errorMessage =
-          err?.error.message || 'Usuario o contraseña incorrectos.';
+          err?.error?.message || 'Usuario o contraseña incorrectos.';
+      },
+    });
+  }
+
+  onGoogleLogin(): void {
+    this.errorMessage = null;
+    this.isGoogleLoading = true;
+    this.authService.getGoogleStartUrl().subscribe({
+      next: (result) => {
+        if (!result.authorizationUrl) {
+          this.isGoogleLoading = false;
+          this.errorMessage = 'No se pudo iniciar el acceso con Google.';
+          return;
+        }
+        window.location.assign(result.authorizationUrl);
+      },
+      error: (err) => {
+        this.isGoogleLoading = false;
+        this.errorMessage =
+          err?.error?.message || 'No se pudo iniciar el acceso con Google.';
       },
     });
   }

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Room } from '../models/room.model';
+import { environment } from '../../environments/environment';
 
 //Acceso a la API REST de habitaciones (/api/rooms).
 @Injectable({
@@ -9,7 +10,7 @@ import { Room } from '../models/room.model';
 })
 export class RoomService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/rooms';
+  private apiUrl = `${environment.apiUrl}/rooms`;
 
   //Lista todas las habitaciones, sin importar su estado.
   findAll(): Observable<Room[]> {

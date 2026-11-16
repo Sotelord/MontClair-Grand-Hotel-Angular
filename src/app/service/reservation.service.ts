@@ -6,6 +6,7 @@ import {
   ReservationDTO,
   ReservationRequestDTO,
 } from '../models/reservation.model';
+import { environment } from '../../environments/environment';
 
 //Acceso a la API REST de reservas (/api/reservations) y reglas de negocio que se validan en el cliente: fechas, huéspedes y cálculo de totales.
 @Injectable({
@@ -13,7 +14,7 @@ import {
 })
 export class ReservationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/reservations';
+  private apiUrl = `${environment.apiUrl}/reservations`;
 
   //Límites de negocio para validar una reserva.
   private static readonly MAX_STAY_NIGHTS = 30;

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Client } from '../models/client.model';
+import { environment } from '../../environments/environment';
 
 //Acceso a la API REST de clientes (/api/clients).
 @Injectable({
@@ -9,11 +10,16 @@ import { Client } from '../models/client.model';
 })
 export class ClientService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/clients';
+  private apiUrl = `${environment.apiUrl}/clients`;
 
   //Lista todos los clientes.
   findAll(): Observable<Client[]> {
     return this.http.get<Client[]>(this.apiUrl);
+  }
+
+  //Devuelve el cliente dueño del JWT (no necesita id): la misma URL entrega datos distintos según quién esté autenticado.
+  getMyDetails(): Observable<Client> {
+    return this.http.get<Client>(`${this.apiUrl}/details`);
   }
 
   //Busca un cliente por su id.
@@ -35,9 +41,5 @@ export class ClientService {
   //Elimina un cliente por su id.
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  getMyDetails(): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/details`);
   }
 }

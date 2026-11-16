@@ -19,9 +19,12 @@ import { ClientReservationComponent } from './pages/client-reservation/client-re
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { LocationComponent } from './pages/location/location.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
-import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
+import { GoogleCallbackComponent } from './pages/google-callback/google-callback.component';
 import { adminGuard } from './guards/admin.guard';
 import { operatorGuard } from './guards/operator.guard';
+import { clientGuard } from './guards/client.guard';
+import { staffGuard } from './guards/staff.guard';
+import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
 
 export const routes: Routes = [
   {
@@ -45,21 +48,29 @@ export const routes: Routes = [
     component: LoginPageComponent,
   },
   {
-    path: 'profile',
-    component: ClientProfileComponent,
+    path: 'auth/google/callback',
+    component: GoogleCallbackComponent,
   },
   {
-    path: 'profile/edit',
-    component: ProfileEditComponent,
+    // Perfil del usuario autenticado: la misma URL para todos, el backend lo identifica por el JWT
+    path: 'profile',
+    component: ClientProfileComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'profile/edit/:id',
-    redirectTo: 'profile/edit',
+    component: ProfileEditComponent,
+    canActivate: [clientGuard],
+  },
+  {
+    path: 'profile/edit',
+    redirectTo: 'login',
     pathMatch: 'full',
   },
   {
     path: 'profile/:id',
-    redirectTo: 'profile',
+    component: ClientProfileComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'clients',
@@ -133,22 +144,22 @@ export const routes: Routes = [
   {
     path: 'admin/reservations',
     component: ReservationsAdminComponent,
-    canActivate: [adminGuard],
+    canActivate: [staffGuard],
   },
   {
     path: 'admin/reservations/new',
     component: AdminReservationFormComponent,
-    canActivate: [adminGuard],
+    canActivate: [staffGuard],
   },
   {
     path: 'admin/reservations/edit/:id',
     component: AdminReservationFormComponent,
-    canActivate: [adminGuard],
+    canActivate: [staffGuard],
   },
   {
     path: 'admin/reservations/:id',
     component: ReservationDetailComponent,
-    canActivate: [adminGuard],
+    canActivate: [staffGuard],
   },
   {
     path: 'operator',
@@ -168,10 +179,12 @@ export const routes: Routes = [
   {
     path: 'reservations/book',
     component: ClientReservationComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'reservations/book/:roomId',
     component: ClientReservationComponent,
+    canActivate: [clientGuard],
   },
   {
     path: 'reservations/edit/:id',
