@@ -80,22 +80,15 @@ export class ClientReservationComponent implements OnInit {
       this.reservationId = Number(editIdParam);
     }
 
-    const queryClientId = Number(
-      this.route.snapshot.queryParamMap.get('clientId'),
-    );
     const sessionClient = this.authService.getSession();
 
-    if (sessionClient) {
-      this.currentUser = sessionClient;
-    }
-
-    const id =
-      Number.isInteger(queryClientId) && queryClientId > 0
-        ? queryClientId
-        : sessionClient?.id || 0;
-
-    if (id > 0) {
-      this.clientService.findById(id).subscribe({
+    if (!this.authService.getToken()) {
+      this.currentUser = null;
+    } else {
+      if (sessionClient) {
+        this.currentUser = sessionClient;
+      }
+      this.clientService.getMyDetails().subscribe({
         next: (client) => {
           this.currentUser = client;
           this.authService.saveSession(client);
@@ -339,7 +332,7 @@ export class ClientReservationComponent implements OnInit {
           ? `¡Reserva #${reservation.id} actualizada!`
           : `¡Reserva #${reservation.id} confirmada!`;
 
-        this.router.navigate(['/profile', clientId]);
+        this.router.navigate(['/profile']);
       },
       error: (err) => {
         this.isSubmitting = false;

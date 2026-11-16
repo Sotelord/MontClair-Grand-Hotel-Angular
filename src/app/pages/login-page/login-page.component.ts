@@ -55,42 +55,18 @@ export class LoginPageComponent implements OnInit {
     this.authService.login(cleanId, cleanPass).subscribe({
       next: (result) => {
         if (result.success && result.client) {
-          if (
-            result.client.role?.toUpperCase() === 'ADMIN' ||
-            result.client.username?.toLowerCase() === 'admin' ||
-            (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin')
-          ) {
-            this.router.navigate(['/admin/rooms']);
-          } else if (
-            result.client.role?.toUpperCase() === 'OPERATOR' ||
-            result.client.role?.toUpperCase() === 'OPERARIO' ||
-            result.client.username?.toLowerCase() === 'operario' ||
-            (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario')
-          ) {
-            this.router.navigate(['/operator/reservations']);
-          } else {
-            this.router.navigate(['/profile', result.client.id]);
-          }
+          // El backend indica a qué pantalla ir según el rol (admin, operador o perfil del cliente)
+          this.router.navigateByUrl(
+            result.redirectUrl ?? `/profile/${result.client.id}`,
+          );
         } else {
-          if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
-            this.router.navigate(['/admin/rooms']);
-          } else if (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario') {
-            this.router.navigate(['/operator/reservations']);
-          } else {
-            this.errorMessage =
-              result.message || 'Usuario o contraseña incorrectos.';
-          }
+          this.errorMessage =
+            result.message || 'Usuario o contraseña incorrectos.';
         }
       },
       error: (err) => {
-        if (cleanId.toLowerCase() === 'admin' && cleanPass === 'admin') {
-          this.router.navigate(['/admin/rooms']);
-        } else if (cleanId.toLowerCase() === 'operario' && cleanPass === 'operario') {
-          this.router.navigate(['/operator/reservations']);
-        } else {
-          this.errorMessage =
-            err?.error?.message || 'Usuario o contraseña incorrectos.';
-        }
+        this.errorMessage =
+          err?.error.message || 'Usuario o contraseña incorrectos.';
       },
     });
   }

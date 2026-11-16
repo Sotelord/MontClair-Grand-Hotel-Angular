@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
@@ -36,7 +36,6 @@ export class ClientProfileComponent implements OnInit {
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   client: Client | null = null;
   reservations: ReservationDTO[] = [];
@@ -46,27 +45,21 @@ export class ClientProfileComponent implements OnInit {
   successMessage: string | null = null;
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const sessionClient = this.authService.getSession();
-    const clientId = idParam ? Number(idParam) : sessionClient?.id || null;
-
-    if (!clientId) {
+    if (!this.authService.getToken()) {
       this.router.navigate(['/login']);
       return;
     }
-
-    this.clientService.findById(clientId).subscribe({
+    this.clientService.getMyDetails().subscribe({
       next: (client) => {
         this.client = client;
         this.authService.saveSession(client);
+        this.loadReservations(client.id);
       },
       error: () => {
         this.authService.clearSession();
         this.router.navigate(['/login']);
       },
     });
-
-    this.loadReservations(clientId);
   }
 
   loadReservations(clientId: number): void {
@@ -148,9 +141,7 @@ export class ClientProfileComponent implements OnInit {
       next: (updated) => {
         // Actualizamos en memoria para que se refleje inmediatamente en el historial
         this.reservations = this.reservations.map((item) =>
-          item.id === reservation.id
-            ? { ...item, status: 'CANCELLED' }
-            : item,
+          item.id === reservation.id ? { ...item, status: 'CANCELLED' } : item,
         );
         this.cancellingReservationIds.delete(reservation.id);
         this.successMessage = `La reservación #${reservation.id} ha sido cancelada exitosamente y permanece en tu historial.`;

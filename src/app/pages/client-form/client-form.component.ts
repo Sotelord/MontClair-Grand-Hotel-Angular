@@ -54,6 +54,11 @@ export class ClientFormComponent implements OnInit {
       this.isEditMode = true;
       this.clientId = Number(idParam);
 
+      // Al editar, la contraseña es opcional: si queda vacía se mantiene la actual
+      const pwd = this.clientForm.get('password');
+      pwd?.setValidators([Validators.minLength(3)]);
+      pwd?.updateValueAndValidity();
+
       this.clientService.findById(this.clientId).subscribe({
         next: (existing) => {
           if (existing) {
@@ -62,7 +67,7 @@ export class ClientFormComponent implements OnInit {
               lastName: existing.lastName || '',
               username: existing.username,
               email: existing.email,
-              password: existing.password,
+              password: '',
               phone: existing.phone || '',
               avatarUrl: existing.avatarUrl || '',
               role: existing.role || 'CLIENT',
@@ -123,9 +128,9 @@ export class ClientFormComponent implements OnInit {
           id: this.clientId,
         })
         .subscribe({
-          next: (updated) => {
+          next: () => {
             this.router.navigate(
-              this.isAdminView ? ['/admin/clients'] : ['/profile', updated.id],
+              this.isAdminView ? ['/admin/clients'] : ['/profile'],
             );
           },
           error: () => {
@@ -135,11 +140,14 @@ export class ClientFormComponent implements OnInit {
         });
     } else {
       this.clientService.add(clientData).subscribe({
-        next: (savedClient) => {
+        next: () => {
           if (this.isAdminView) {
             this.router.navigate(['/admin/clients']);
           } else {
-            this.router.navigate(['/profile', savedClient.id]);
+            // Sin sesión todavía: se envía al login para que ingrese con su cuenta nueva
+            this.router.navigate(['/login'], {
+              queryParams: { registered: true },
+            });
           }
         },
         error: () => {

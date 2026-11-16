@@ -6,11 +6,14 @@ import { Client } from '../models/client.model';
 //Respuesta del endpoint de login. `client` viene solo si el login fue exitoso; `message` trae el motivo si falló.
 export interface LoginResponse {
   success: boolean;
+  token?: string;
   client?: Client;
+  role?: string;
+  redirectUrl?: string;
   message?: string;
 }
 
-//Maneja la autenticación y la sesión del usuario. No usa tokens: la sesión es el objeto Client guardado en localStorage.
+//Maneja la autenticación y la sesión del usuario. La sesión es el objeto Client guardado en localStorage y el JWT que devuelve el backend.
 @Injectable({
   providedIn: 'root',
 })
@@ -18,11 +21,12 @@ export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  //Clave con la que se guarda el cliente en localStorage.
+  //Claves con las que se guardan el cliente y el token en localStorage.
   private readonly SESSION_KEY = 'currentClient';
+  private readonly TOKEN_KEY = 'token';
 
-  /*Envía las credenciales al backend (POST /api/auth/login). Si el login es exitoso, guarda la sesión automáticamente con `tap`,
-  sin alterar lo que recibe quien se suscriba.*/
+  /*Envía las credenciales al backend (POST /api/auth/login). Si el login es exitoso, guarda la sesión y el token
+  automáticamente con `tap`, sin alterar lo que recibe quien se suscriba.*/
   login(identifier: string, password: string): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(`${this.apiUrl}/login`, {
@@ -33,6 +37,9 @@ export class AuthService {
         tap((res) => {
           if (res.success && res.client) {
             this.saveSession(res.client);
+          }
+          if (res.success && res.token) {
+            this.saveToken(res.token);
           }
         }),
       );
@@ -57,8 +64,20 @@ export class AuthService {
     }
   }
 
+  //Guarda el JWT en localStorage.
+  saveToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  //Lee el JWT guardado, o null si no hay.
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
   //Cierra la sesión borrando el cliente de localStorage.
   clearSession(): void {
     localStorage.removeItem(this.SESSION_KEY);
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem('montclair_current_user');
   }
 }

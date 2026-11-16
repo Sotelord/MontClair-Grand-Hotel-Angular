@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
 import { ProfileBreadcrumbComponent } from './components/profile-breadcrumb/profile-breadcrumb.component';
@@ -16,6 +16,7 @@ import { PersonalFieldsComponent } from './components/personal-fields/personal-f
 import { AvatarFieldComponent } from './components/avatar-field/avatar-field.component';
 import { PasswordFieldsComponent } from './components/password-fields/password-fields.component';
 import { EditActionsComponent } from './components/edit-actions/edit-actions.component';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-profile-edit',
@@ -38,7 +39,7 @@ export class ProfileEditComponent implements OnInit {
   private fb = inject(FormBuilder);
   private clientService = inject(ClientService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
 
   client: Client | null = null;
   profileForm!: FormGroup;
@@ -50,15 +51,12 @@ export class ProfileEditComponent implements OnInit {
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const clientId = idParam ? Number(idParam) : null;
-
-    if (!clientId) {
+    if (!this.authService.getToken()) {
       this.router.navigate(['/login']);
       return;
     }
 
-    this.clientService.findById(clientId).subscribe({
+    this.clientService.getMyDetails().subscribe({
       next: (client) => {
         this.client = client;
         this.initForm();
@@ -133,11 +131,11 @@ export class ProfileEditComponent implements OnInit {
     };
 
     this.clientService.update(this.client.id, updatedClient).subscribe({
-      next: (savedClient) => {
+      next: () => {
         this.successMessage = '¡Perfil actualizado con éxito!';
         this.isSubmitting = false;
 
-        this.router.navigate(['/profile', savedClient?.id || updatedClient.id]);
+        this.router.navigate(['/profile']);
       },
       error: () => {
         this.isSubmitting = false;
