@@ -188,6 +188,34 @@
         Ver Detalle
       </a>
 
+      <button
+        type="button"
+        (click)="generatePdf()"
+        class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3 rounded-[2px] transition inline-flex items-center gap-1.5 cursor-pointer"
+        title="Generar PDF"
+      >
+        <svg
+          class="w-3.5 h-3.5 text-twine"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M14 2v6h6M8 13h8M8 17h5"
+          />
+        </svg>
+        Generar PDF
+      </button>
+
       @if (reservation().status === 'CONFIRMED') {
         <a
           [routerLink]="['/reservations/edit', reservation().id]"
