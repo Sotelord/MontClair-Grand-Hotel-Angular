@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, tap, throwError } from 'rxjs';
 import { Client } from '../models/client.model';
 import { resetMontclairCsrfCache } from '../interceptors/montclair-auth.interceptor';
+import { environment } from '../../environments/environment';
 
 //Respuesta del endpoint de login. `client` viene solo si el login fue exitoso; `message` trae el motivo si falló.
 export interface LoginResponse {
@@ -17,7 +18,7 @@ export interface LoginResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private readonly storageKey = 'montclair_current_user';
   private currentUserSubject = new BehaviorSubject<Client | null>(this.readStoredUser());
   private restoredSession$?: Observable<Client | null>;
@@ -85,8 +86,18 @@ export class AuthService {
   }
 
   me(): Observable<Client> {
-    return this.http.get<Client>(`${this.apiUrl}/me`).pipe(
-      tap((client) => this.setCurrentUser(client)),
+    return this.http.get<LoginResponse | Client>(`${this.apiUrl}/me`).pipe(
+      map((result) => {
+        const client =
+          result && typeof result === 'object' && 'client' in result && result.client
+            ? result.client
+            : this.profileFromResponse(result);
+        if (!client) {
+          throw new Error('No hay una sesión activa.');
+        }
+        this.setCurrentUser(client);
+        return client;
+      }),
       catchError((error) => {
         this.clearCurrentUser();
         return throwError(() => error);
@@ -96,10 +107,18 @@ export class AuthService {
 
   restoreSession(): Observable<Client | null> {
     if (!this.restoredSession$) {
-      this.restoredSession$ = this.http.get<Client>(`${this.apiUrl}/me`).pipe(
-        map((client) => {
-          this.setCurrentUser(client);
-          return client;
+      this.restoredSession$ = this.http.get<LoginResponse | Client>(`${this.apiUrl}/me`).pipe(
+        map((result) => {
+          const client =
+            result && typeof result === 'object' && 'client' in result && result.client
+              ? result.client
+              : this.profileFromResponse(result);
+          if (client) {
+            this.setCurrentUser(client);
+            return client;
+          }
+          this.clearCurrentUser();
+          return null;
         }),
         catchError(() => {
           this.clearCurrentUser();

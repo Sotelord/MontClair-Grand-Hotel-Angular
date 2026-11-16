@@ -27,7 +27,9 @@ export class ReservationCardComponent {
 
   reservation = input.required<ReservationDTO>();
   isCancelling = input.required<boolean>();
+  isPaying = input<boolean>(false);
   cancelRequested = output<ReservationDTO>();
+  payRequested = output<ReservationDTO>();
 
   get roomName(): string {
     const res = this.reservation();

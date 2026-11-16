@@ -6,7 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
+import { resetMontclairCsrfCache } from '../../interceptors/montclair-auth.interceptor';
 import { Client } from '../../models/client.model';
 import { ClientFormHeaderComponent } from './components/client-form-header/client-form-header.component';
 import { PersonalInfoFieldsComponent } from './components/personal-info-fields/personal-info-fields.component';
@@ -34,6 +36,7 @@ import { LoginLinkComponent } from './components/login-link/login-link.component
 })
 export class ClientFormComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
   private clientService = inject(ClientService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -139,6 +142,8 @@ export class ClientFormComponent implements OnInit {
           if (this.isAdminView) {
             this.router.navigate(['/admin/clients']);
           } else {
+            this.authService.setCurrentUser(savedClient);
+            resetMontclairCsrfCache();
             this.router.navigate(['/profile', savedClient.id]);
           }
         },

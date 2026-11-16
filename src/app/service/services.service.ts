@@ -15,7 +15,7 @@ export class ServicesService {
   readonly services$ = this.servicesSubject.asObservable();
 
   constructor() {
-    this.findAll().subscribe();
+    this.findAll().subscribe({ error: () => {} });
   }
 
   // Lista todos los servicios, incluidos los ocultos (uso administrativo).

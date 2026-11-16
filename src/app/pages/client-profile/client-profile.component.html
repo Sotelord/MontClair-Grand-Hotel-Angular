@@ -39,7 +39,9 @@
       [reservations]="reservations"
       [clientId]="client.id"
       [cancellingIds]="cancellingReservationIds"
+      [payingIds]="payingReservationIds"
       (cancelRequested)="cancelReservation($event)"
+      (payRequested)="payReservationWithBold($event)"
     ></app-reservations-list>
 
     <app-danger-zone
