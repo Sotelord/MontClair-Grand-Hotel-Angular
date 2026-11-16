@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { Client } from '../../models/client.model';
@@ -6,7 +7,7 @@ import { Client } from '../../models/client.model';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgClass],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
@@ -18,6 +19,10 @@ export class NavbarComponent {
 
   get currentClient(): Client | null {
     return this.authService.getSession();
+  }
+
+  get isProfilePage(): boolean {
+    return this.router.url.startsWith('/profile');
   }
 
   toggleMenu(): void {
