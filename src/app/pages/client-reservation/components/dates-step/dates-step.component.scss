@@ -21,6 +21,7 @@ input[type='date'] {
   -webkit-appearance: none;
   appearance: none;
   padding-inline: 0.75rem;
+  text-align: center;
 }
 
 input[type='date']::-webkit-date-and-time-value {
@@ -29,7 +30,7 @@ input[type='date']::-webkit-date-and-time-value {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  text-align: left;
+  text-align: center;
 }
 
 input[type='date']::-webkit-date-and-time-container {

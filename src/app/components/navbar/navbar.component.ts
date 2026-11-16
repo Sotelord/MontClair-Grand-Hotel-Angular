@@ -21,8 +21,11 @@ export class NavbarComponent {
     return this.authService.getSession();
   }
 
-  get isProfilePage(): boolean {
-    return this.router.url.startsWith('/profile');
+  get isBlueHeaderPage(): boolean {
+    return (
+      this.router.url.startsWith('/profile') ||
+      this.router.url.startsWith('/reservations/book')
+    );
   }
 
   toggleMenu(): void {
