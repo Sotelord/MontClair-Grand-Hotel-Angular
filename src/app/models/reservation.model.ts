@@ -38,6 +38,7 @@ export interface ReservationRequestDTO {
 
 export interface ReservationServiceDTO {
   id: number;
+  serviceId?: number;
   name: string;
   quantity: number;
   unitPrice: number;
@@ -56,7 +57,6 @@ export interface ReservationDTO {
   clientLastName: string;
   clientEmail: string;
   clientPhone: string;
-  client: Client;
 
   roomId?: number;
   roomNumber: string;
@@ -93,5 +93,4 @@ export interface ReservationDTO {
   totalPrice: number;
 
   services: ReservationServiceDTO[];
-  reservationRooms?: ReservationRoom[];
 }

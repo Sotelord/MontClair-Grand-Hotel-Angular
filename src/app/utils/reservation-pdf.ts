@@ -1,5 +1,4 @@
 import { ReservationDTO, ReservationServiceDTO } from '../models/reservation.model';
-import { AcquiredService } from '../models/adquiredService.model';
 import { Room } from '../models/room.model';
 import { RoomService } from '../service/room.service';
 import { RoomTypeService } from '../service/room-type.service';
@@ -77,10 +76,10 @@ function statusLabel(status: string): string {
 }
 
 function getRoom(
-  reservation: ReservationDTO,
+  _reservation: ReservationDTO,
   roomOverride?: Room | null,
 ): Room | null {
-  return roomOverride ?? reservation.reservationRooms?.[0]?.room ?? null;
+  return roomOverride ?? null;
 }
 
 export async function loadReservationPdfRoom(
@@ -180,24 +179,13 @@ export async function loadReservationPdfRoom(
 }
 
 function getServices(reservation: ReservationDTO): PdfService[] {
-  if (reservation.services?.length) {
-    return reservation.services
-      .filter((service: ReservationServiceDTO) => cleanValue(service.name))
-      .map((service) => ({
-        name: cleanValue(service.name),
-        quantity: service.quantity,
-        unitPrice: service.unitPrice,
-        subtotal: service.subtotal,
-      }));
-  }
-
-  return (reservation.reservationRooms?.[0]?.acquiredServices ?? [])
-    .filter((service: AcquiredService) => cleanValue(service.service?.name))
+  return (reservation.services ?? [])
+    .filter((service: ReservationServiceDTO) => cleanValue(service.name))
     .map((service) => ({
-      name: cleanValue(service.service.name),
+      name: cleanValue(service.name),
       quantity: service.quantity,
       unitPrice: service.unitPrice,
-      subtotal: service.quantity * service.unitPrice,
+      subtotal: service.subtotal,
     }));
 }
 
@@ -502,8 +490,8 @@ function drawMainPage(
   roundedRect(context, 300, 188, 253, 112, 3, colors.panel, colors.border);
 
   const guestName = [
-    cleanValue(reservation.clientFirstName || reservation.client?.firstName),
-    cleanValue(reservation.clientLastName || reservation.client?.lastName),
+    cleanValue(reservation.clientFirstName),
+    cleanValue(reservation.clientLastName),
   ]
     .filter(Boolean)
     .join(' ')
@@ -512,7 +500,7 @@ function drawMainPage(
   drawLabel(
     context,
     'Correo electrónico',
-    cleanValue(reservation.clientEmail || reservation.client?.email),
+    cleanValue(reservation.clientEmail),
     55,
     239,
     220,
@@ -520,7 +508,7 @@ function drawMainPage(
   drawLabel(
     context,
     'Teléfono',
-    cleanValue(reservation.clientPhone || reservation.client?.phone) || 'No especificado',
+    cleanValue(reservation.clientPhone) || 'No especificado',
     55,
     271,
     220,

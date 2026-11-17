@@ -2,9 +2,7 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RoomType } from '../../../../models/roomType.model';
 import { Room } from '../../../../models/room.model';
-import { ReservationDTO } from '../../../../models/reservation.model';
-import { RoomService } from '../../../../service/room.service';
-import { ReservationService } from '../../../../service/reservation.service';
+import { OccupiedRoomRange, RoomService } from '../../../../service/room.service';
 
 @Component({
   selector: 'app-room-type-step',
@@ -15,21 +13,21 @@ import { ReservationService } from '../../../../service/reservation.service';
 })
 export class RoomTypeStepComponent implements OnInit {
   private roomService = inject(RoomService);
-  private reservationService = inject(ReservationService);
 
   form = input.required<FormGroup>();
   roomTypes = input.required<RoomType[]>();
   selectedRoomType = input<RoomType | null>(null);
 
   allRooms: Room[] = [];
-  allReservations: ReservationDTO[] = [];
+  occupiedRanges: OccupiedRoomRange[] = [];
 
   ngOnInit(): void {
     this.roomService.findAll().subscribe({
       next: (rooms) => (this.allRooms = rooms || []),
     });
-    this.reservationService.findSummary().subscribe({
-      next: (res) => (this.allReservations = res || []),
+    this.roomService.getOccupiedRanges().subscribe({
+      next: (ranges) => (this.occupiedRanges = ranges || []),
+      error: () => (this.occupiedRanges = []),
     });
   }
 
@@ -48,13 +46,11 @@ export class RoomTypeStepComponent implements OnInit {
     if (!checkIn || !checkOut) {
       return true;
     }
-    const occupied = this.allReservations.some(
-      (res) =>
-        res.status !== 'CANCELLED' &&
-        res.status !== 'INACTIVE' &&
-        (res.roomId === room.id || res.roomNumber === room.number) &&
-        res.checkInDate < checkOut &&
-        res.checkOutDate > checkIn,
+    const occupied = this.occupiedRanges.some(
+      (range) =>
+        (range.roomId === room.id || range.roomNumber === room.number) &&
+        range.checkInDate < checkOut &&
+        range.checkOutDate > checkIn,
     );
     return !occupied;
   }

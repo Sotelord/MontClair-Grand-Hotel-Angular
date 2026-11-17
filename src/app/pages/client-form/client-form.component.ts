@@ -8,7 +8,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
-import { resetMontclairCsrfCache } from '../../interceptors/montclair-auth.interceptor';
 import { Client } from '../../models/client.model';
 import { ClientFormHeaderComponent } from './components/client-form-header/client-form-header.component';
 import { PersonalInfoFieldsComponent } from './components/personal-info-fields/personal-info-fields.component';
@@ -131,9 +130,9 @@ export class ClientFormComponent implements OnInit {
           id: this.clientId,
         })
         .subscribe({
-          next: (updated) => {
+          next: () => {
             this.router.navigate(
-              this.isAdminView ? ['/admin/clients'] : ['/profile', updated.id],
+              this.isAdminView ? ['/admin/clients'] : ['/profile'],
             );
           },
           error: () => {
@@ -147,11 +146,15 @@ export class ClientFormComponent implements OnInit {
           if (this.isAdminView) {
             this.router.navigate(['/admin/clients']);
           } else {
-            // Registro público: la sesión nueva llega por cookie; se descarta cualquier JWT anterior
-            this.authService.clearToken();
-            this.authService.setCurrentUser(savedClient);
-            resetMontclairCsrfCache();
-            this.router.navigate(['/profile']);
+            this.authService
+              .login(clientData.username, val.password.trim())
+              .subscribe({
+                next: () => this.router.navigate(['/profile']),
+                error: () => {
+                  this.authService.setCurrentUser(savedClient);
+                  this.router.navigate(['/profile']);
+                },
+              });
           }
         },
         error: () => {

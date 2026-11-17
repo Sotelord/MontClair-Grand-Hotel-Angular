@@ -216,6 +216,7 @@ export class AuthService {
 
   clearCurrentUser(): void {
     this.currentUserSubject.next(null);
+    this.restoredSession$ = undefined;
     localStorage.removeItem(this.storageKey);
     localStorage.removeItem('currentClient'); // clave antigua
     this.clearToken();

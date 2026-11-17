@@ -25,7 +25,9 @@ export class OperatorNavbarComponent {
 
   logout(): void {
     this.closeMenu();
-    this.authService.clearSession();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => this.router.navigate(['/login']),
+    });
   }
 }

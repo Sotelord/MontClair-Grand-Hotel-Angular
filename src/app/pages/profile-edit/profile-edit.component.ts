@@ -51,7 +51,7 @@ export class ProfileEditComponent implements OnInit {
     'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
 
   ngOnInit(): void {
-    if (!this.authService.getToken()) {
+    if (!this.authService.getToken() && !this.authService.getSession()) {
       this.router.navigate(['/login']);
       return;
     }

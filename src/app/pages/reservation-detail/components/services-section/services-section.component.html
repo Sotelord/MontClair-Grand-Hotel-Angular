@@ -22,7 +22,7 @@
           @for (acq of services(); track acq.id) {
             <tr class="hover:bg-pampas/20">
               <td class="py-3 px-4 font-semibold">
-                {{ acq.service.name || "Servicio del Hotel" }}
+                {{ getServiceName(acq) }}
               </td>
               <td class="py-3 px-4 text-center font-mono">
                 {{ acq.quantity }}

@@ -215,7 +215,7 @@ export class OperatorPortalComponent implements OnInit {
 
   contractService(): void {
     const res = this.selectedReservationForService;
-    const roomId = res?.roomId ?? res?.reservationRooms?.[0]?.room?.id;
+    const roomId = res?.roomId;
     if (!res || !roomId || !this.selectedServiceId) {
       return;
     }
@@ -307,7 +307,7 @@ export class OperatorPortalComponent implements OnInit {
 
   contractServiceForSelectedRoom(): void {
     const res = this.selectedRoomReservation;
-    const roomId = res?.roomId ?? res?.reservationRooms?.[0]?.room?.id;
+    const roomId = res?.roomId;
     if (!res || !roomId || !this.selectedServiceId) {
       return;
     }

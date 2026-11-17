@@ -184,15 +184,11 @@ export class AdminReservationFormComponent implements OnInit {
   private loadReservation(id: number): void {
     this.reservationService.findById(id).subscribe({
       next: (existing) => {
-        const reservationRoom = existing.reservationRooms?.[0];
-
-        const currentRoom = reservationRoom?.room;
-
         this.originalCheckInDate = existing.checkInDate;
 
         this.reservationForm.patchValue({
-          clientId: existing.client?.id || existing.clientId || null,
-          roomTypeId: currentRoom?.roomType?.id ?? existing.roomTypeId ?? null,
+          clientId: existing.clientId || null,
+          roomTypeId: existing.roomTypeId ?? null,
           checkInDate: existing.checkInDate,
           checkOutDate: existing.checkOutDate,
           numberOfPeople: existing.numberOfPeople,
@@ -202,17 +198,9 @@ export class AdminReservationFormComponent implements OnInit {
 
         if (existing.services && existing.services.length > 0) {
           existing.services.forEach((s) => {
-            if (s.id != null) {
-              this.selectedServiceIds.add(s.id);
-            }
-          });
-        } else if (reservationRoom?.acquiredServices) {
-          reservationRoom.acquiredServices.forEach((acquired: any) => {
-            if (
-              acquired.service?.id != null &&
-              (acquired.service.price ?? 0) > 0
-            ) {
-              this.selectedServiceIds.add(acquired.service.id);
+            const targetId = s.serviceId ?? s.id;
+            if (targetId != null) {
+              this.selectedServiceIds.add(targetId);
             }
           });
         }

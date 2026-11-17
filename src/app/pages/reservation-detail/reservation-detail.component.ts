@@ -4,7 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../service/reservation.service';
 import { BoldPaymentService } from '../../service/bold-payment.service';
 import { AuthService } from '../../service/auth.service';
+import { RoomService } from '../../service/room.service';
 import { ReservationDTO } from '../../models/reservation.model';
+import { Room } from '../../models/room.model';
 import { DetailToolbarComponent } from './components/detail-toolbar/detail-toolbar.component';
 import { DetailLoadingComponent } from './components/detail-loading/detail-loading.component';
 import { DetailNotFoundComponent } from './components/detail-not-found/detail-not-found.component';
@@ -42,9 +44,11 @@ export class ReservationDetailComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private boldPaymentService = inject(BoldPaymentService);
   private authService = inject(AuthService);
+  private roomService = inject(RoomService);
   private location = inject(Location);
 
   reservation: ReservationDTO | null = null;
+  roomDetails: Room | null = null;
   isLoading = true;
   isPayingWithBold = false;
   errorMessage: string | null = null;
@@ -86,6 +90,16 @@ export class ReservationDetailComponent implements OnInit {
       next: (res) => {
         this.reservation = res;
         this.isLoading = false;
+        if (res.roomId) {
+          this.roomService.findById(res.roomId).subscribe({
+            next: (room) => {
+              this.roomDetails = room;
+            },
+            error: () => {
+              this.roomDetails = null;
+            },
+          });
+        }
       },
       error: () => {
         this.errorMessage =
@@ -153,20 +167,43 @@ export class ReservationDetailComponent implements OnInit {
     });
   }
 
-  get assignedRoom() {
-    return this.reservation?.reservationRooms?.[0]?.room || null;
+  get assignedRoom(): Room | null {
+    if (this.roomDetails) {
+      return this.roomDetails;
+    }
+    if (!this.reservation) {
+      return null;
+    }
+    return {
+      id: this.reservation.roomId || 0,
+      number: this.reservation.roomNumber || '',
+      floor: 1,
+      status: 'AVAILABLE',
+      name: this.reservation.roomName || '',
+      capacity: this.reservation.numberOfPeople || 2,
+      area: 30,
+      pricePerNight: this.reservation.pricePerNight || 0,
+      roomType: {
+        id: this.reservation.roomTypeId || 0,
+        name: this.reservation.roomTypeName || 'Categoría Premium',
+        description: '',
+        pricePerNight: this.reservation.pricePerNight || 0,
+      },
+      highlights: [],
+      galleryImages: [],
+    };
   }
 
   get roomPricePerNight(): number {
     return (
-      this.reservation?.reservationRooms?.[0]?.pricePerNight ||
+      this.reservation?.pricePerNight ||
       this.assignedRoom?.pricePerNight ||
       0
     );
   }
 
   get acquiredServices() {
-    return this.reservation?.reservationRooms?.[0]?.acquiredServices || [];
+    return this.reservation?.services || [];
   }
 
   get nightsCount(): number {

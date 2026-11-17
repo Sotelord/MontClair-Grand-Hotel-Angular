@@ -4,6 +4,13 @@ import { Observable } from 'rxjs';
 import { Room } from '../models/room.model';
 import { environment } from '../../environments/environment';
 
+export interface OccupiedRoomRange {
+  roomId: number;
+  roomNumber: string;
+  checkInDate: string;
+  checkOutDate: string;
+}
+
 //Acceso a la API REST de habitaciones (/api/rooms).
 @Injectable({
   providedIn: 'root',
@@ -32,6 +39,11 @@ export class RoomService {
   //Lista las habitaciones de una categoría (tipo de habitación).
   findByTypeId(typeId: number): Observable<Room[]> {
     return this.http.get<Room[]>(`${this.apiUrl}/type/${typeId}`);
+  }
+
+  //Lista rangos de fechas ocupados por habitación sin datos personales de huéspedes.
+  getOccupiedRanges(): Observable<OccupiedRoomRange[]> {
+    return this.http.get<OccupiedRoomRange[]>(`${this.apiUrl}/occupied`);
   }
 
   //Crea una habitación. Se quita el `id` del cuerpo porque lo genera el backend.

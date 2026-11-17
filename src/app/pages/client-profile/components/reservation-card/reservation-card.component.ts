@@ -33,38 +33,22 @@ export class ReservationCardComponent {
 
   get roomName(): string {
     const res = this.reservation();
-    return (
-      res.roomName ||
-      res.reservationRooms?.[0]?.room?.name ||
-      'Habitación Reservada'
-    );
+    return res.roomName || 'Habitación Reservada';
   }
 
   get roomNumber(): string {
     const res = this.reservation();
-    return (
-      res.roomNumber ||
-      res.reservationRooms?.[0]?.room?.number ||
-      ''
-    );
+    return res.roomNumber || '';
   }
 
   get roomTypeName(): string {
     const res = this.reservation();
-    return (
-      res.roomTypeName ||
-      res.reservationRooms?.[0]?.room?.roomType?.name ||
-      'Categoría Premium'
-    );
+    return res.roomTypeName || 'Categoría Premium';
   }
 
   get roomPrice(): number {
     const res = this.reservation();
-    return (
-      res.pricePerNight ||
-      res.reservationRooms?.[0]?.pricePerNight ||
-      0
-    );
+    return res.pricePerNight || 0;
   }
 
   get servicesList(): Array<{ name: string; quantity: number; unitPrice: number }> {
@@ -72,14 +56,6 @@ export class ReservationCardComponent {
     if (res.services && res.services.length > 0) {
       return res.services.map((s) => ({
         name: s.name,
-        quantity: s.quantity,
-        unitPrice: s.unitPrice,
-      }));
-    }
-    const acq = res.reservationRooms?.[0]?.acquiredServices;
-    if (acq && acq.length > 0) {
-      return acq.map((s: any) => ({
-        name: s.service?.name || 'Servicio',
         quantity: s.quantity,
         unitPrice: s.unitPrice,
       }));

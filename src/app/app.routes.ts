@@ -58,19 +58,19 @@ export const routes: Routes = [
     canActivate: [clientGuard],
   },
   {
-    path: 'profile/edit/:id',
+    path: 'profile/edit',
     component: ProfileEditComponent,
     canActivate: [clientGuard],
   },
   {
-    path: 'profile/edit',
-    redirectTo: 'login',
+    path: 'profile/edit/:id',
+    redirectTo: 'profile/edit',
     pathMatch: 'full',
   },
   {
     path: 'profile/:id',
-    component: ClientProfileComponent,
-    canActivate: [clientGuard],
+    redirectTo: 'profile',
+    pathMatch: 'full',
   },
   {
     path: 'clients',

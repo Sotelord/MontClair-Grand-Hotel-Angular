@@ -204,11 +204,12 @@ export class ReservationService {
   //Subtotal de la estancia: noches × tarifa por noche.
   calculateRoomSubtotal(res: Reservation | ReservationDTO): number {
     const nights = this.calculateNights(res.checkInDate, res.checkOutDate);
+    const legacyRes = res as Reservation;
 
     const roomPrice =
-      (res as any).pricePerNight ||
-      res.reservationRooms?.[0]?.pricePerNight ||
-      res.reservationRooms?.[0]?.room?.pricePerNight ||
+      (res as ReservationDTO).pricePerNight ||
+      legacyRes.reservationRooms?.[0]?.pricePerNight ||
+      legacyRes.reservationRooms?.[0]?.room?.pricePerNight ||
       0;
 
     return nights * roomPrice;
@@ -221,7 +222,7 @@ export class ReservationService {
       return dtoServices.reduce((acc: number, curr: any) => acc + (curr.subtotal ?? curr.quantity * curr.unitPrice), 0);
     }
 
-    const services = res.reservationRooms?.[0]?.acquiredServices || [];
+    const services = (res as Reservation).reservationRooms?.[0]?.acquiredServices || [];
 
     return services.reduce(
       (acc: number, curr: any) => acc + curr.quantity * curr.unitPrice,

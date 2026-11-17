@@ -10,19 +10,16 @@
     <div class="flex justify-between">
       <span class="text-woodsmoke/60">Nombre Completo:</span>
       <span class="font-semibold uppercase">
-        {{ reservation().client.firstName }}
-        {{ reservation().client.lastName || "" }}
+        {{ guestFullName }}
       </span>
     </div>
     <div class="flex justify-between">
       <span class="text-woodsmoke/60">Correo Electrónico:</span>
-      <span class="font-mono">{{ reservation().client.email }}</span>
+      <span class="font-mono">{{ guestEmail }}</span>
     </div>
     <div class="flex justify-between">
       <span class="text-woodsmoke/60">Teléfono:</span>
-      <span class="font-mono">{{
-        reservation().client.phone || "No especificado"
-      }}</span>
+      <span class="font-mono">{{ guestPhone }}</span>
     </div>
     <div class="flex justify-between">
       <span class="text-woodsmoke/60">Número de Huéspedes:</span>
@@ -33,7 +30,7 @@
     <div class="flex justify-between pt-1 border-t border-[#E8E2DA]/60">
       <span class="text-woodsmoke/60">Código de Cliente:</span>
       <span class="font-mono text-twine-dark font-semibold"
-        >#CLI-{{ reservation().client.id }}</span
+        >#CLI-{{ guestId }}</span
       >
     </div>
   </div>

@@ -18,7 +18,7 @@
       <!-- Acciones de escritorio y botón menú móvil -->
       <div class="flex items-center space-x-2 sm:space-x-3 md:order-2 shrink-0">
         @if (currentClient) {
-          <a [routerLink]="['/profile', currentClient.id]"
+          <a routerLink="/profile"
             id="nav-profile-link"
             [ngClass]="isBlueHeaderPage
               ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
@@ -132,7 +132,7 @@
         <!-- Acciones en Móvil -->
         <div class="pt-4 flex flex-col gap-2.5">
           @if (currentClient) {
-            <a [routerLink]="['/profile', currentClient.id]" (click)="closeMenu()"
+            <a routerLink="/profile" (click)="closeMenu()"
               [ngClass]="isBlueHeaderPage
                 ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
                 : 'border-twine text-twine hover:bg-twine hover:text-white'"

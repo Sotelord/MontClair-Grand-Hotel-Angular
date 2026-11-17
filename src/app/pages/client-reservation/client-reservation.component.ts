@@ -160,8 +160,7 @@ export class ClientReservationComponent implements OnInit {
   private loadReservation(id: number): void {
     this.reservationService.findById(id).subscribe({
       next: (existing) => {
-        const reservationRoom = existing.reservationRooms?.[0];
-        const currentRoomTypeId = reservationRoom?.room?.roomType?.id ?? null;
+        const currentRoomTypeId = existing.roomTypeId ?? null;
 
         this.originalCheckInDate = existing.checkInDate;
 
@@ -180,17 +179,9 @@ export class ClientReservationComponent implements OnInit {
         this.selectedServiceIds.clear();
         if (existing.services && existing.services.length > 0) {
           existing.services.forEach((s) => {
-            if (s.id != null) {
-              this.selectedServiceIds.add(s.id);
-            }
-          });
-        } else if (reservationRoom?.acquiredServices) {
-          reservationRoom.acquiredServices.forEach((acquired: any) => {
-            if (
-              acquired.service?.id != null &&
-              (acquired.service.price ?? 0) > 0
-            ) {
-              this.selectedServiceIds.add(acquired.service.id);
+            const targetId = s.serviceId ?? s.id;
+            if (targetId != null) {
+              this.selectedServiceIds.add(targetId);
             }
           });
         }
