@@ -97,7 +97,7 @@ export class ClientReservationComponent implements OnInit {
 
     const sessionClient = this.authService.getSession();
 
-    if (!this.authService.getToken()) {
+    if (!this.authService.getToken() && !sessionClient) {
       this.currentUser = null;
     } else {
       if (sessionClient) {

@@ -119,6 +119,9 @@ export class AuthService {
           if (client) {
             this.setCurrentUser(client);
           }
+          if ('token' in result && result.token) {
+            this.saveToken(result.token);
+          }
           resetMontclairCsrfCache();
         }),
       );

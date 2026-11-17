@@ -141,6 +141,9 @@ export class ClientFormComponent implements OnInit {
           },
         });
     } else {
+      if (!this.isAdminView) {
+        this.authService.clearSession();
+      }
       this.clientService.add(clientData).subscribe({
         next: (savedClient) => {
           if (this.isAdminView) {

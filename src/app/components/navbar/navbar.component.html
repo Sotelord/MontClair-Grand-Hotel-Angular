@@ -26,6 +26,16 @@
             class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 cursor-pointer whitespace-nowrap">
             Mi Perfil
           </a>
+          <button type="button"
+            id="nav-logout-btn"
+            (click)="logout()"
+            [ngClass]="isBlueHeaderPage
+              ? 'border-white/30 text-white/80 hover:border-red-300 hover:text-red-300'
+              : 'border-woodsmoke/25 text-woodsmoke/70 hover:border-red-600 hover:text-red-600'"
+            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border px-3 py-2 rounded-sm transition-colors duration-300 cursor-pointer whitespace-nowrap"
+            title="Cerrar Sesión">
+            Salir
+          </button>
         } @else {
           <a routerLink="/login"
             id="nav-login-link"

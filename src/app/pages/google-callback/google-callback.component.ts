@@ -44,12 +44,16 @@ export class GoogleCallbackComponent implements OnInit {
     if (this.processed) return;
     this.processed = true;
 
+    this.auth.clearSession();
     this.auth.exchangeGoogleCode(code).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         const client = 'client' in result ? result.client : this.profileFromResult(result);
         if (!client) {
           this.errorMessage = 'El backend no confirmó una sesión válida.';
           return;
+        }
+        if ('token' in result && result.token) {
+          this.auth.saveToken(result.token);
         }
         this.auth.setCurrentUser(client);
         this.router.navigate(this.auth.getRedirectForClient(client));
