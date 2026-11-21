@@ -34,6 +34,7 @@ export class ProfileSidebarComponent {
     { id: 'details', label: 'Detalles del Perfil' },
     { id: 'edit', label: 'Editar Perfil' },
     { id: 'reservations', label: 'Mis Reservas' },
+    { id: 'itinerary', label: 'Mi Itinerario' },
     { id: 'rewards', label: 'Catálogo de Recompensas' },
     { id: 'redeemed', label: 'Canjeados' },
     { id: 'transactions', label: 'Transacciones de Puntos' },

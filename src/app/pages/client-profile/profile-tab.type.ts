@@ -3,6 +3,7 @@ export type ProfileTab =
   | 'details'
   | 'edit'
   | 'reservations'
+  | 'itinerary'
   | 'rewards'
   | 'redeemed'
   | 'transactions'
