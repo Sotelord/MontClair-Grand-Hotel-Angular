@@ -1,22 +1,31 @@
 <div
   [formGroup]="form()"
-  class="w-full min-w-0 max-w-full bg-white border border-[#E8E2DA] rounded-[4px] p-6 sm:p-8 shadow-sm"
+  class="w-full min-w-0 max-w-full bg-white border border-[#E8E2DA] p-7 sm:p-9 shadow-sm hover:shadow-md transition-shadow"
 >
-  <span
-    class="text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-2"
-    >PASO 2</span
-  >
+  <div class="mb-6 pb-5 border-b border-[#E8E2DA]">
+    <span
+      class="font-sans text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
+    >
+      PASO 02 &bull; CALENDARIO &amp; OCUPACIÓN
+    </span>
 
-  <h2 class="font-serif text-xl uppercase tracking-wider text-woodsmoke mb-4">
-    Fechas de Estancia y Huéspedes
-  </h2>
+    <h2 class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-woodsmoke">
+      Fechas de Estancia y Huéspedes
+    </h2>
+
+    <div class="flex items-center gap-3 mt-2.5">
+      <div class="h-[1px] w-10 bg-twine"></div>
+      <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+    </div>
+  </div>
 
   <div class="dates-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
     <div class="min-w-0">
       <label
-        class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+        for="booking-checkInDate"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
       >
-        Fecha de Entrada
+        Fecha de Entrada (Check-In)
       </label>
       <input
         type="date"
@@ -24,15 +33,16 @@
         formControlName="checkInDate"
         [attr.min]="isEditMode() ? null : todayDate()"
         max="9999-12-31"
-        class="w-full min-w-0 max-w-full box-border px-3 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono"
+        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
       />
     </div>
 
     <div class="min-w-0">
       <label
-        class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+        for="booking-checkOutDate"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
       >
-        Fecha de Salida
+        Fecha de Salida (Check-Out)
       </label>
       <input
         type="date"
@@ -40,13 +50,14 @@
         formControlName="checkOutDate"
         [attr.min]="minCheckOutDate()"
         max="9999-12-31"
-        class="w-full min-w-0 max-w-full box-border px-3 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono"
+        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
       />
     </div>
 
     <div class="min-w-0">
       <label
-        class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+        for="booking-numberOfPeople"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
       >
         Número de Huéspedes
       </label>
@@ -56,16 +67,18 @@
         formControlName="numberOfPeople"
         min="1"
         max="10"
-        class="w-full min-w-0 max-w-full box-border px-4 py-2.5 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke font-mono"
+        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
       />
     </div>
   </div>
 
   <div
-    class="mt-4 pt-4 border-t border-[#E8E2DA] flex items-center justify-between text-xs text-woodsmoke/70"
+    class="mt-6 pt-4 border-t border-[#E8E2DA] flex items-center justify-between text-xs"
   >
-    <span>Duración calculada:</span>
-    <span class="font-mono font-semibold text-woodsmoke">
+    <span class="font-sans text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold">
+      Duración Calculada de la Estancia
+    </span>
+    <span class="font-serif font-bold text-sm text-twine-dark uppercase tracking-wider">
       {{ nightsCount() }} {{ nightsCount() === 1 ? "Noche" : "Noches" }}
     </span>
   </div>

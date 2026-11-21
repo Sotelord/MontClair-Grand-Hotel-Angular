@@ -1,7 +1,7 @@
-<div class="pt-6 border-t border-[#E8E2DA] flex items-center justify-end gap-4">
+<div class="pt-6 border-t border-[#E8E2DA] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3">
   <a
     routerLink="/profile"
-    class="px-6 py-3 border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold rounded-[2px] transition"
+    class="px-6 py-3.5 border border-[#E8E2DA] hover:border-woodsmoke text-woodsmoke/75 hover:text-woodsmoke text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-300 text-center"
   >
     Cancelar
   </a>
@@ -9,7 +9,7 @@
   <button
     type="submit"
     [disabled]="isSubmitting()"
-    class="px-8 py-3 bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold rounded-[2px] transition shadow-sm cursor-pointer disabled:opacity-50"
+    class="px-8 py-3.5 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-300 shadow-xs cursor-pointer disabled:opacity-50"
   >
     {{ isSubmitting() ? "Guardando..." : "Guardar Cambios" }}
   </button>

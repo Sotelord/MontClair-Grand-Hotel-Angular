@@ -1,15 +1,20 @@
 <div
-  class="bg-white border border-red-200 rounded-[4px] shadow-lg p-6 sm:p-8 mt-8"
+  class="bg-white border border-[#E8E2DA] p-8 sm:p-10 transition-shadow hover:shadow-xl"
 >
   <div
-    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
   >
     <div>
-      <h2 class="font-serif text-lg uppercase tracking-[1px] text-red-800">
-        Zona de peligro
+      <span
+        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+      >
+        PRIVACIDAD &amp; GESTIÓN DE CUENTA
+      </span>
+      <h2 class="font-serif text-xl uppercase tracking-[1.5px] text-woodsmoke">
+        Desactivación de Perfil
       </h2>
-      <p class="text-xs text-woodsmoke/60 mt-1">
-        Eliminar tu perfil borra permanentemente tu cuenta.
+      <p class="text-xs text-woodsmoke/65 mt-2 max-w-xl leading-relaxed">
+        Si desea dar de baja su perfil de huésped de forma permanente, tenga en cuenta que esta acción no se puede deshacer y requiere no tener estancias activas asociadas.
       </p>
     </div>
 
@@ -17,7 +22,7 @@
       type="button"
       (click)="deleteRequested.emit()"
       [disabled]="isDeleting()"
-      class="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer"
+      class="border border-[#E8E2DA] hover:border-woodsmoke hover:bg-woodsmoke hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-woodsmoke/75 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 transition-colors duration-300 cursor-pointer shrink-0"
     >
       {{ isDeleting() ? "Eliminando..." : "Eliminar Perfil" }}
     </button>

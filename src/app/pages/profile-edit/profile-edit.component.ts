@@ -17,12 +17,14 @@ import { AvatarFieldComponent } from './components/avatar-field/avatar-field.com
 import { PasswordFieldsComponent } from './components/password-fields/password-fields.component';
 import { EditActionsComponent } from './components/edit-actions/edit-actions.component';
 import { AuthService } from '../../service/auth.service';
+import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    PageHeaderComponent,
     ProfileBreadcrumbComponent,
     EditHeaderComponent,
     ErrorAlertComponent,

@@ -12,6 +12,7 @@ import { SuccessAlertComponent } from '../../components/success-alert/success-al
 import { ProfileStatsComponent } from './components/profile-stats/profile-stats.component';
 import { ReservationsListComponent } from './components/reservations-list/reservations-list.component';
 import { DangerZoneComponent } from './components/danger-zone/danger-zone.component';
+import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 
 /**
  * Componente del perfil de usuario / historial de reservas del huésped.
@@ -22,6 +23,7 @@ import { DangerZoneComponent } from './components/danger-zone/danger-zone.compon
   selector: 'app-client-profile',
   standalone: true,
   imports: [
+    PageHeaderComponent,
     ProfileHeaderComponent,
     ErrorAlertComponent,
     SuccessAlertComponent,

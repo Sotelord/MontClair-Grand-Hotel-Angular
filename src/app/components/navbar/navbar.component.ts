@@ -22,10 +22,7 @@ export class NavbarComponent {
   }
 
   get isBlueHeaderPage(): boolean {
-    return (
-      this.router.url.startsWith('/profile') ||
-      this.router.url.startsWith('/reservations/book')
-    );
+    return false;
   }
 
   toggleMenu(): void {

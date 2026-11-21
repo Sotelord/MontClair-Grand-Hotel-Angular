@@ -1,27 +1,36 @@
 <div
   [formGroup]="form()"
-  class="bg-white border border-[#E8E2DA] rounded-[4px] p-6 sm:p-8 shadow-sm"
+  class="bg-white border border-[#E8E2DA] p-7 sm:p-9 shadow-sm hover:shadow-md transition-shadow"
 >
-  <span
-    class="text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-2"
-    >PASO 1</span
-  >
+  <div class="mb-6 pb-5 border-b border-[#E8E2DA]">
+    <span
+      class="font-sans text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
+    >
+      PASO 01 &bull; ALOJAMIENTO DE LUJO
+    </span>
 
-  <h2 class="font-serif text-xl uppercase tracking-wider text-woodsmoke mb-4">
-    Seleccionar Suite o Habitación
-  </h2>
+    <h2 class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-woodsmoke">
+      Seleccionar Suite o Habitación
+    </h2>
+
+    <div class="flex items-center gap-3 mt-2.5">
+      <div class="h-[1px] w-10 bg-twine"></div>
+      <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+    </div>
+  </div>
 
   <div class="mb-6">
     <label
-      class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+      for="booking-roomTypeId"
+      class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
     >
-      Tipo de habitación
+      Categoría de Suite / Habitación
     </label>
 
     <select
       id="booking-roomTypeId"
       formControlName="roomTypeId"
-      class="w-full px-4 py-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine text-woodsmoke"
+      class="w-full px-4 py-3.5 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium cursor-pointer"
     >
       @for (type of roomTypes(); track type.id) {
         <option class="room-type-option" [value]="type.id">
@@ -33,48 +42,74 @@
 
   @if (selectedRoomType(); as selected) {
     <div
-      class="p-4 bg-pampas/30 border border-[#E8E2DA] rounded-[3px] flex flex-col sm:flex-row items-center gap-4"
+      class="border border-[#E8E2DA] bg-pampas/20 grid grid-cols-1 md:grid-cols-12 overflow-hidden"
     >
       @if (selected.imageUrl) {
-        <img
-          [src]="selected.imageUrl"
-          [alt]="selected.name"
-          class="w-full sm:w-36 h-24 object-cover rounded-[2px] border border-[#E8E2DA]"
-        />
+        <div class="md:col-span-5 relative min-h-[180px] bg-mirage overflow-hidden">
+          <img
+            [src]="selected.imageUrl"
+            [alt]="selected.name"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#141e26]/80 via-transparent to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
+            <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold">
+              Tarifa Oficial
+            </span>
+            <span class="font-serif text-sm font-bold text-white">
+              {{ formatPrice(selected.pricePerNight) }} / noche
+            </span>
+          </div>
+        </div>
       }
 
-      <div class="flex-grow text-xs space-y-1 text-woodsmoke/80">
-        <div class="flex justify-between items-start">
-          <h3
-            class="font-serif text-base font-semibold text-woodsmoke uppercase"
-          >
-            {{ selected.name }}
-          </h3>
+      <div
+        class="p-5 sm:p-6 flex flex-col justify-between"
+        [class.md:col-span-7]="selected.imageUrl"
+        [class.md:col-span-12]="!selected.imageUrl"
+      >
+        <div>
+          <div class="flex flex-wrap justify-between items-baseline gap-2 mb-2">
+            <h3
+              class="font-serif text-lg font-semibold text-woodsmoke uppercase tracking-[1px]"
+            >
+              {{ selected.name }}
+            </h3>
 
-          <span class="font-mono text-twine-dark font-bold text-sm">
-            {{ formatPrice(selected.pricePerNight) }} / noche
-          </span>
+            <span class="font-serif text-twine-dark font-bold text-sm">
+              {{ formatPrice(selected.pricePerNight) }} / noche
+            </span>
+          </div>
+
+          <p class="text-xs text-woodsmoke/70 leading-relaxed mb-4">
+            {{ selected.description }}
+          </p>
         </div>
 
-        <p class="text-[11px] text-woodsmoke/60">{{ selected.description }}</p>
-
         @if (roomsOfSelectedType.length > 0) {
-          <div class="pt-2 flex flex-wrap gap-1.5">
-            @for (room of roomsOfSelectedType; track room.id) {
-              @if (isRoomAvailable(room)) {
-                <span
-                  class="room-available-badge px-2 py-0.5 rounded-[2px] text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200"
-                >
-                  Hab. {{ room.number }}: Disponible
-                </span>
-              } @else {
-                <span
-                  class="room-unavailable-badge px-2 py-0.5 rounded-[2px] text-[10px] font-mono bg-rose-50 text-rose-700 border border-rose-200"
-                >
-                  Hab. {{ room.number }}: No disponible
-                </span>
+          <div class="pt-3 border-t border-[#E8E2DA]">
+            <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-2">
+              Estado de Unidades en esta Categoría
+            </span>
+            <div class="flex flex-wrap gap-1.5">
+              @for (room of roomsOfSelectedType; track room.id) {
+                @if (isRoomAvailable(room)) {
+                  <span
+                    class="room-available-badge px-2.5 py-1 text-[9.5px] uppercase tracking-[1px] font-semibold bg-white text-woodsmoke border border-twine/60 inline-flex items-center gap-1.5"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Hab. {{ room.number }}: Disponible
+                  </span>
+                } @else {
+                  <span
+                    class="room-unavailable-badge px-2.5 py-1 text-[9.5px] uppercase tracking-[1px] font-medium bg-pampas/60 text-woodsmoke/40 border border-[#E8E2DA] inline-flex items-center gap-1.5"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full bg-woodsmoke/25"></span>
+                    Hab. {{ room.number }}: Ocupada
+                  </span>
+                }
               }
-            }
+            </div>
           </div>
         }
       </div>

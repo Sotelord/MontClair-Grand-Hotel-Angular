@@ -1,6 +1,11 @@
-<div [formGroup]="form()">
+<div [formGroup]="form()" class="pt-6 border-t border-[#E8E2DA]">
+  <span
+    class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1.5"
+  >
+    02 &bull; IDENTIDAD VISUAL
+  </span>
   <label
-    class="block text-[11px] uppercase tracking-wider font-semibold text-woodsmoke mb-2"
+    class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
   >
     URL de Fotografía de Perfil (Avatar)
   </label>
@@ -8,11 +13,11 @@
   <input
     type="url"
     formControlName="avatarUrl"
-    placeholder="https://..."
-    class="w-full px-4 py-2.5 text-xs bg-pampas/30 border border-[#E8E2DA] rounded-[2px] focus:outline-none focus:border-twine focus:ring-1 focus:ring-twine text-woodsmoke font-mono"
+    placeholder="https://images.unsplash.com/..."
+    class="w-full px-4 py-3 text-xs bg-pampas/30 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke"
   />
 
-  <p class="text-[10px] text-woodsmoke/50 mt-1">
-    Pegue el enlace a su fotografía (Unsplash, Cloudinary, etc.)
+  <p class="text-[10.5px] text-woodsmoke/55 mt-1.5">
+    Pegue el enlace directo a su fotografía (Unsplash, Cloudinary, etc.). La vista previa a la izquierda se actualizará en tiempo real.
   </p>
 </div>

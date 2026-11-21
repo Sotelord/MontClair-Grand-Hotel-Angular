@@ -1,42 +1,97 @@
 @if (client && profileForm) {
-  <section class="max-w-3xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-    <app-profile-breadcrumb [clientId]="client.id"></app-profile-breadcrumb>
+  <div class="bg-pampas min-h-screen pb-24">
+    <app-page-header
+      superiorText="MONTCLAIR GRAND HOTEL"
+      title="Actualizar Mi Perfil"
+      description="Personalice su información de contacto, fotografía de huésped y credenciales de acceso para su membresía MontClair Privilège."
+    ></app-page-header>
 
-    <div
-      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative"
-    >
-      <div
-        class="h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
-      ></div>
+    <section class="max-w-5xl w-full mx-auto px-6 -mt-8 relative z-10">
+      <div class="bg-white border border-[#E8E2DA] shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        <!-- COLUMNA IZQUIERDA: TARJETA OSCURA DE VISTA PREVIA DE MEMBRESÍA -->
+        <aside class="lg:col-span-4 bg-mirage text-white p-8 sm:p-10 flex flex-col justify-between border-b-2 lg:border-b-0 lg:border-r-2 border-twine">
+          <div>
+            <app-profile-breadcrumb [clientId]="client.id"></app-profile-breadcrumb>
 
-      <div class="p-6 sm:p-10">
-        <app-edit-header [avatarUrl]="avatarPreview"></app-edit-header>
+            <div class="mt-8 flex flex-col items-center text-center">
+              <div class="p-1.5 border-2 border-twine rounded-full shadow-lg bg-mirage mb-5">
+                <img
+                  [src]="avatarPreview"
+                  alt="Vista previa de perfil"
+                  class="w-28 h-28 rounded-full object-cover"
+                />
+              </div>
 
-        @if (errorMessage) {
-          <app-error-alert
-            [message]="errorMessage"
-            (closed)="errorMessage = null"
-          ></app-error-alert>
-        }
+              <span class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1.5">
+                VISTA PREVIA DE CREDENCIAL
+              </span>
 
-        @if (successMessage) {
-          <app-success-alert [message]="successMessage"></app-success-alert>
-        }
+              <h2 class="font-serif text-xl sm:text-2xl text-white uppercase tracking-[1.5px] leading-snug">
+                {{ profileForm.get('firstName')?.value || client.firstName }}
+                {{ profileForm.get('lastName')?.value || client.lastName || '' }}
+              </h2>
 
-        <form
-          [formGroup]="profileForm"
-          (ngSubmit)="onSubmit()"
-          class="space-y-6"
-        >
-          <app-personal-fields [form]="profileForm"></app-personal-fields>
-          <app-avatar-field [form]="profileForm"></app-avatar-field>
-          <app-password-fields [form]="profileForm"></app-password-fields>
-          <app-edit-actions
-            [isSubmitting]="isSubmitting"
-            [clientId]="client.id"
-          ></app-edit-actions>
-        </form>
+              <div class="flex items-center justify-center gap-3 my-3.5">
+                <div class="h-[1px] w-8 bg-twine/60"></div>
+                <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+                <div class="h-[1px] w-8 bg-twine/60"></div>
+              </div>
+
+              <p class="text-xs text-[#C2C9D1] font-sans break-all">
+                {{ profileForm.get('email')?.value || client.email }}
+              </p>
+              <p class="text-[11px] text-twine/90 font-sans mt-1 tracking-wider">
+                &#64;{{ client.username }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-10 pt-6 border-t border-white/10">
+            <div class="border border-twine/30 bg-white/[0.03] p-4">
+              <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1.5">
+                CONCIERGE &amp; NOTIFICACIONES
+              </span>
+              <p class="text-[11px] text-[#C2C9D1] leading-relaxed font-light">
+                Sus datos actualizados se utilizarán automáticamente para el envío de comprobantes de reserva y atención personalizada durante su estancia.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- COLUMNA DERECHA: FORMULARIO EDITORIAL -->
+        <div class="lg:col-span-8 p-8 sm:p-10 lg:p-12 bg-white">
+          <app-edit-header [avatarUrl]="avatarPreview"></app-edit-header>
+
+          @if (errorMessage) {
+            <div class="mb-6">
+              <app-error-alert
+                [message]="errorMessage"
+                (closed)="errorMessage = null"
+              ></app-error-alert>
+            </div>
+          }
+
+          @if (successMessage) {
+            <div class="mb-6">
+              <app-success-alert [message]="successMessage"></app-success-alert>
+            </div>
+          }
+
+          <form
+            [formGroup]="profileForm"
+            (ngSubmit)="onSubmit()"
+            class="space-y-8"
+          >
+            <app-personal-fields [form]="profileForm"></app-personal-fields>
+            <app-avatar-field [form]="profileForm"></app-avatar-field>
+            <app-password-fields [form]="profileForm"></app-password-fields>
+            <app-edit-actions
+              [isSubmitting]="isSubmitting"
+              [clientId]="client.id"
+            ></app-edit-actions>
+          </form>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 }

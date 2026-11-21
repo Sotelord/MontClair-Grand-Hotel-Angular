@@ -26,12 +26,14 @@ import { ServicesStepComponent } from './components/services-step/services-step.
 import { QuoteSummaryComponent } from './components/quote-summary/quote-summary.component';
 import { BookingBenefitsComponent } from './components/booking-benefits/booking-benefits.component';
 import { QuoteActionsComponent } from './components/quote-actions/quote-actions.component';
+import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-client-reservation',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    PageHeaderComponent,
     BookingBreadcrumbComponent,
     LoginRequiredComponent,
     GuestBannerComponent,
