@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .rooms-section {
   background-color: #ffffff;
   padding: 80px 0;
@@ -10,18 +14,9 @@
   gap: 48px;
 }
 
-@media (min-width: 1024px) {
-  .rooms-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
-    gap: 48px;
-    align-items: center;
-  }
-}
-
 .rooms-intro h2 {
   font-family: var(--font-serif);
-  font-size: 38px;
+  font-size: clamp(28px, 5vw, 38px);
   font-weight: normal;
   line-height: 1.2;
   margin-bottom: 24px;
@@ -35,28 +30,6 @@
   color: rgba(17, 20, 19, 0.8);
 }
 
-.rooms-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
-@media (min-width: 768px) {
-  .rooms-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.room-card {
-  background-color: var(--pampas);
-  border: 1px solid var(--silver);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .rooms-carousel {
   display: flex;
   align-items: center;
@@ -68,7 +41,7 @@
   flex: 1;
   min-width: 0;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
   gap: 24px;
   align-items: center;
 }
@@ -76,35 +49,131 @@
 .rooms-grid app-room-card {
   display: block;
   min-width: 0;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
-@media (min-width: 1024px) {
-  .rooms-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
-  }
-
-  .rooms-grid app-room-card:nth-child(1),
-  .rooms-grid app-room-card:nth-child(3) {
-    display: block;
-    opacity: 0.7;
-  }
+.rooms-grid app-room-card.is-center {
+  opacity: 1;
 }
 
 .carousel-btn {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--twine);
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--twine, #c5a880);
   border-radius: 50%;
-  background: transparent;
-  color: var(--twine);
-  font-size: 22px;
-  line-height: 1;
+  background-color: var(--twine, #c5a880);
+  color: #ffffff;
   cursor: pointer;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background-color: var(--twine-hover, #b08e5c);
+    border-color: var(--twine-hover, #b08e5c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--twine, #c5a880);
+    outline-offset: 3px;
+  }
 }
 
-.carousel-btn:hover {
-  background-color: var(--twine);
-  color: white;
+/* PC*/
+@media (min-width: 1024px) {
+  .rooms-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+    gap: 48px;
+    align-items: center;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .rooms-section {
+    padding: 64px 0;
+  }
+
+  .rooms-layout {
+    gap: 36px;
+  }
+
+  .rooms-intro {
+    text-align: center;
+  }
+
+  .rooms-intro .section-subtitle {
+    justify-content: center;
+  }
+
+  .rooms-intro p {
+    padding-right: 0;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+}
+
+/* Celular */
+@media (max-width: 767px) {
+  .rooms-section {
+    padding: 56px 0;
+  }
+
+  .rooms-intro h2 {
+    margin-bottom: 16px;
+  }
+
+  .rooms-carousel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 14px;
+  }
+
+  .rooms-grid {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: block;
+  }
+
+  .rooms-grid app-room-card {
+    display: none;
+  }
+
+  .rooms-grid app-room-card.is-center {
+    display: block;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .carousel-btn--prev {
+    justify-self: end;
+  }
+
+  .carousel-btn--next {
+    justify-self: start;
+  }
 }

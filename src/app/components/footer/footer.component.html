@@ -14,11 +14,51 @@
     <div class="footer-col">
       <h4>Enlaces Rápidos</h4>
       <ul>
-        <li><a routerLink="/" fragment="inicio">Inicio</a></li>
-        <li><a routerLink="/rooms/cards">Habitaciones</a></li>
-        <li><a routerLink="/services">Servicios</a></li>
-        <li><a routerLink="/gallery">Galería</a></li>
-        <li><a routerLink="/location">Ubicación</a></li>
+        <!-- routerLinkActive agrega la clase "is-active" al enlace de la página actual -->
+        <li>
+          <a
+            routerLink="/"
+            fragment="inicio"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            ariaCurrentWhenActive="page"
+            >Inicio</a
+          >
+        </li>
+        <li>
+          <a
+            routerLink="/rooms/cards"
+            routerLinkActive="is-active"
+            ariaCurrentWhenActive="page"
+            >Habitaciones</a
+          >
+        </li>
+        <li>
+          <a
+            routerLink="/services"
+            routerLinkActive="is-active"
+            ariaCurrentWhenActive="page"
+            >Servicios</a
+          >
+        </li>
+        <li>
+          <a
+            routerLink="/gallery"
+            routerLinkActive="is-active"
+            ariaCurrentWhenActive="page"
+            >Galería</a
+          >
+        </li>
+        <li>
+          <a
+            routerLink="/location"
+            routerLinkActive="is-active"
+            ariaCurrentWhenActive="page"
+            >Ubicación</a
+          >
+        </li>
+        <!-- Contacto NO lleva routerLinkActive: apunta a "/" igual que Inicio,
+             así que se marcarían los dos a la vez en la landing -->
         <li><a routerLink="/" fragment="contacto">Contacto</a></li>
       </ul>
     </div>

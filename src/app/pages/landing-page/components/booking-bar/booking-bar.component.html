@@ -14,10 +14,21 @@
       aria-label="Seleccionar fecha de check-in"
     >
       <div class="booking-item">
-        <img src="images/Calendario.png" alt="" class="icon" aria-hidden="true" />
+        <img
+          src="images/Calendario.png"
+          alt=""
+          class="icon"
+          aria-hidden="true"
+        />
         <div class="booking-info">
           <label for="booking-check-in">Check-In</label>
-          <div class="date-display">{{ formatDisplayDate(checkIn) }}</div>
+          <div class="date-display">
+            <!-- Fecha completa en PC, abreviada en celular (se alterna con CSS) -->
+            <span class="date-full">{{ formatDisplayDate(checkIn) }}</span>
+            <span class="date-short">{{
+              formatDisplayDate(checkIn, true)
+            }}</span>
+          </div>
           <input
             #checkInInput
             type="date"
@@ -31,7 +42,9 @@
           />
         </div>
       </div>
-      <span class="arrow-down" aria-hidden="true">v</span>
+      <svg class="arrow-down" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </div>
 
     <div class="divider" aria-hidden="true"></div>
@@ -46,10 +59,20 @@
       aria-label="Seleccionar fecha de check-out"
     >
       <div class="booking-item">
-        <img src="images/Calendario.png" alt="" class="icon" aria-hidden="true" />
+        <img
+          src="images/Calendario.png"
+          alt=""
+          class="icon"
+          aria-hidden="true"
+        />
         <div class="booking-info">
           <label for="booking-check-out">Check-Out</label>
-          <div class="date-display">{{ formatDisplayDate(checkOut) }}</div>
+          <div class="date-display">
+            <span class="date-full">{{ formatDisplayDate(checkOut) }}</span>
+            <span class="date-short">{{
+              formatDisplayDate(checkOut, true)
+            }}</span>
+          </div>
           <input
             #checkOutInput
             type="date"
@@ -63,7 +86,9 @@
           />
         </div>
       </div>
-      <span class="arrow-down" aria-hidden="true">v</span>
+      <svg class="arrow-down" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </div>
 
     <div class="divider" aria-hidden="true"></div>
@@ -71,7 +96,12 @@
     <!-- HUÉSPEDES -->
     <div class="booking-group guests-group">
       <div class="booking-item">
-        <img src="images/Num Persona.png" alt="" class="icon" aria-hidden="true" />
+        <img
+          src="images/Num Persona.png"
+          alt=""
+          class="icon"
+          aria-hidden="true"
+        />
         <div class="booking-info">
           <label for="booking-huespedes">Huéspedes</label>
           <select
@@ -90,7 +120,9 @@
           </select>
         </div>
       </div>
-      <span class="arrow-down" aria-hidden="true">v</span>
+      <svg class="arrow-down" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </div>
 
     <!-- BOTÓN CONSULTAR -->

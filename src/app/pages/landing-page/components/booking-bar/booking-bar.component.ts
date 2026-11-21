@@ -13,9 +13,24 @@ import { Router } from '@angular/router';
 export class BookingBarComponent implements OnInit {
   private router = inject(Router);
 
+  private readonly months = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ];
+
   checkIn: string = '';
   checkOut: string = '';
-  guests: string = '2'; // Default: 2 Adultos
+  guests: string = '2';
   todayDate: string = '';
   minCheckOutDate: string = '';
 
@@ -23,12 +38,10 @@ export class BookingBarComponent implements OnInit {
     const today = new Date();
     this.todayDate = this.formatDate(today);
 
-    // Default Check-In: mañana
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     this.checkIn = this.formatDate(tomorrow);
 
-    // Default Check-Out: 2 noches después
     const defaultCheckOut = new Date(tomorrow);
     defaultCheckOut.setDate(defaultCheckOut.getDate() + 2);
     this.checkOut = this.formatDate(defaultCheckOut);
@@ -84,34 +97,19 @@ export class BookingBarComponent implements OnInit {
         input.showPicker();
         return;
       }
-    } catch {
-      // Navegadores que no soporten showPicker
-    }
+    } catch {}
     input.focus();
   }
 
-  formatDisplayDate(dateStr: string): string {
+  formatDisplayDate(dateStr: string, short: boolean = false): string {
     if (!dateStr) return 'Seleccionar';
     const parts = dateStr.split('-');
     if (parts.length !== 3) return dateStr;
     const year = parts[0];
     const monthIdx = parseInt(parts[1], 10) - 1;
     const day = parseInt(parts[2], 10);
-    const months = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
-    const monthName = months[monthIdx] || parts[1];
+    const fullName = this.months[monthIdx] || parts[1];
+    const monthName = short ? fullName.slice(0, 3) : fullName;
     return `${day} ${monthName} ${year}`;
   }
 

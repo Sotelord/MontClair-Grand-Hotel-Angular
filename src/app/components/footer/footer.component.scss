@@ -87,8 +87,31 @@
   }
 }
 
+.footer-col ul a {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
 .footer-col ul a:hover {
   color: var(--twine);
+}
+
+/* ===== Enlace de la página actual (lo agrega routerLinkActive) ===== */
+.footer-col ul a.is-active {
+  color: var(--twine);
+  font-weight: 700;
+
+  /* Rayita dorada a la izquierda; en posición absoluta para que el texto no se mueva */
+  &::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    width: 6px;
+    height: 1px;
+    background-color: var(--twine);
+    transform: translateY(-50%);
+  }
 }
 
 .footer-col:last-child {
