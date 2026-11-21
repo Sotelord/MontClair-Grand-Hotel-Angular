@@ -10,6 +10,7 @@ import { Component, input, output } from '@angular/core';
 export class ConfirmModalComponent {
   title = input.required<string>();
   confirmLabel = input('Eliminar');
+  variant = input<'danger' | 'primary'>('danger');
   confirmed = output<void>();
   cancelled = output<void>();
 }

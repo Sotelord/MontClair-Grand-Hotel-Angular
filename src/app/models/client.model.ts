@@ -1,3 +1,5 @@
+export type LoyaltyTierName = 'CLASSIC' | 'PRIVILEGE' | 'IMPERIAL';
+
 export interface Client {
   id: number;
   username: string;
@@ -8,4 +10,8 @@ export interface Client {
   avatarUrl?: string;
   phone?: string;
   role: string;
+  points?: number;
+  lifetimePoints?: number;
+  loyaltyTier?: LoyaltyTierName;
+  loyaltyTierLabel?: string;
 }

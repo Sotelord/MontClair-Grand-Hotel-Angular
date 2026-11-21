@@ -1,0 +1,201 @@
+<div class="space-y-6">
+  <!-- ENCABEZADO Y KPI DE MOVIMIENTOS -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+    <div class="mb-6">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+      >
+        ESTADO DE CUENTA DE PUNTOS
+      </span>
+      <h2
+        class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-mirage"
+      >
+        Transacciones de Puntos
+      </h2>
+      <p class="text-xs text-woodsmoke/70 mt-2 max-w-2xl leading-relaxed">
+        Consulte el registro detallado de todas sus adiciones por estancias y bonificaciones, restas administrativas y canjes de recompensas.
+      </p>
+    </div>
+
+    <!-- TARJETAS RESUMEN -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="bg-mirage text-white p-5 border-l-4 border-twine">
+        <span
+          class="font-sans text-[8.5px] uppercase tracking-[2px] text-twine font-bold block"
+        >
+          SALDO DISPONIBLE
+        </span>
+        <span class="font-serif text-2xl text-white font-semibold mt-1 block">
+          {{ (summary()?.points ?? 0) | number }}
+          <span class="text-xs font-sans text-twine uppercase">pts</span>
+        </span>
+      </div>
+
+      <div class="bg-[#FAF8F5] border border-[#E8E2DA] p-5">
+        <span
+          class="font-sans text-[8.5px] uppercase tracking-[2px] text-emerald-700 font-bold block"
+        >
+          TOTAL ACUMULADO (+)
+        </span>
+        <span
+          class="font-serif text-2xl text-emerald-800 font-semibold mt-1 block"
+        >
+          +{{ (summary()?.totalEarned ?? 0) | number }}
+          <span class="text-xs font-sans uppercase">pts</span>
+        </span>
+      </div>
+
+      <div class="bg-[#FAF8F5] border border-[#E8E2DA] p-5">
+        <span
+          class="font-sans text-[8.5px] uppercase tracking-[2px] text-amber-800 font-bold block"
+        >
+          CANJEADO / RESTADO (-)
+        </span>
+        <span
+          class="font-serif text-2xl text-amber-900 font-semibold mt-1 block"
+        >
+          -{{ (summary()?.totalSpent ?? 0) | number }}
+          <span class="text-xs font-sans uppercase">pts</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- PESTAÑAS DE FILTRO -->
+    <div class="flex flex-wrap gap-2 pt-4 border-t border-[#E8E2DA]">
+      <button
+        type="button"
+        (click)="activeFilter.set('ALL')"
+        class="px-3.5 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer"
+        [ngClass]="
+          activeFilter() === 'ALL'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Todas ({{ transactions().length }})
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('EARN')"
+        class="px-3.5 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer"
+        [ngClass]="
+          activeFilter() === 'EARN'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Adiciones ({{ countByType("EARN") }})
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('REDEEM')"
+        class="px-3.5 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer"
+        [ngClass]="
+          activeFilter() === 'REDEEM'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Canjeos ({{ countByType("REDEEM") }})
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('ADJUSTMENT_ADD')"
+        class="px-3.5 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer"
+        [ngClass]="
+          activeFilter() === 'ADJUSTMENT_ADD'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Bonificaciones ({{ countByType("ADJUSTMENT_ADD") }})
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('ADJUSTMENT_SUBTRACT')"
+        class="px-3.5 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer"
+        [ngClass]="
+          activeFilter() === 'ADJUSTMENT_SUBTRACT'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Restas ({{ countByType("ADJUSTMENT_SUBTRACT") }})
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLA / LIBRO MAYOR DE TRANSACCIONES -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm overflow-hidden">
+    @if (filteredTransactions().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-[#FAF8F5] border-b border-[#E8E2DA] text-[9.5px] uppercase tracking-[2px] text-woodsmoke/65 font-bold"
+            >
+              <th class="py-4 px-6">Fecha</th>
+              <th class="py-4 px-6">Tipo</th>
+              <th class="py-4 px-6">Concepto</th>
+              <th class="py-4 px-6 text-right">Movimiento</th>
+              <th class="py-4 px-6 text-right">Saldo Posterior</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#F0EAE2] text-xs">
+            @for (tx of filteredTransactions(); track tx.id) {
+              <tr class="hover:bg-[#FAF8F5]/70 transition-colors">
+                <td class="py-4 px-6 text-woodsmoke/70 whitespace-nowrap">
+                  {{ tx.createdAt | date: "dd MMM yyyy, HH:mm" }}
+                </td>
+                <td class="py-4 px-6 whitespace-nowrap">
+                  <span
+                    class="inline-block px-2.5 py-0.5 text-[9px] uppercase tracking-[1.5px] font-bold border"
+                    [ngClass]="{
+                      'bg-emerald-50 text-emerald-800 border-emerald-200':
+                        tx.type === 'EARN' || tx.type === 'ADJUSTMENT_ADD',
+                      'bg-amber-50 text-amber-900 border-amber-200':
+                        tx.type === 'REDEEM',
+                      'bg-red-50 text-red-700 border-red-200':
+                        tx.type === 'ADJUSTMENT_SUBTRACT',
+                    }"
+                  >
+                    {{ typeLabel(tx.type) }}
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-woodsmoke font-medium">
+                  {{ tx.description }}
+                </td>
+                <td
+                  class="py-4 px-6 text-right font-serif text-sm font-semibold whitespace-nowrap"
+                  [ngClass]="
+                    tx.pointsDelta >= 0 ? 'text-emerald-700' : 'text-red-700'
+                  "
+                >
+                  {{ tx.pointsDelta >= 0 ? "+" : ""
+                  }}{{ tx.pointsDelta | number }} pts
+                </td>
+                <td
+                  class="py-4 px-6 text-right font-semibold text-mirage whitespace-nowrap"
+                >
+                  {{ tx.balanceAfter | number }} pts
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="py-16 px-6 text-center text-xs text-woodsmoke/65">
+        @if (transactions().length === 0) {
+          Aún no existen movimientos registrados en tu cuenta de puntos.
+        } @else {
+          No hay transacciones para el filtro seleccionado.
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -25,7 +25,11 @@
         type="button"
         id="modal-confirm-btn"
         (click)="confirmed.emit()"
-        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs uppercase tracking-wider font-semibold rounded-[2px] transition cursor-pointer"
+        [class]="
+          variant() === 'primary'
+            ? 'px-4 py-2 bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-wider font-semibold rounded-[2px] transition cursor-pointer'
+            : 'px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs uppercase tracking-wider font-semibold rounded-[2px] transition cursor-pointer'
+        "
       >
         {{ confirmLabel() }}
       </button>

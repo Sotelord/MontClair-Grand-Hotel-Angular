@@ -3,60 +3,161 @@
     <app-page-header
       superiorText="MONTCLAIR GRAND HOTEL"
       title="Mi Perfil & Estancias"
-      description="Gestione su información personal, consulte el estado de cuenta de sus reservaciones y personalice cada detalle de su experiencia en MontClair Grand Hotel."
+      description="Gestione su información personal, consulte sus reservas, canjee recompensas exclusivas y revise el historial de sus puntos MontClair Privilège."
     ></app-page-header>
 
-    <section class="max-w-6xl w-full mx-auto px-6 -mt-8 relative z-10 space-y-14">
-      <!-- TARJETA DE MEMBRESÍA DEL HUÉSPED (CONTRASTE MIRAGE + MARFIL) -->
-      <div
-        class="bg-white border border-[#E8E2DA] shadow-xl overflow-hidden"
-      >
-        <div class="bg-mirage text-white px-8 py-8 sm:px-10 border-b-2 border-twine">
-          <app-profile-header
+    <section class="max-w-7xl w-full mx-auto px-6 -mt-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- COLUMNA IZQUIERDA: TARJETA DE MEMBRESÍA + NAVBAR INTERNO -->
+        <div class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24">
+          <app-profile-sidebar
             [client]="client"
+            [activeTab]="activeTab"
+            [reservationsCount]="reservations.length"
+            [redeemedCount]="redeemedRewards.length"
+            [loyaltySummary]="loyaltySummary"
+            (tabSelected)="selectTab($event)"
             (logoutClicked)="logout()"
-          ></app-profile-header>
+          ></app-profile-sidebar>
         </div>
 
-        <div class="px-8 py-6 sm:px-10 bg-white">
+        <!-- COLUMNA DERECHA: ÁREA DE CONTENIDO DINÁMICO -->
+        <div class="lg:col-span-8 xl:col-span-9 space-y-6">
           @if (successMessage) {
-            <div class="mb-6">
-              <app-success-alert
-                [message]="successMessage"
-                [dismissible]="true"
-                (closed)="successMessage = null"
-              />
-            </div>
+            <app-success-alert
+              [message]="successMessage"
+              [dismissible]="true"
+              (closed)="successMessage = null"
+            />
           }
+
           @if (errorMessage) {
-            <div class="mb-6">
-              <app-error-alert
-                [message]="errorMessage"
-                (closed)="errorMessage = null"
-              />
-            </div>
+            <app-error-alert
+              [message]="errorMessage"
+              (closed)="errorMessage = null"
+            />
           }
-          <app-profile-stats
-            [client]="client"
-            [reservationsCount]="reservations.length"
-          ></app-profile-stats>
+
+          @switch (activeTab) {
+            @case ("overview") {
+              <app-profile-overview
+                [client]="client"
+                [reservations]="reservations"
+                [loyaltySummary]="loyaltySummary"
+                (navigateToTab)="selectTab($event)"
+              ></app-profile-overview>
+            }
+
+            @case ("details") {
+              <app-profile-details
+                [client]="client"
+                (editRequested)="selectTab('edit')"
+              ></app-profile-details>
+            }
+
+            @case ("edit") {
+              <app-profile-edit-panel
+                [client]="client"
+                (profileUpdated)="onProfileUpdated($event)"
+                (cancelRequested)="selectTab('details')"
+              ></app-profile-edit-panel>
+            }
+
+            @case ("reservations") {
+              <app-reservations-list
+                [reservations]="reservations"
+                [clientId]="client.id"
+                [cancellingIds]="cancellingReservationIds"
+                [payingIds]="payingReservationIds"
+                (cancelRequested)="cancelReservation($event)"
+                (payRequested)="payReservationWithBold($event)"
+              ></app-reservations-list>
+            }
+
+            @case ("itinerary") {
+              <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10 text-center space-y-4">
+                <span class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1">
+                  PLANIFICACIÓN DE ESTANCIA
+                </span>
+                <h2 class="font-serif text-2xl uppercase tracking-[1.5px] text-mirage">
+                  Mi Itinerario
+                </h2>
+                <p class="text-xs text-woodsmoke/60 max-w-md mx-auto leading-relaxed">
+                  Próximamente podrá organizar sus actividades programadas, reservas de restaurante, sesiones de spa y traslados.
+                </p>
+              </div>
+            }
+
+            @case ("rewards") {
+              <app-rewards-catalog
+                [rewards]="rewardsCatalog"
+                [summary]="loyaltySummary"
+                [redeemingRewardId]="redeemingRewardId"
+                [canRedeemAction]="isViewingOwnProfile"
+                (redeemRequested)="redeemReward($event)"
+                (viewRedeemedClicked)="selectTab('redeemed')"
+              ></app-rewards-catalog>
+            }
+
+            @case ("redeemed") {
+              <app-redeemed-rewards-list
+                [redeemedRewards]="redeemedRewards"
+                (browseCatalogClicked)="selectTab('rewards')"
+              ></app-redeemed-rewards-list>
+            }
+
+            @case ("transactions") {
+              <app-point-transactions-list
+                [transactions]="pointTransactions"
+                [summary]="loyaltySummary"
+              ></app-point-transactions-list>
+            }
+
+            @case ("security") {
+              <div class="space-y-6">
+                <div
+                  class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10"
+                >
+                  <div
+                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+                  >
+                    <div>
+                      <span
+                        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+                      >
+                        SESIÓN ACTIVA
+                      </span>
+                      <h2
+                        class="font-serif text-xl uppercase tracking-[1.5px] text-woodsmoke"
+                      >
+                        Cerrar Sesión en este Dispositivo
+                      </h2>
+                      <p
+                        class="text-xs text-woodsmoke/65 mt-2 max-w-xl leading-relaxed"
+                      >
+                        Finalice su sesión actual de forma segura. Deberá ingresar sus credenciales nuevamente para consultar sus reservaciones o editar su perfil.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      (click)="logout()"
+                      class="border border-twine text-twine hover:bg-twine hover:text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 transition-colors duration-300 cursor-pointer shrink-0"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </div>
+                </div>
+
+                <app-danger-zone
+                  [isDeleting]="isDeletingProfile"
+                  (deleteRequested)="deleteProfile()"
+                ></app-danger-zone>
+              </div>
+            }
+          }
         </div>
       </div>
-
-      <!-- LISTADO EDITORIAL DE RESERVAS SOBRE FONDO PAMPAS -->
-      <app-reservations-list
-        [reservations]="reservations"
-        [clientId]="client.id"
-        [cancellingIds]="cancellingReservationIds"
-        [payingIds]="payingReservationIds"
-        (cancelRequested)="cancelReservation($event)"
-        (payRequested)="payReservationWithBold($event)"
-      ></app-reservations-list>
-
-      <app-danger-zone
-        [isDeleting]="isDeletingProfile"
-        (deleteRequested)="deleteProfile()"
-      ></app-danger-zone>
     </section>
   </div>
 }

@@ -1,0 +1,96 @@
+<div class="space-y-8">
+  <!-- BANNER DE VISTA PREVIA DEL PROGRAMA DE FIDELIDAD -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+      <div>
+        <span
+          class="inline-block px-3 py-1 bg-pampas border border-twine/40 text-twine font-sans text-[9px] uppercase tracking-[2.5px] font-bold mb-3"
+        >
+          SISTEMA EN DESARROLLO &bull; PRÓXIMAMENTE
+        </span>
+        <h2 class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-mirage">
+          Programa MontClair Privilège
+        </h2>
+        <p class="text-xs text-woodsmoke/70 mt-2 max-w-2xl leading-relaxed">
+          Muy pronto podrá acumular puntos por cada noche hospedada y servicio adquirido para redimir noches de cortesía, experiencias de spa y ascensos de suite.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-mirage text-white border-l-4 border-twine"
+    >
+      <div>
+        <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block">
+          NOCHES ACUMULADAS HASTA HOY
+        </span>
+        <span class="font-serif text-2xl text-white mt-1 block">
+          {{ validNights() }} {{ validNights() === 1 ? "Noche" : "Noches" }}
+        </span>
+      </div>
+      <div>
+        <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block">
+          PROYECCIÓN DE PUNTOS INICIALES
+        </span>
+        <span class="font-serif text-2xl text-twine mt-1 block">
+          {{ estimatedPoints() | number }} pts
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NIVELES Y RECOMPENSAS MILESTONE -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+    <div class="text-center mb-8">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1.5"
+      >
+        RECOMPENSAS &amp; NIVELES
+      </span>
+      <h3 class="font-serif text-xl uppercase tracking-[1.5px] text-mirage">
+        Beneficios por Categoría
+      </h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      @for (tier of tiers; track tier.name) {
+        <div
+          class="border p-6 flex flex-col justify-between transition-shadow hover:shadow-md"
+          [ngClass]="
+            validNights() >= tier.nightsRequired
+              ? 'border-twine bg-[#FAF7F2]'
+              : 'border-[#E8E2DA] bg-white'
+          "
+        >
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <h4 class="font-serif text-lg uppercase tracking-[1.5px] text-mirage">
+                {{ tier.name }}
+              </h4>
+              @if (validNights() >= tier.nightsRequired) {
+                <span
+                  class="px-2 py-0.5 text-[8.5px] uppercase tracking-[1.5px] font-bold bg-twine text-white"
+                >
+                  Alcanzado
+                </span>
+              }
+            </div>
+            <p class="text-[11px] text-twine font-semibold mb-4">
+              {{ tier.subtitle }}
+            </p>
+
+            <ul class="space-y-2.5 text-xs text-woodsmoke/75">
+              @for (benefit of tier.benefits; track benefit) {
+                <li class="flex items-start gap-2">
+                  <span class="text-twine mt-0.5 shrink-0">&diams;</span>
+                  <span>{{ benefit }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
