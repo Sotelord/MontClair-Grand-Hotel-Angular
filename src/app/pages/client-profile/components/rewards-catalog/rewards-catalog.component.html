@@ -1,0 +1,119 @@
+<div class="space-y-8">
+  <!-- ENCABEZADO DEL CATÁLOGO Y SALDO DISPONIBLE -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-6"
+    >
+      <div>
+        <span
+          class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+        >
+          PROGRAMA MONTCLAIR PRIVILÈGE
+        </span>
+        <h2
+          class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-mirage"
+        >
+          Catálogo de Recompensas
+        </h2>
+        <p class="text-xs text-woodsmoke/70 mt-2 max-w-xl leading-relaxed">
+          Canjee sus puntos acumulados por experiencias exclusivas, gastronomía de autor, sesiones de spa y ascensos de suite.
+        </p>
+      </div>
+
+      <div
+        class="bg-mirage text-white px-6 py-4 border-l-4 border-twine shrink-0 flex items-center gap-6"
+      >
+        <div>
+          <span
+            class="font-sans text-[8.5px] uppercase tracking-[2px] text-twine font-bold block"
+          >
+            SALDO DISPONIBLE
+          </span>
+          <span class="font-serif text-2xl text-white font-semibold">
+            {{ userPoints() | number }}
+            <span class="text-xs text-twine font-sans uppercase">pts</span>
+          </span>
+        </div>
+        <div class="h-8 w-[1px] bg-white/15"></div>
+        <div>
+          <span
+            class="font-sans text-[8.5px] uppercase tracking-[2px] text-[#C2C9D1] font-bold block"
+          >
+            CATEGORÍA
+          </span>
+          <span class="font-serif text-sm text-twine uppercase tracking-wider">
+            {{ summary()?.tierLabel || "Classic" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTROS DE CATEGORÍA Y ENLACE A CANJEADOS -->
+    <div
+      class="flex flex-wrap items-center justify-between gap-4 mt-8 pt-6 border-t border-[#E8E2DA]"
+    >
+      <div class="flex flex-wrap gap-2">
+        @for (cat of categories(); track cat) {
+          <button
+            type="button"
+            (click)="selectedCategory.set(cat)"
+            class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold transition-colors duration-200 cursor-pointer border"
+            [ngClass]="
+              selectedCategory() === cat
+                ? 'bg-mirage text-white border-mirage'
+                : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+            "
+          >
+            {{ categoryLabel(cat) }}
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        (click)="viewRedeemedClicked.emit()"
+        class="text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer"
+      >
+        Ver mis recompensas canjeadas ({{ summary()?.redeemedCount || 0 }}) &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- GRILLA DE RECOMPENSAS -->
+  @if (filteredRewards().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      @for (reward of filteredRewards(); track reward.id) {
+        <app-reward-card
+          [reward]="reward"
+          [userPoints]="userPoints()"
+          [userTier]="userTier()"
+          [isRedeeming]="redeemingRewardId() === reward.id"
+          [canRedeemAction]="canRedeemAction()"
+          (redeemClicked)="openConfirmModal($event)"
+        ></app-reward-card>
+      }
+    </div>
+  } @else {
+    <div
+      class="bg-white border border-[#E8E2DA] py-16 text-center text-xs text-woodsmoke/65"
+    >
+      No hay recompensas disponibles en esta categoría en este momento.
+    </div>
+  }
+</div>
+
+<!-- REUTILIZACIÓN DE APP-CONFIRM-MODAL PARA CONFIRMAR EL CANJE -->
+@if (pendingReward(); as reward) {
+  <app-confirm-modal
+    title="Confirmar Canje de Recompensa"
+    confirmLabel="Confirmar Canje"
+    variant="primary"
+    (confirmed)="confirmRedemption()"
+    (cancelled)="closeConfirmModal()"
+  >
+    ¿Desea canjear <strong>{{ reward.name }}</strong> por
+    <strong>{{ reward.pointsCost | number }} puntos</strong>? Se descontarán
+    inmediatamente de su saldo disponible ({{ userPoints() | number }} pts) y
+    recibirá un código único en su sección <strong>Canjeados</strong>.
+  </app-confirm-modal>
+}

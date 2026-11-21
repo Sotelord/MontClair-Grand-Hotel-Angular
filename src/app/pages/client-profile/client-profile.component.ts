@@ -6,13 +6,17 @@ import { ReservationService } from '../../service/reservation.service';
 import { BoldPaymentService } from '../../service/bold-payment.service';
 import { Client } from '../../models/client.model';
 import { ReservationDTO } from '../../models/reservation.model';
-import { ProfileHeaderComponent } from './components/profile-header/profile-header.component';
 import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
-import { ProfileStatsComponent } from './components/profile-stats/profile-stats.component';
 import { ReservationsListComponent } from './components/reservations-list/reservations-list.component';
 import { DangerZoneComponent } from './components/danger-zone/danger-zone.component';
 import { PageHeaderComponent } from '../../components/page-header/page-header.component';
+import { ProfileSidebarComponent } from './components/profile-sidebar/profile-sidebar.component';
+import { ProfileOverviewComponent } from './components/profile-overview/profile-overview.component';
+import { ProfileDetailsComponent } from './components/profile-details/profile-details.component';
+import { ProfileEditPanelComponent } from './components/profile-edit-panel/profile-edit-panel.component';
+import { ProfileLoyaltyComponent } from './components/profile-loyalty/profile-loyalty.component';
+import { ProfileTab } from './profile-tab.type';
 
 /**
  * Componente del perfil de usuario / historial de reservas del huésped.
@@ -24,10 +28,13 @@ import { PageHeaderComponent } from '../../components/page-header/page-header.co
   standalone: true,
   imports: [
     PageHeaderComponent,
-    ProfileHeaderComponent,
+    ProfileSidebarComponent,
+    ProfileOverviewComponent,
+    ProfileDetailsComponent,
+    ProfileEditPanelComponent,
+    ProfileLoyaltyComponent,
     ErrorAlertComponent,
     SuccessAlertComponent,
-    ProfileStatsComponent,
     ReservationsListComponent,
     DangerZoneComponent,
   ],
@@ -44,11 +51,32 @@ export class ClientProfileComponent implements OnInit {
 
   client: Client | null = null;
   reservations: ReservationDTO[] = [];
+  activeTab: ProfileTab = 'overview';
   isDeletingProfile = false;
   cancellingReservationIds = new Set<number>();
   payingReservationIds = new Set<number>();
   errorMessage: string | null = null;
   successMessage: string | null = null;
+
+  get validNights(): number {
+    return this.reservations
+      .filter((r) => r.status !== 'CANCELLED')
+      .reduce((acc, r) => acc + (r.nights || 0), 0);
+  }
+
+  selectTab(tab: ProfileTab): void {
+    this.activeTab = tab;
+    this.errorMessage = null;
+  }
+
+  onProfileUpdated(updated: Client): void {
+    this.client = updated;
+    this.activeTab = 'details';
+    this.successMessage = '¡Tu información de perfil ha sido actualizada con éxito!';
+    setTimeout(() => {
+      this.successMessage = null;
+    }, 5000);
+  }
 
   ngOnInit(): void {
     const sessionClient = this.authService.getSession();
@@ -215,6 +243,8 @@ export class ClientProfileComponent implements OnInit {
     if (!reservationId) {
       return;
     }
+
+    this.activeTab = 'reservations';
 
     if (txStatus.toLowerCase() === 'approved') {
       this.boldPaymentService

@@ -1,0 +1,217 @@
+<div class="space-y-6">
+  <!-- ENCABEZADO SECCIÓN CANJEADOS -->
+  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+    <div
+      class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 mb-6 border-b border-[#E8E2DA]"
+    >
+      <div>
+        <span
+          class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+        >
+          MIS BENEFICIOS ADQUIRIDOS
+        </span>
+        <h2
+          class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-mirage"
+        >
+          Recompensas Canjeadas
+        </h2>
+        <p class="text-xs text-woodsmoke/70 mt-2 max-w-xl leading-relaxed">
+          Presente su código de canje en recepción, restaurante o spa para hacer efectivo cada beneficio durante su estancia.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="browseCatalogClicked.emit()"
+        class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 transition-colors duration-300 cursor-pointer shrink-0 self-start sm:self-auto"
+      >
+        Ir al Catálogo
+      </button>
+    </div>
+
+    <!-- FILTROS DE ESTADO -->
+    <div class="flex flex-wrap gap-2.5">
+      <button
+        type="button"
+        (click)="activeFilter.set('ALL')"
+        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+        [ngClass]="
+          activeFilter() === 'ALL'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Todos
+        <span
+          class="px-1.5 py-0.5 text-[9px]"
+          [ngClass]="
+            activeFilter() === 'ALL'
+              ? 'bg-twine text-white'
+              : 'bg-pampas text-woodsmoke/70'
+          "
+        >
+          {{ redeemedRewards().length }}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('ACTIVE')"
+        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+        [ngClass]="
+          activeFilter() === 'ACTIVE'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Vigentes
+        <span
+          class="px-1.5 py-0.5 text-[9px]"
+          [ngClass]="
+            activeFilter() === 'ACTIVE'
+              ? 'bg-twine text-white'
+              : 'bg-pampas text-woodsmoke/70'
+          "
+        >
+          {{ activeCount() }}
+        </span>
+      </button>
+
+      <button
+        type="button"
+        (click)="activeFilter.set('USED')"
+        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+        [ngClass]="
+          activeFilter() === 'USED'
+            ? 'bg-mirage text-white border-mirage'
+            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+        "
+      >
+        Utilizados
+        <span
+          class="px-1.5 py-0.5 text-[9px]"
+          [ngClass]="
+            activeFilter() === 'USED'
+              ? 'bg-twine text-white'
+              : 'bg-pampas text-woodsmoke/70'
+          "
+        >
+          {{ usedCount() }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LISTADO DE VOUCHERS CANJEADOS -->
+  @if (filteredList().length > 0) {
+    <div class="space-y-4">
+      @for (item of filteredList(); track item.id) {
+        <div
+          class="bg-white border border-[#E8E2DA] shadow-xs overflow-hidden flex flex-col sm:flex-row"
+        >
+          <div class="sm:w-44 h-40 sm:h-auto bg-mirage shrink-0 relative">
+            <img
+              [src]="item.rewardImageUrl || fallbackImage"
+              [alt]="item.rewardName"
+              class="w-full h-full object-cover"
+            />
+            <span
+              class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[8.5px] uppercase tracking-[2px] font-bold bg-mirage/90 text-twine"
+            >
+              {{ item.rewardCategory }}
+            </span>
+          </div>
+
+          <div
+            class="p-6 flex-1 flex flex-col md:flex-row md:items-center justify-between gap-5"
+          >
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="px-2.5 py-0.5 text-[9px] uppercase tracking-[2px] font-bold border"
+                  [ngClass]="{
+                    'bg-emerald-50 text-emerald-800 border-emerald-200':
+                      item.status === 'ACTIVE',
+                    'bg-pampas text-woodsmoke/70 border-[#E8E2DA]':
+                      item.status === 'USED',
+                    'bg-red-50 text-red-700 border-red-200':
+                      item.status === 'CANCELLED',
+                  }"
+                >
+                  {{ statusLabel(item.status) }}
+                </span>
+
+                <span class="text-[11px] text-woodsmoke/60">
+                  Canjeado el {{ item.redeemedAt | date: "dd MMM yyyy, HH:mm" }}
+                </span>
+              </div>
+
+              <h3
+                class="font-serif text-lg uppercase tracking-[1px] text-mirage"
+              >
+                {{ item.rewardName }}
+              </h3>
+
+              <p class="text-xs text-woodsmoke/70 leading-relaxed max-w-xl">
+                {{ item.rewardDescription }}
+              </p>
+
+              <p class="text-[11px] font-semibold text-twine">
+                Puntos canjeados: -{{ item.pointsSpent | number }} pts
+              </p>
+            </div>
+
+            <!-- CÓDIGO DE VOUCHER -->
+            <div
+              class="bg-[#FAF8F5] border border-dashed border-twine/60 px-5 py-4 text-center shrink-0 min-w-[190px]"
+            >
+              <span
+                class="font-sans text-[8.5px] uppercase tracking-[2px] text-woodsmoke/60 font-bold block mb-1"
+              >
+                CÓDIGO DE CANJE
+              </span>
+              <span
+                class="font-mono text-sm font-bold tracking-widest text-mirage block"
+              >
+                {{ item.redemptionCode }}
+              </span>
+
+              <button
+                type="button"
+                (click)="copyCode(item.redemptionCode)"
+                class="mt-2.5 text-[9.5px] uppercase tracking-[2px] font-bold text-twine hover:text-twine-hover transition-colors cursor-pointer"
+              >
+                {{
+                  copiedCode() === item.redemptionCode
+                    ? "¡Código Copiado!"
+                    : "Copiar Código"
+                }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div
+      class="bg-white border border-[#E8E2DA] py-16 px-6 text-center space-y-4"
+    >
+      <p class="text-xs text-woodsmoke/65 max-w-md mx-auto leading-relaxed">
+        @if (redeemedRewards().length === 0) {
+          Aún no has canjeado ninguna recompensa. Explora nuestro catálogo MontClair Privilège y disfruta de beneficios exclusivos con tus puntos.
+        } @else {
+          No hay recompensas canjeadas con este filtro de estado.
+        }
+      </p>
+      @if (redeemedRewards().length === 0) {
+        <button
+          type="button"
+          (click)="browseCatalogClicked.emit()"
+          class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 transition-colors cursor-pointer"
+        >
+          Explorar Catálogo de Recompensas
+        </button>
+      }
+    </div>
+  }
+</div>

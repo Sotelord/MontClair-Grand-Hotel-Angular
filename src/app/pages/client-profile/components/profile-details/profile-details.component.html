@@ -1,0 +1,120 @@
+<div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+  <div
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-[#E8E2DA]"
+  >
+    <div>
+      <span
+        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1.5"
+      >
+        INFORMACIÓN DEL HUÉSPED
+      </span>
+      <h2 class="font-serif text-2xl uppercase tracking-[1.5px] text-mirage">
+        Detalles del Perfil
+      </h2>
+    </div>
+
+    <button
+      type="button"
+      (click)="editRequested.emit()"
+      class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 transition-colors duration-300 cursor-pointer self-start sm:self-auto"
+    >
+      Editar Información
+    </button>
+  </div>
+
+  <!-- CABECERA DE IDENTIDAD -->
+  <div
+    class="flex flex-col sm:flex-row items-center sm:items-center gap-5 p-6 bg-[#FAF8F5] border border-[#E8E2DA] mb-8"
+  >
+    <div class="p-1 border-2 border-twine rounded-full bg-white shrink-0">
+      <img
+        [src]="client().avatarUrl || defaultAvatar"
+        [alt]="client().firstName"
+        class="w-20 h-20 rounded-full object-cover"
+      />
+    </div>
+    <div class="text-center sm:text-left">
+      <h3 class="font-serif text-xl text-mirage uppercase tracking-[1.5px]">
+        {{ client().firstName }} {{ client().lastName || "" }}
+      </h3>
+      <p class="text-xs text-woodsmoke/70 mt-1">
+        &#64;{{ client().username }} &bull; {{ roleDisplay() }}
+      </p>
+      <span
+        class="inline-block mt-2 px-2.5 py-0.5 text-[9px] uppercase tracking-[2px] font-bold bg-mirage text-twine"
+      >
+        ID {{ memberCode() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- GRILLA DE DATOS PERSONALES -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Nombre
+      </span>
+      <p class="font-serif text-sm text-woodsmoke font-semibold">
+        {{ client().firstName }}
+      </p>
+    </div>
+
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Apellido
+      </span>
+      <p class="font-serif text-sm text-woodsmoke font-semibold">
+        {{ client().lastName || "No registrado" }}
+      </p>
+    </div>
+
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Correo Electrónico
+      </span>
+      <p class="text-sm text-woodsmoke font-medium break-all">
+        {{ client().email }}
+      </p>
+    </div>
+
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Teléfono de Contacto
+      </span>
+      <p class="text-sm text-woodsmoke font-medium">
+        {{ client().phone || "No registrado" }}
+      </p>
+    </div>
+
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Nombre de Usuario
+      </span>
+      <p class="text-sm text-woodsmoke font-medium">
+        &#64;{{ client().username }}
+      </p>
+    </div>
+
+    <div class="border border-[#E8E2DA] p-5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+      >
+        Categoría de Cuenta
+      </span>
+      <p class="text-sm text-woodsmoke font-medium">
+        {{ roleDisplay() }}
+      </p>
+    </div>
+  </div>
+</div>
+

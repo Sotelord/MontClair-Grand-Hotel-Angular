@@ -28,7 +28,9 @@
         >Nivel de Membresía</span
       >
       <span class="font-serif text-sm text-woodsmoke font-semibold tracking-wider uppercase">{{
-        client().role === "CLIENT" ? "Huésped MontClair" : client().role
+        client().role === "CLIENT"
+          ? "MontClair " + (client().loyaltyTierLabel || "Classic")
+          : client().role
       }}</span>
     </div>
   </div>
