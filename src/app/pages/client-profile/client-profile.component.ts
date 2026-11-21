@@ -4,8 +4,16 @@ import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { ReservationService } from '../../service/reservation.service';
 import { BoldPaymentService } from '../../service/bold-payment.service';
+import { LoyaltyService } from '../../service/loyalty.service';
+import { RewardService } from '../../service/reward.service';
 import { Client } from '../../models/client.model';
 import { ReservationDTO } from '../../models/reservation.model';
+import {
+  LoyaltySummaryDTO,
+  PointTransactionDTO,
+  RedeemedRewardDTO,
+  RewardDTO,
+} from '../../models/loyalty.model';
 import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
 import { ReservationsListComponent } from './components/reservations-list/reservations-list.component';
@@ -15,13 +23,15 @@ import { ProfileSidebarComponent } from './components/profile-sidebar/profile-si
 import { ProfileOverviewComponent } from './components/profile-overview/profile-overview.component';
 import { ProfileDetailsComponent } from './components/profile-details/profile-details.component';
 import { ProfileEditPanelComponent } from './components/profile-edit-panel/profile-edit-panel.component';
-import { ProfileLoyaltyComponent } from './components/profile-loyalty/profile-loyalty.component';
+import { RewardsCatalogComponent } from './components/rewards-catalog/rewards-catalog.component';
+import { RedeemedRewardsListComponent } from './components/redeemed-rewards-list/redeemed-rewards-list.component';
+import { PointTransactionsListComponent } from './components/point-transactions-list/point-transactions-list.component';
 import { ProfileTab } from './profile-tab.type';
 
 /**
- * Componente del perfil de usuario / historial de reservas del huésped.
- * Permite visualizar el historial completo de estancias (confirmadas, activas, finalizadas, canceladas)
- * y cancelar reservaciones conservándolas en el registro histórico.
+ * Componente del perfil de usuario / historial de reservas y programa de fidelidad del huésped.
+ * Coordina resumen de cuenta, datos personales, reservas, catálogo de recompensas,
+ * recompensas canjeadas y libro mayor de transacciones de puntos.
  */
 @Component({
   selector: 'app-client-profile',
@@ -32,7 +42,9 @@ import { ProfileTab } from './profile-tab.type';
     ProfileOverviewComponent,
     ProfileDetailsComponent,
     ProfileEditPanelComponent,
-    ProfileLoyaltyComponent,
+    RewardsCatalogComponent,
+    RedeemedRewardsListComponent,
+    PointTransactionsListComponent,
     ErrorAlertComponent,
     SuccessAlertComponent,
     ReservationsListComponent,
@@ -46,23 +58,26 @@ export class ClientProfileComponent implements OnInit {
   private clientService = inject(ClientService);
   private reservationService = inject(ReservationService);
   private boldPaymentService = inject(BoldPaymentService);
+  private loyaltyService = inject(LoyaltyService);
+  private rewardService = inject(RewardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   client: Client | null = null;
   reservations: ReservationDTO[] = [];
+  loyaltySummary: LoyaltySummaryDTO | null = null;
+  rewardsCatalog: RewardDTO[] = [];
+  redeemedRewards: RedeemedRewardDTO[] = [];
+  pointTransactions: PointTransactionDTO[] = [];
+
   activeTab: ProfileTab = 'overview';
+  isViewingOwnProfile = true;
   isDeletingProfile = false;
+  redeemingRewardId: number | null = null;
   cancellingReservationIds = new Set<number>();
   payingReservationIds = new Set<number>();
   errorMessage: string | null = null;
   successMessage: string | null = null;
-
-  get validNights(): number {
-    return this.reservations
-      .filter((r) => r.status !== 'CANCELLED')
-      .reduce((acc, r) => acc + (r.nights || 0), 0);
-  }
 
   selectTab(tab: ProfileTab): void {
     this.activeTab = tab;
@@ -72,7 +87,8 @@ export class ClientProfileComponent implements OnInit {
   onProfileUpdated(updated: Client): void {
     this.client = updated;
     this.activeTab = 'details';
-    this.successMessage = '¡Tu información de perfil ha sido actualizada con éxito!';
+    this.successMessage =
+      '¡Tu información de perfil ha sido actualizada con éxito!';
     setTimeout(() => {
       this.successMessage = null;
     }, 5000);
@@ -85,11 +101,14 @@ export class ClientProfileComponent implements OnInit {
     const isStaff =
       role === 'ADMIN' || role === 'OPERATOR' || role === 'OPERARIO';
 
+    const viewingOtherClient =
+      isStaff && idParam > 0 && idParam !== sessionClient?.id;
+    this.isViewingOwnProfile = !viewingOtherClient;
+
     // El personal puede ver el perfil de otra persona por id; el cliente siempre ve el suyo (lo identifica el JWT)
-    const client$ =
-      isStaff && idParam > 0 && idParam !== sessionClient?.id
-        ? this.clientService.findById(idParam)
-        : this.clientService.getMyDetails();
+    const client$ = viewingOtherClient
+      ? this.clientService.findById(idParam)
+      : this.clientService.getMyDetails();
 
     client$.subscribe({
       next: (client) => {
@@ -98,6 +117,8 @@ export class ClientProfileComponent implements OnInit {
           this.authService.saveSession(client);
         }
         this.loadReservations(client.id);
+        this.loadLoyaltyData(client.id);
+        this.loadRewardsCatalog();
         this.handleBoldReturnIfPresent(client.id);
       },
       error: () => {
@@ -114,6 +135,93 @@ export class ClientProfileComponent implements OnInit {
       },
       error: () => {
         this.reservations = [];
+      },
+    });
+  }
+
+  loadRewardsCatalog(): void {
+    this.rewardService.getActiveCatalog().subscribe({
+      next: (rewards) => {
+        this.rewardsCatalog = rewards || [];
+      },
+      error: () => {
+        this.rewardsCatalog = [];
+      },
+    });
+  }
+
+  loadLoyaltyData(clientId: number): void {
+    const summary$ = this.isViewingOwnProfile
+      ? this.loyaltyService.getMySummary()
+      : this.loyaltyService.getClientSummary(clientId);
+
+    const redeemed$ = this.isViewingOwnProfile
+      ? this.loyaltyService.getMyRedeemedRewards()
+      : this.loyaltyService.getClientRedeemedRewards(clientId);
+
+    const transactions$ = this.isViewingOwnProfile
+      ? this.loyaltyService.getMyTransactions()
+      : this.loyaltyService.getClientTransactions(clientId);
+
+    summary$.subscribe({
+      next: (summary) => {
+        this.loyaltySummary = summary;
+        if (this.client && summary) {
+          this.client = {
+            ...this.client,
+            points: summary.points,
+            lifetimePoints: summary.lifetimePoints,
+            loyaltyTier: summary.tier,
+            loyaltyTierLabel: summary.tierLabel,
+          };
+        }
+      },
+      error: () => {
+        this.loyaltySummary = null;
+      },
+    });
+
+    redeemed$.subscribe({
+      next: (items) => {
+        this.redeemedRewards = items || [];
+      },
+      error: () => {
+        this.redeemedRewards = [];
+      },
+    });
+
+    transactions$.subscribe({
+      next: (txs) => {
+        this.pointTransactions = txs || [];
+      },
+      error: () => {
+        this.pointTransactions = [];
+      },
+    });
+  }
+
+  redeemReward(reward: RewardDTO): void {
+    if (!this.client || !this.isViewingOwnProfile || this.redeemingRewardId) {
+      return;
+    }
+
+    this.redeemingRewardId = reward.id;
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    this.loyaltyService.redeemReward(reward.id).subscribe({
+      next: (redeemed) => {
+        this.redeemingRewardId = null;
+        this.successMessage = `¡Canje exitoso! Has canjeado "${redeemed.rewardName}" por ${redeemed.pointsSpent.toLocaleString()} puntos. Código de canje: ${redeemed.redemptionCode}.`;
+        this.loadLoyaltyData(this.client!.id);
+        this.loadRewardsCatalog();
+        this.activeTab = 'redeemed';
+      },
+      error: (err) => {
+        this.redeemingRewardId = null;
+        this.errorMessage =
+          err?.error?.message ||
+          'No se pudo completar el canje de la recompensa. Verifica tus puntos y categoría.';
       },
     });
   }
@@ -185,8 +293,7 @@ export class ClientProfileComponent implements OnInit {
     this.errorMessage = null;
 
     this.reservationService.cancel(reservation.id).subscribe({
-      next: (updated) => {
-        // Actualizamos en memoria para que se refleje inmediatamente en el historial
+      next: () => {
         this.reservations = this.reservations.map((item) =>
           item.id === reservation.id ? { ...item, status: 'CANCELLED' } : item,
         );
@@ -251,8 +358,9 @@ export class ClientProfileComponent implements OnInit {
         .confirmPayment(reservationId, orderId, txStatus)
         .subscribe({
           next: () => {
-            this.successMessage = `¡Pago en Bold aprobado! La cuenta de tu reservación #${reservationId} ha quedado saldada y te enviamos el comprobante por correo.`;
+            this.successMessage = `¡Pago en Bold aprobado! La cuenta de tu reservación #${reservationId} ha quedado saldada y tus puntos MontClair Privilège han sido acreditados.`;
             this.loadReservations(clientId);
+            this.loadLoyaltyData(clientId);
             this.clearBoldQueryParams();
           },
           error: (err) => {
@@ -277,3 +385,4 @@ export class ClientProfileComponent implements OnInit {
     });
   }
 }
+
