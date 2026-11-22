@@ -1,5 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, HostListener, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { PageHeaderComponent } from '../../components/page-header/page-header.component';
@@ -27,6 +34,12 @@ export class TouristGuideComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly pendingPlaceService = inject(PendingTouristPlaceService);
   private readonly router = inject(Router);
+
+  @ViewChild('bookContainer') private bookContainer?: ElementRef<HTMLElement>;
+
+  /** Punto donde empezó el toque, para detectar el gesto de deslizar */
+  private touchStartX = 0;
+  private touchStartY = 0;
 
   /**
    * Catálogo de 5 categorías con EXACTAMENTE 5 lugares reales cada una (25 lugares en total).
@@ -121,7 +134,9 @@ export class TouristGuideComponent implements OnInit {
       return this.places;
     }
     if (category.slugs) {
-      return this.places.filter((place) => category.slugs!.includes(place.slug));
+      return this.places.filter((place) =>
+        category.slugs!.includes(place.slug),
+      );
     }
     return this.places;
   }
@@ -135,10 +150,18 @@ export class TouristGuideComponent implements OnInit {
     return Math.ceil(this.filteredPlaces.length / this.pageSize);
   }
 
-  selectCategory(categoryId: string): void {
+  selectCategory(categoryId: string, event?: Event): void {
     this.selectedCategory = categoryId;
     this.pageIndex = 0;
     this.actionMessage = null;
+
+    // En celular, desliza la fila de categorías para centrar el botón elegido
+    const button = event?.currentTarget as HTMLElement | null;
+    button?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    });
   }
 
   turnPage(direction: -1 | 1): void {
@@ -151,12 +174,48 @@ export class TouristGuideComponent implements OnInit {
     window.setTimeout(() => {
       this.pageIndex = nextPage;
       this.isTurningPage = false;
+      this.scrollBookIntoView();
     }, 380);
+  }
+
+  /**
+   * En celular la página es larga y los botones quedan abajo: al pasar de
+   * página, si el inicio del libro quedó fuera de la pantalla, subimos hasta él
+   * para que la persona empiece a leer la nueva página desde arriba.
+   */
+  private scrollBookIntoView(): void {
+    const el = this.bookContainer?.nativeElement;
+    if (!el) return;
+    if (el.getBoundingClientRect().top < 0) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* ---------- Pasar página deslizando el dedo (celular/tablet) ---------- */
+  onTouchStart(event: TouchEvent): void {
+    const touch = event.changedTouches[0];
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - this.touchStartX;
+    const dy = touch.clientY - this.touchStartY;
+    // Solo cuenta como "pasar página" si el gesto es claramente horizontal
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) {
+      return;
+    }
+    this.turnPage(dx < 0 ? 1 : -1);
   }
 
   onImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    if (img && !img.src.includes('Hotel%20Atardecer') && !img.src.includes('Hotel Atardecer')) {
+    if (
+      img &&
+      !img.src.includes('Hotel%20Atardecer') &&
+      !img.src.includes('Hotel Atardecer')
+    ) {
       img.src = 'images/Hotel Atardecer.jpg';
     }
   }
@@ -166,7 +225,7 @@ export class TouristGuideComponent implements OnInit {
       return place.googleMapsUrl;
     }
     const origin = encodeURIComponent(
-      "Hôtel Hermitage Monte-Carlo, Square Beaumarchais, 98000 Monaco",
+      'Hôtel Hermitage Monte-Carlo, Square Beaumarchais, 98000 Monaco',
     );
     const destination = `${place.latitude},${place.longitude}`;
     return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}`;
@@ -259,7 +318,12 @@ export class TouristGuideComponent implements OnInit {
   }
 
   private updatePageSize(): void {
-    const nextPageSize = window.matchMedia('(max-width: 768px)').matches ? 1 : 2;
+    // Debe coincidir con el breakpoint del SCSS (1024px): antes el TS usaba 768px
+    // y el CSS min-width: 768px, así que justo en 768px (iPad mini) se mostraba
+    // una sola página dentro del libro de dos páginas, con la derecha vacía.
+    const nextPageSize = window.matchMedia('(max-width: 1023px)').matches
+      ? 1
+      : 2;
     if (nextPageSize === this.pageSize) {
       return;
     }

@@ -1,83 +1,165 @@
-<div [formGroup]="form()" class="space-y-4">
+<fieldset [formGroup]="form()" class="min-w-0">
+  <legend class="flex items-center gap-3 w-full mb-4">
+    <span
+      class="w-6 h-6 shrink-0 grid place-items-center rounded-full bg-mirage text-twine text-[10px] font-bold"
+      >2</span
+    >
+    <span
+      class="text-[10px] uppercase tracking-[2.5px] font-bold text-twine-hover whitespace-nowrap"
+      >Cuenta y acceso</span
+    >
+    <span class="flex-1 h-px bg-[#E8E2DA]" aria-hidden="true"></span>
+  </legend>
+
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label
+        for="client-username"
         class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >Nombre de usuario *</label
       >
-        Nombre de Usuario *
-      </label>
-      <input
-        type="text"
-        id="client-username"
-        formControlName="username"
-        placeholder="ej. amorales"
-        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-        [class.border-red-400]="isInvalid('username')"
-      />
+      <div class="relative">
+        <span
+          class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-woodsmoke/40"
+          >&#64;</span
+        >
+        <input
+          type="text"
+          id="client-username"
+          formControlName="username"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          placeholder="amorales"
+          class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition pl-7"
+          [class.border-red-400]="isInvalid('username')"
+        />
+      </div>
       @if (isInvalid("username")) {
-        <span class="text-[10px] text-red-500 mt-1 block"
-          >El usuario es requerido.</span
+        <span class="text-[11px] text-red-600 mt-1 block"
+          >El usuario debe tener al menos 3 caracteres.</span
         >
       }
     </div>
 
     <div>
       <label
+        for="client-email"
         class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >Correo electrónico *</label
       >
-        Correo Electrónico *
-      </label>
       <input
         type="email"
         id="client-email"
         formControlName="email"
-        placeholder="ej. amorales@example.com"
-        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="none"
+        placeholder="amorales@example.com"
+        class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition"
         [class.border-red-400]="isInvalid('email')"
       />
       @if (isInvalid("email")) {
-        <span id="client-email-error" class="text-[10px] text-red-500 mt-1 block"
+        <span
+          id="client-email-error"
+          class="text-[11px] text-red-600 mt-1 block"
           >Ingresa un correo electrónico válido.</span
         >
       }
     </div>
-  </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div>
       <label
+        for="client-password"
         class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
       >
-        Contraseña *
+        Contraseña {{ isEditMode() ? "(opcional)" : "*" }}
       </label>
-      <input
-        type="password"
-        id="client-password"
-        formControlName="password"
-        placeholder="••••••••"
-        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-        [class.border-red-400]="isInvalid('password')"
-      />
+      <!-- Botón para mostrar / ocultar la contraseña -->
+      <div class="relative">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="client-password"
+          formControlName="password"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition pr-11"
+          [class.border-red-400]="isInvalid('password')"
+        />
+        <button
+          type="button"
+          (click)="showPassword = !showPassword"
+          class="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 grid place-items-center text-woodsmoke/50 hover:text-twine transition-colors cursor-pointer"
+          [attr.aria-label]="
+            showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+          "
+          [attr.aria-pressed]="showPassword"
+        >
+          @if (showPassword) {
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+              />
+            </svg>
+          } @else {
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+          }
+        </button>
+      </div>
       @if (isInvalid("password")) {
-        <span class="text-[10px] text-red-500 mt-1 block"
-          >La contraseña es requerida.</span
+        <span class="text-[11px] text-red-600 mt-1 block"
+          >La contraseña debe tener al menos 3 caracteres.</span
+        >
+      } @else if (isEditMode()) {
+        <span class="text-[11px] text-woodsmoke/50 mt-1 block"
+          >Déjala vacía para mantener la actual.</span
         >
       }
     </div>
 
     <div>
       <label
+        for="client-phone"
         class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >Teléfono de contacto</label
       >
-        Teléfono de Contacto
-      </label>
       <input
         type="tel"
         id="client-phone"
         formControlName="phone"
-        placeholder="ej. +34 600 123 456"
-        class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
+        autocomplete="tel"
+        inputmode="tel"
+        placeholder="+34 600 123 456"
+        class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition tabular-nums"
       />
     </div>
   </div>
-</div>
+</fieldset>

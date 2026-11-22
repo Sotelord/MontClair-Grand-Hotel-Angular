@@ -11,4 +11,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class ProfileFieldsComponent {
   form = input.required<FormGroup>();
   isAdminView = input.required<boolean>();
+
+  get avatarUrl(): string {
+    return (this.form().get('avatarUrl')?.value || '').trim();
+  }
 }

@@ -5,20 +5,23 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoomTypeService } from '../../service/room-type.service';
 import { RoomType } from '../../models/roomType.model';
 import { RoomTypeFormHeaderComponent } from './components/room-type-form-header/room-type-form-header.component';
 import { RoomTypeFieldsComponent } from './components/room-type-fields/room-type-fields.component';
 import { RoomTypeFormActionsComponent } from './components/room-type-form-actions/room-type-form-actions.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 
 @Component({
   selector: 'app-room-type-form',
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     RoomTypeFormHeaderComponent,
     RoomTypeFieldsComponent,
     RoomTypeFormActionsComponent,
+    ErrorAlertComponent,
   ],
   templateUrl: './room-type-form.component.html',
   styleUrl: './room-type-form.component.scss',
@@ -32,6 +35,9 @@ export class RoomTypeFormComponent implements OnInit {
   roomTypeForm: FormGroup;
   isEditMode: boolean = false;
   currentRoomTypeId?: number;
+
+  errorMessage: string | null = null;
+  isSubmitting = false;
 
   constructor() {
     this.roomTypeForm = this.fb.group({
@@ -63,30 +69,48 @@ export class RoomTypeFormComponent implements OnInit {
   }
 
   handleSubmit(): void {
+    this.errorMessage = null;
+
     if (this.roomTypeForm.invalid) {
       this.roomTypeForm.markAllAsTouched();
+      this.errorMessage =
+        'Por favor completa correctamente los campos marcados.';
+      return;
+    }
+
+    if (this.isSubmitting) {
       return;
     }
 
     const formValue = this.roomTypeForm.value;
     const roomType: RoomType = {
       id: this.currentRoomTypeId || 0,
-      name: formValue.name,
-      description: formValue.description,
+      name: formValue.name.trim(),
+      description: formValue.description.trim(),
       pricePerNight: Number(formValue.pricePerNight),
-      imageUrl: formValue.imageUrl,
+      imageUrl: formValue.imageUrl.trim(),
     };
 
-    if (this.isEditMode && this.currentRoomTypeId) {
-      this.roomTypeService.update(this.currentRoomTypeId, roomType).subscribe({
-        next: () => this.router.navigate(['/admin/rooms-types']),
-        error: () => {},
-      });
-    } else {
-      this.roomTypeService.add(roomType).subscribe({
-        next: () => this.router.navigate(['/admin/rooms-types']),
-        error: () => {},
-      });
-    }
+    this.isSubmitting = true;
+
+    const request$ =
+      this.isEditMode && this.currentRoomTypeId
+        ? this.roomTypeService.update(this.currentRoomTypeId, roomType)
+        : this.roomTypeService.add(roomType);
+
+    request$.subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.router.navigate(['/admin/rooms-types']);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage =
+          err?.error?.message ||
+          (this.isEditMode
+            ? 'No se pudo actualizar la categoría. Intenta nuevamente.'
+            : 'No se pudo guardar la categoría. Verifica que el nombre no exista ya.');
+      },
+    });
   }
 }

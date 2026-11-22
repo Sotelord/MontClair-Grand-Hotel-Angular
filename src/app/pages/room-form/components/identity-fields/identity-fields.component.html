@@ -1,41 +1,57 @@
-<div [formGroup]="form()" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  <div>
-    <label
-      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+<fieldset [formGroup]="form()" class="min-w-0">
+  <legend class="flex items-center gap-3 w-full mb-4">
+    <span
+      class="w-6 h-6 shrink-0 grid place-items-center rounded-full bg-mirage text-twine text-[10px] font-bold"
+      >1</span
     >
-      Nombre / Título Comercial *
-    </label>
-    <input
-      type="text"
-      formControlName="name"
-      placeholder="ej. Deluxe Room"
-      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-      [class.border-red-400]="isInvalid('name')"
-    />
-    @if (isInvalid("name")) {
-      <span class="text-[10px] text-red-500 mt-1 block"
-        >El nombre es requerido.</span
-      >
-    }
-  </div>
+    <span
+      class="text-[10px] uppercase tracking-[2.5px] font-bold text-twine-hover whitespace-nowrap"
+      >Identificación</span
+    >
+    <span class="flex-1 h-px bg-[#E8E2DA]" aria-hidden="true"></span>
+  </legend>
 
-  <div>
-    <label
-      class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
-    >
-      Número de Habitación *
-    </label>
-    <input
-      type="text"
-      formControlName="number"
-      placeholder="ej. 101"
-      class="w-full bg-pampas/60 border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] p-3 text-xs text-woodsmoke outline-none transition"
-      [class.border-red-400]="isInvalid('number')"
-    />
-    @if (isInvalid("number")) {
-      <span class="text-[10px] text-red-500 mt-1 block"
-        >El número de habitación es requerido.</span
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label
+        for="room-name"
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >Nombre comercial *</label
       >
-    }
+      <input
+        id="room-name"
+        type="text"
+        formControlName="name"
+        placeholder="ej. Deluxe Room"
+        class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition"
+        [class.border-red-400]="isInvalid('name')"
+      />
+      @if (isInvalid("name")) {
+        <span class="text-[11px] text-red-600 mt-1 block"
+          >El nombre es requerido (mínimo 2 caracteres).</span
+        >
+      }
+    </div>
+
+    <div>
+      <label
+        for="room-number"
+        class="block font-sans text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/80 mb-1.5"
+        >Número de habitación *</label
+      >
+      <input
+        id="room-number"
+        type="text"
+        formControlName="number"
+        placeholder="ej. 101"
+        class="w-full h-11 bg-[#FAF8F5] border border-[#E8E2DA] focus:border-twine focus:ring-1 focus:ring-twine rounded-[2px] px-3 text-base sm:text-sm text-woodsmoke outline-none transition tabular-nums"
+        [class.border-red-400]="isInvalid('number')"
+      />
+      @if (isInvalid("number")) {
+        <span class="text-[11px] text-red-600 mt-1 block"
+          >Ingresa un número válido (letras, números o guion).</span
+        >
+      }
+    </div>
   </div>
-</div>
+</fieldset>

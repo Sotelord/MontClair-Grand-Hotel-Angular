@@ -9,7 +9,7 @@
   min-width: 0;
 }
 
-.dates-grid input {
+.dates-grid input[type="date"] {
   display: block;
   inline-size: 100% !important;
   min-inline-size: 0 !important;
@@ -17,14 +17,13 @@
   box-sizing: border-box;
 }
 
-input[type='date'] {
+input[type="date"] {
   -webkit-appearance: none;
   appearance: none;
-  padding-inline: 0.75rem;
   text-align: center;
 }
 
-input[type='date']::-webkit-date-and-time-value {
+input[type="date"]::-webkit-date-and-time-value {
   display: block;
   width: 100%;
   min-width: 0;
@@ -33,18 +32,26 @@ input[type='date']::-webkit-date-and-time-value {
   text-align: center;
 }
 
-input[type='date']::-webkit-date-and-time-container {
+input[type="date"]::-webkit-date-and-time-container {
   display: flex;
   width: 100%;
   min-width: 0;
   max-width: 100%;
 }
 
-input[type='date']::-webkit-calendar-picker-indicator {
+input[type="date"]::-webkit-calendar-picker-indicator {
   flex: 0 0 auto;
   margin: 0 0 0 0.25rem;
 }
 
-input[type='number'] {
+.guests-stepper input[type="number"] {
   text-align: center;
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }

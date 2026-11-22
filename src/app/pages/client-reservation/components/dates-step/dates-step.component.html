@@ -1,31 +1,32 @@
 <div
   [formGroup]="form()"
-  class="w-full min-w-0 max-w-full bg-white border border-[#E8E2DA] p-7 sm:p-9 shadow-sm hover:shadow-md transition-shadow"
+  class="w-full min-w-0 max-w-full bg-white border border-[#E8E2DA] p-5 sm:p-7 lg:p-9 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
 >
-  <div class="mb-6 pb-5 border-b border-[#E8E2DA]">
+  <div class="mb-5 sm:mb-6 pb-4 sm:pb-5 border-b border-[#E8E2DA]">
     <span
-      class="font-sans text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
+      class="font-sans text-[10px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
     >
       PASO 02 &bull; CALENDARIO &amp; OCUPACIÓN
     </span>
 
-    <h2 class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-woodsmoke">
-      Fechas de Estancia y Huéspedes
+    <h2
+      class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-woodsmoke"
+    >
+      Fechas y Huéspedes
     </h2>
 
-    <div class="flex items-center gap-3 mt-2.5">
+    <div class="flex items-center gap-3 mt-2.5" aria-hidden="true">
       <div class="h-[1px] w-10 bg-twine"></div>
       <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
     </div>
   </div>
-
-  <div class="dates-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
+  <div class="dates-grid grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5">
     <div class="min-w-0">
       <label
         for="booking-checkInDate"
-        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2 whitespace-nowrap"
       >
-        Fecha de Entrada (Check-In)
+        Entrada
       </label>
       <input
         type="date"
@@ -33,16 +34,16 @@
         formControlName="checkInDate"
         [attr.min]="isEditMode() ? null : todayDate()"
         max="9999-12-31"
-        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
+        class="w-full min-w-0 max-w-full box-border h-12 px-3 text-base sm:text-sm bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
       />
     </div>
 
     <div class="min-w-0">
       <label
         for="booking-checkOutDate"
-        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2 whitespace-nowrap"
       >
-        Fecha de Salida (Check-Out)
+        Salida
       </label>
       <input
         type="date"
@@ -50,35 +51,63 @@
         formControlName="checkOutDate"
         [attr.min]="minCheckOutDate()"
         max="9999-12-31"
-        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
+        class="w-full min-w-0 max-w-full box-border h-12 px-3 text-base sm:text-sm bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
       />
     </div>
 
-    <div class="min-w-0">
+    <div class="min-w-0 col-span-2 sm:col-span-1">
       <label
         for="booking-numberOfPeople"
-        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2.5"
+        class="block font-sans text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke mb-2 whitespace-nowrap"
       >
-        Número de Huéspedes
+        Huéspedes
       </label>
-      <input
-        type="number"
-        id="booking-numberOfPeople"
-        formControlName="numberOfPeople"
-        min="1"
-        max="10"
-        class="w-full min-w-0 max-w-full box-border px-4 py-3 text-xs bg-pampas/35 border border-[#E8E2DA] focus:outline-none focus:border-twine focus:bg-white transition-colors text-woodsmoke font-medium"
-      />
+      <!-- Selector con botones − / + (más cómodo en celular que escribir el número) -->
+      <div
+        class="guests-stepper flex items-stretch h-12 border border-[#E8E2DA] bg-pampas/35 focus-within:border-twine"
+      >
+        <button
+          type="button"
+          (click)="changeGuests(-1)"
+          [disabled]="guests <= 1"
+          class="w-12 shrink-0 grid place-items-center text-lg text-twine hover:bg-twine/10 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          aria-label="Quitar un huésped"
+        >
+          −
+        </button>
+        <input
+          type="number"
+          id="booking-numberOfPeople"
+          formControlName="numberOfPeople"
+          min="1"
+          max="10"
+          inputmode="numeric"
+          class="flex-1 min-w-0 bg-transparent border-x border-[#E8E2DA] text-base sm:text-sm text-woodsmoke font-semibold focus:outline-none"
+        />
+        <button
+          type="button"
+          (click)="changeGuests(1)"
+          [disabled]="guests >= 10"
+          class="w-12 shrink-0 grid place-items-center text-lg text-twine hover:bg-twine/10 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+          aria-label="Agregar un huésped"
+        >
+          +
+        </button>
+      </div>
     </div>
   </div>
 
   <div
-    class="mt-6 pt-4 border-t border-[#E8E2DA] flex items-center justify-between text-xs"
+    class="mt-5 sm:mt-6 pt-4 border-t border-[#E8E2DA] flex items-center justify-between gap-4"
   >
-    <span class="font-sans text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold">
-      Duración Calculada de la Estancia
+    <span
+      class="font-sans text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold"
+    >
+      Duración de la estancia
     </span>
-    <span class="font-serif font-bold text-sm text-twine-dark uppercase tracking-wider">
+    <span
+      class="font-serif font-bold text-base text-twine-hover uppercase tracking-wider whitespace-nowrap"
+    >
       {{ nightsCount() }} {{ nightsCount() === 1 ? "Noche" : "Noches" }}
     </span>
   </div>

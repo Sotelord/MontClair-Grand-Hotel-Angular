@@ -10,4 +10,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class MediaFieldsComponent {
   form = input.required<FormGroup>();
+
+  get imageUrl(): string {
+    return (this.form().get('secondaryImageUrl')?.value || '').trim();
+  }
 }

@@ -14,4 +14,18 @@ export class DatesStepComponent {
   todayDate = input.required<string>();
   minCheckOutDate = input.required<string>();
   nightsCount = input.required<number>();
+
+  /** Número actual de huéspedes en el formulario */
+  get guests(): number {
+    return Number(this.form().get('numberOfPeople')?.value) || 1;
+  }
+
+  /** Suma o resta un huésped respetando el rango 1–10 del validador */
+  changeGuests(delta: number): void {
+    const control = this.form().get('numberOfPeople');
+    if (!control) return;
+    const next = Math.min(10, Math.max(1, this.guests + delta));
+    control.setValue(next);
+    control.markAsDirty();
+  }
 }

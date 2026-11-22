@@ -1,10 +1,13 @@
-<div
-  class="p-4 bg-pampas/35 border border-[#E8E2DA] space-y-2.5 text-[11px] text-woodsmoke/75"
+<ul
+  class="p-4 bg-[#FAF8F5] border border-[#E8E2DA] space-y-2.5 text-[13px] text-woodsmoke/75"
 >
   @for (benefit of benefits; track benefit) {
-    <div class="flex items-center gap-2.5">
-      <span class="w-1.5 h-1.5 rotate-45 bg-twine shrink-0"></span>
+    <li class="flex items-center gap-2.5">
+      <span
+        class="w-1.5 h-1.5 rotate-45 bg-twine shrink-0"
+        aria-hidden="true"
+      ></span>
       <span>{{ benefit }}</span>
-    </div>
+    </li>
   }
-</div>
+</ul>

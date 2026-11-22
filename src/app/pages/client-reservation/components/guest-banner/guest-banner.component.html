@@ -1,19 +1,21 @@
 <div
-  class="bg-mirage text-white p-6 sm:p-8 mb-6 border border-[#E8E2DA]/20 border-b-2 border-b-twine relative overflow-hidden shadow-xl"
+  class="bg-mirage text-white px-5 py-4 sm:p-6 lg:p-8 mb-5 sm:mb-6 border border-[#E8E2DA]/20 border-b-2 border-b-twine relative overflow-hidden shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
 >
-  <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-    <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-      <div class="p-1 border-2 border-twine rounded-full bg-mirage shadow-md shrink-0">
+  <div class="flex items-center justify-between gap-6">
+    <div class="flex items-center gap-4 sm:gap-5 min-w-0">
+      <div
+        class="p-0.5 sm:p-1 border-2 border-twine rounded-full bg-mirage shadow-md shrink-0"
+      >
         <img
           [src]="client().avatarUrl || defaultAvatar"
           [alt]="client().firstName"
-          class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
+          class="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
         />
       </div>
 
-      <div>
+      <div class="min-w-0">
         <span
-          class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+          class="font-sans text-[10px] uppercase tracking-[2.5px] sm:tracking-[3px] text-twine font-bold block mb-0.5 sm:mb-1"
         >
           {{
             isEditMode()
@@ -22,23 +24,32 @@
           }}
         </span>
 
-        <h2 class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-white">
+        <h2
+          class="font-serif text-lg sm:text-2xl uppercase tracking-[1.5px] text-white truncate"
+        >
           {{ client().firstName }} {{ client().lastName || "" }}
         </h2>
 
-        <p class="text-xs text-[#C2C9D1] font-sans mt-1">
-          {{ client().email }} &bull; Huésped #{{ client().id }}
+        <p
+          class="text-xs sm:text-sm text-[#C2C9D1] font-sans mt-0.5 sm:mt-1 truncate"
+        >
+          {{ client().email
+          }}<span class="hidden sm:inline">
+            &bull; Huésped #{{ client().id }}</span
+          >
         </p>
       </div>
     </div>
 
-    <div class="text-center sm:text-right sm:border-l sm:border-white/15 sm:pl-6">
+    <div
+      class="hidden md:block text-right border-l border-white/15 pl-6 shrink-0"
+    >
       <span
-        class="font-sans text-[9px] uppercase tracking-[2.5px] text-twine block font-bold mb-1"
+        class="font-sans text-[10px] uppercase tracking-[2.5px] text-twine block font-bold mb-1"
       >
         GARANTÍA MONTCLAIR
       </span>
-      <span class="text-xs text-[#C2C9D1] font-light">
+      <span class="text-sm text-[#C2C9D1] font-light">
         Tarifa oficial directa &bull; Sin comisiones
       </span>
     </div>

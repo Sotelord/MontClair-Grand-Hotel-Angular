@@ -1,63 +1,83 @@
 <div>
   <!-- ENCABEZADO OSCURO DE LA TARJETA DE COTIZACIÓN -->
-  <div class="bg-mirage text-white px-7 py-6 border-b-2 border-twine">
+  <div
+    class="bg-mirage text-white px-5 sm:px-7 py-5 sm:py-6 border-b-2 border-twine"
+  >
     <span
-      class="font-sans text-[9px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
+      class="font-sans text-[10px] uppercase tracking-[3px] font-bold text-twine block mb-1.5"
     >
       RESUMEN DE ESTANCIA
     </span>
-    <h3 class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-white">
+    <h3
+      class="font-serif text-xl sm:text-2xl uppercase tracking-[1.5px] text-white"
+    >
       Su Cotización
     </h3>
-    <div class="flex items-center gap-3 mt-2.5">
+    <div class="flex items-center gap-3 mt-2.5" aria-hidden="true">
       <div class="h-[1px] w-8 bg-twine/60"></div>
       <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
     </div>
   </div>
 
   <!-- DESGLOSE DE PRECIOS -->
-  <div class="px-7 pt-6 pb-5 space-y-3.5 text-xs bg-white">
-    <div class="flex justify-between items-center text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70">
-      <span class="font-sans text-[10px] uppercase tracking-[1.5px]">Suite seleccionada</span>
-      <span class="font-serif font-semibold text-woodsmoke text-right uppercase">
+  <dl class="px-5 sm:px-7 pt-5 sm:pt-6 pb-5 space-y-3 text-sm bg-white">
+    <div
+      class="flex justify-between items-center gap-4 text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70"
+    >
+      <dt class="font-sans text-[10px] uppercase tracking-[1.5px]">
+        Habitación
+      </dt>
+      <dd class="font-serif font-semibold text-woodsmoke text-right uppercase">
         {{ selectedRoomType()?.name || "Por seleccionar" }}
-      </span>
-    </div>
-
-    <div class="flex justify-between items-center text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70">
-      <span class="font-sans text-[10px] uppercase tracking-[1.5px]">Noches de estancia</span>
-      <span class="font-serif font-semibold text-woodsmoke">{{ nightsCount() }}</span>
-    </div>
-
-    <div class="flex justify-between items-center text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70">
-      <span class="font-sans text-[10px] uppercase tracking-[1.5px]">Alojamiento</span>
-      <span class="font-serif font-semibold text-woodsmoke">{{
-        formatPrice(roomTotal())
-      }}</span>
-    </div>
-
-    <div class="flex justify-between items-center text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70">
-      <span class="font-sans text-[10px] uppercase tracking-[1.5px]">Experiencias ({{ servicesCount() }})</span>
-      <span class="font-serif font-semibold text-woodsmoke">{{
-        formatPrice(servicesTotal())
-      }}</span>
+      </dd>
     </div>
 
     <div
-      class="pt-3 flex justify-between items-baseline"
+      class="flex justify-between items-center gap-4 text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70"
     >
-      <span
+      <dt class="font-sans text-[10px] uppercase tracking-[1.5px]">Noches</dt>
+      <dd class="font-serif font-semibold text-woodsmoke">
+        {{ nightsCount() }}
+      </dd>
+    </div>
+
+    <div
+      class="flex justify-between items-center gap-4 text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70"
+    >
+      <dt class="font-sans text-[10px] uppercase tracking-[1.5px]">
+        Alojamiento
+      </dt>
+      <dd class="font-serif font-semibold text-woodsmoke whitespace-nowrap">
+        {{ formatPrice(roomTotal()) }}
+      </dd>
+    </div>
+
+    <div
+      class="flex justify-between items-center gap-4 text-woodsmoke/70 pb-2.5 border-b border-[#E8E2DA]/70"
+    >
+      <dt class="font-sans text-[10px] uppercase tracking-[1.5px]">
+        Experiencias ({{ servicesCount() }})
+      </dt>
+      <dd class="font-serif font-semibold text-woodsmoke whitespace-nowrap">
+        {{ formatPrice(servicesTotal()) }}
+      </dd>
+    </div>
+
+    <div class="pt-2 flex justify-between items-baseline gap-4">
+      <dt
         class="font-sans uppercase tracking-[2px] text-[11px] font-bold text-woodsmoke"
       >
         Total Estimado
-      </span>
-      <span class="font-serif text-2xl font-bold text-twine-dark">{{
-        formatPrice(grandTotal())
-      }}</span>
+      </dt>
+      <dd
+        class="font-serif text-2xl font-bold text-twine-hover whitespace-nowrap"
+      >
+        {{ formatPrice(grandTotal()) }}
+      </dd>
     </div>
 
-    <p class="text-[10px] text-woodsmoke/50 text-right">
+    <p class="text-[11px] text-woodsmoke/50 text-right">
       Impuestos y tasas de estancia incluidos
     </p>
-  </div>
+  </dl>
 </div>

@@ -1,14 +1,20 @@
 @if (client) {
-  <div class="bg-pampas min-h-screen pb-24">
+  <div class="bg-pampas min-h-screen pb-16 sm:pb-24">
     <app-page-header
       superiorText="MONTCLAIR GRAND HOTEL"
       title="Mi Perfil & Estancias"
       description="Gestione su información personal, consulte sus reservas, canjee recompensas exclusivas y revise el historial de sus puntos MontClair Privilège."
     ></app-page-header>
 
-    <section class="max-w-7xl w-full mx-auto px-6 -mt-8 relative z-10">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <!-- COLUMNA IZQUIERDA: TARJETA DE MEMBRESÍA + NAVBAR INTERNO -->
+    <!--
+      Antes el contenido subía sobre el hero (-mt-8). Ahora empieza debajo,
+      sobre el fondo beige, con aire entre ambos.
+    -->
+    <section
+      class="max-w-7xl w-full mx-auto px-4 sm:px-6 mt-6 sm:mt-10 lg:mt-12"
+    >
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        <!-- COLUMNA IZQUIERDA: TARJETA DE MEMBRESÍA + MENÚ (desplegable en celular/tablet) -->
         <div class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-24">
           <app-profile-sidebar
             [client]="client"
@@ -22,7 +28,7 @@
         </div>
 
         <!-- COLUMNA DERECHA: ÁREA DE CONTENIDO DINÁMICO -->
-        <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+        <div class="lg:col-span-8 xl:col-span-9 space-y-6 min-w-0">
           @if (successMessage) {
             <app-success-alert
               [message]="successMessage"
@@ -104,45 +110,69 @@
             }
 
             @case ("security") {
-              <div class="space-y-6">
-                <div
-                  class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10"
-                >
-                  <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+              <div>
+                <!-- Encabezado sobre el fondo beige (mismo estilo en todas las secciones) -->
+                <header class="mb-5 sm:mb-6">
+                  <span
+                    class="font-sans text-[10px] uppercase tracking-[3px] text-twine font-bold block mb-2"
                   >
-                    <div>
-                      <span
-                        class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
-                      >
-                        SESIÓN ACTIVA
-                      </span>
-                      <h2
-                        class="font-serif text-xl uppercase tracking-[1.5px] text-woodsmoke"
-                      >
-                        Cerrar Sesión en este Dispositivo
-                      </h2>
-                      <p
-                        class="text-xs text-woodsmoke/65 mt-2 max-w-xl leading-relaxed"
-                      >
-                        Finalice su sesión actual de forma segura. Deberá ingresar sus credenciales nuevamente para consultar sus reservaciones o editar su perfil.
-                      </p>
-                    </div>
-
-                    <button
-                      type="button"
-                      (click)="logout()"
-                      class="border border-twine text-twine hover:bg-twine hover:text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 transition-colors duration-300 cursor-pointer shrink-0"
-                    >
-                      Cerrar Sesión
-                    </button>
+                    PRIVACIDAD &amp; ACCESO
+                  </span>
+                  <h2
+                    class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-woodsmoke"
+                  >
+                    Seguridad y Cuenta
+                  </h2>
+                  <div class="flex items-center gap-3 mt-3" aria-hidden="true">
+                    <div class="h-[1px] w-12 bg-twine"></div>
+                    <div
+                      class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"
+                    ></div>
                   </div>
-                </div>
+                </header>
 
-                <app-danger-zone
-                  [isDeleting]="isDeletingProfile"
-                  (deleteRequested)="deleteProfile()"
-                ></app-danger-zone>
+                <div class="space-y-6">
+                  <div
+                    class="bg-white border border-[#E8E2DA] p-6 sm:p-8 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+                  >
+                    <div
+                      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
+                    >
+                      <div>
+                        <span
+                          class="font-sans text-[10px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+                        >
+                          SESIÓN ACTIVA
+                        </span>
+                        <h3
+                          class="font-serif text-lg sm:text-xl uppercase tracking-[1.5px] text-woodsmoke"
+                        >
+                          Cerrar Sesión en este Dispositivo
+                        </h3>
+                        <p
+                          class="text-sm text-woodsmoke/65 mt-2 max-w-xl leading-relaxed"
+                        >
+                          Finalice su sesión actual de forma segura. Deberá
+                          ingresar sus credenciales nuevamente para consultar
+                          sus reservaciones o editar su perfil.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        (click)="logout()"
+                        class="w-full sm:w-auto border border-twine text-twine hover:bg-twine hover:text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 transition-colors duration-300 cursor-pointer shrink-0"
+                      >
+                        Cerrar Sesión
+                      </button>
+                    </div>
+                  </div>
+
+                  <app-danger-zone
+                    [isDeleting]="isDeletingProfile"
+                    (deleteRequested)="deleteProfile()"
+                  ></app-danger-zone>
+                </div>
               </div>
             }
           }

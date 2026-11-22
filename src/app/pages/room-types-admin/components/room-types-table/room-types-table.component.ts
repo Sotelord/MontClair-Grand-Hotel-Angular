@@ -18,7 +18,10 @@ export class RoomTypesTableComponent {
   }
 
   formatPrice(price: number): string {
-    return '€ ' + price.toFixed(2).replace('.', ',');
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(price || 0);
   }
 
   onEdit(roomType: RoomType): void {

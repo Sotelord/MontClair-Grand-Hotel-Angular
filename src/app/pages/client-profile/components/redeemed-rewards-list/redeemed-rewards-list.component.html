@@ -1,105 +1,115 @@
-<div class="space-y-6">
-  <!-- ENCABEZADO SECCIÓN CANJEADOS -->
-  <div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
-    <div
-      class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 mb-6 border-b border-[#E8E2DA]"
-    >
-      <div>
-        <span
-          class="font-sans text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-2"
-        >
-          MIS BENEFICIOS ADQUIRIDOS
-        </span>
-        <h2
-          class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-mirage"
-        >
-          Recompensas Canjeadas
-        </h2>
-        <p class="text-xs text-woodsmoke/70 mt-2 max-w-xl leading-relaxed">
-          Presente su código de canje en recepción, restaurante o spa para hacer efectivo cada beneficio durante su estancia.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        (click)="browseCatalogClicked.emit()"
-        class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 transition-colors duration-300 cursor-pointer shrink-0 self-start sm:self-auto"
+<div class="space-y-5 sm:space-y-6">
+  <!-- Encabezado sobre el fondo beige -->
+  <header class="flex items-end justify-between gap-4">
+    <div class="min-w-0">
+      <span
+        class="font-sans text-[10px] uppercase tracking-[3px] text-twine font-bold block mb-2"
       >
-        Ir al Catálogo
-      </button>
+        MIS BENEFICIOS ADQUIRIDOS
+      </span>
+      <h2
+        class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-woodsmoke"
+      >
+        Recompensas Canjeadas
+      </h2>
+      <div class="flex items-center gap-3 mt-3" aria-hidden="true">
+        <div class="h-[1px] w-12 bg-twine"></div>
+        <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+      </div>
     </div>
 
-    <!-- FILTROS DE ESTADO -->
-    <div class="flex flex-wrap gap-2.5">
-      <button
-        type="button"
-        (click)="activeFilter.set('ALL')"
-        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+    <button
+      type="button"
+      (click)="browseCatalogClicked.emit()"
+      class="shrink-0 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-4 sm:px-6 transition-colors duration-300 cursor-pointer"
+    >
+      <span class="sm:hidden">Catálogo</span>
+      <span class="hidden sm:inline">Ir al Catálogo</span>
+    </button>
+  </header>
+
+  <p class="text-sm text-woodsmoke/70 max-w-2xl leading-relaxed -mt-1">
+    Presente su código de canje en recepción, restaurante o spa para hacer
+    efectivo cada beneficio durante su estancia.
+  </p>
+
+  <!-- FILTRO DE ESTADO: control segmentado, 3 partes iguales y centradas -->
+  <div
+    class="grid grid-cols-3 gap-1 p-1 bg-white border border-[#E8E2DA] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+    role="group"
+    aria-label="Filtrar recompensas canjeadas"
+  >
+    <button
+      type="button"
+      (click)="activeFilter.set('ALL')"
+      [attr.aria-pressed]="activeFilter() === 'ALL'"
+      class="flex items-center justify-center gap-2 px-2 py-2.5 text-[10px] uppercase tracking-[1.5px] font-bold transition-colors cursor-pointer"
+      [ngClass]="
+        activeFilter() === 'ALL'
+          ? 'bg-mirage text-white shadow-xs'
+          : 'text-woodsmoke/70 hover:bg-[#FAF8F5] hover:text-twine'
+      "
+    >
+      Todos
+      <span
+        class="min-w-[1.25rem] px-1.5 py-0.5 text-[9px] text-center"
         [ngClass]="
           activeFilter() === 'ALL'
-            ? 'bg-mirage text-white border-mirage'
-            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+            ? 'bg-twine text-white'
+            : 'bg-pampas text-woodsmoke/70'
         "
       >
-        Todos
-        <span
-          class="px-1.5 py-0.5 text-[9px]"
-          [ngClass]="
-            activeFilter() === 'ALL'
-              ? 'bg-twine text-white'
-              : 'bg-pampas text-woodsmoke/70'
-          "
-        >
-          {{ redeemedRewards().length }}
-        </span>
-      </button>
+        {{ redeemedRewards().length }}
+      </span>
+    </button>
 
-      <button
-        type="button"
-        (click)="activeFilter.set('ACTIVE')"
-        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+    <button
+      type="button"
+      (click)="activeFilter.set('ACTIVE')"
+      [attr.aria-pressed]="activeFilter() === 'ACTIVE'"
+      class="flex items-center justify-center gap-2 px-2 py-2.5 text-[10px] uppercase tracking-[1.5px] font-bold transition-colors cursor-pointer"
+      [ngClass]="
+        activeFilter() === 'ACTIVE'
+          ? 'bg-mirage text-white shadow-xs'
+          : 'text-woodsmoke/70 hover:bg-[#FAF8F5] hover:text-twine'
+      "
+    >
+      Vigentes
+      <span
+        class="min-w-[1.25rem] px-1.5 py-0.5 text-[9px] text-center"
         [ngClass]="
           activeFilter() === 'ACTIVE'
-            ? 'bg-mirage text-white border-mirage'
-            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+            ? 'bg-twine text-white'
+            : 'bg-pampas text-woodsmoke/70'
         "
       >
-        Vigentes
-        <span
-          class="px-1.5 py-0.5 text-[9px]"
-          [ngClass]="
-            activeFilter() === 'ACTIVE'
-              ? 'bg-twine text-white'
-              : 'bg-pampas text-woodsmoke/70'
-          "
-        >
-          {{ activeCount() }}
-        </span>
-      </button>
+        {{ activeCount() }}
+      </span>
+    </button>
 
-      <button
-        type="button"
-        (click)="activeFilter.set('USED')"
-        class="px-4 py-2 text-[9.5px] uppercase tracking-[2px] font-bold border transition-colors cursor-pointer flex items-center gap-2"
+    <button
+      type="button"
+      (click)="activeFilter.set('USED')"
+      [attr.aria-pressed]="activeFilter() === 'USED'"
+      class="flex items-center justify-center gap-2 px-2 py-2.5 text-[10px] uppercase tracking-[1.5px] font-bold transition-colors cursor-pointer"
+      [ngClass]="
+        activeFilter() === 'USED'
+          ? 'bg-mirage text-white shadow-xs'
+          : 'text-woodsmoke/70 hover:bg-[#FAF8F5] hover:text-twine'
+      "
+    >
+      Usados
+      <span
+        class="min-w-[1.25rem] px-1.5 py-0.5 text-[9px] text-center"
         [ngClass]="
           activeFilter() === 'USED'
-            ? 'bg-mirage text-white border-mirage'
-            : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+            ? 'bg-twine text-white'
+            : 'bg-pampas text-woodsmoke/70'
         "
       >
-        Utilizados
-        <span
-          class="px-1.5 py-0.5 text-[9px]"
-          [ngClass]="
-            activeFilter() === 'USED'
-              ? 'bg-twine text-white'
-              : 'bg-pampas text-woodsmoke/70'
-          "
-        >
-          {{ usedCount() }}
-        </span>
-      </button>
-    </div>
+        {{ usedCount() }}
+      </span>
+    </button>
   </div>
 
   <!-- LISTADO DE VOUCHERS CANJEADOS -->
@@ -107,9 +117,9 @@
     <div class="space-y-4">
       @for (item of filteredList(); track item.id) {
         <div
-          class="bg-white border border-[#E8E2DA] shadow-xs overflow-hidden flex flex-col sm:flex-row"
+          class="bg-white border border-[#E8E2DA] overflow-hidden flex flex-col sm:flex-row shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
         >
-          <div class="sm:w-44 h-40 sm:h-auto bg-mirage shrink-0 relative">
+          <div class="sm:w-44 h-36 sm:h-auto bg-mirage shrink-0 relative">
             <img
               [src]="item.rewardImageUrl || fallbackImage"
               [alt]="item.rewardName"
@@ -123,7 +133,7 @@
           </div>
 
           <div
-            class="p-6 flex-1 flex flex-col md:flex-row md:items-center justify-between gap-5"
+            class="p-5 sm:p-6 flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 min-w-0"
           >
             <div class="space-y-2">
               <div class="flex flex-wrap items-center gap-2">
@@ -152,7 +162,7 @@
                 {{ item.rewardName }}
               </h3>
 
-              <p class="text-xs text-woodsmoke/70 leading-relaxed max-w-xl">
+              <p class="text-sm text-woodsmoke/70 leading-relaxed max-w-xl">
                 {{ item.rewardDescription }}
               </p>
 
@@ -163,7 +173,7 @@
 
             <!-- CÓDIGO DE VOUCHER -->
             <div
-              class="bg-[#FAF8F5] border border-dashed border-twine/60 px-5 py-4 text-center shrink-0 min-w-[190px]"
+              class="bg-[#FAF8F5] border border-dashed border-twine/60 px-5 py-4 text-center shrink-0 w-full md:w-auto md:min-w-[190px]"
             >
               <span
                 class="font-sans text-[8.5px] uppercase tracking-[2px] text-woodsmoke/60 font-bold block mb-1"
@@ -194,11 +204,13 @@
     </div>
   } @else {
     <div
-      class="bg-white border border-[#E8E2DA] py-16 px-6 text-center space-y-4"
+      class="bg-white border border-[#E8E2DA] py-14 px-6 text-center space-y-4 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
     >
-      <p class="text-xs text-woodsmoke/65 max-w-md mx-auto leading-relaxed">
+      <p class="text-sm text-woodsmoke/65 max-w-md mx-auto leading-relaxed">
         @if (redeemedRewards().length === 0) {
-          Aún no has canjeado ninguna recompensa. Explora nuestro catálogo MontClair Privilège y disfruta de beneficios exclusivos con tus puntos.
+          Aún no has canjeado ninguna recompensa. Explora nuestro catálogo
+          MontClair Privilège y disfruta de beneficios exclusivos con tus
+          puntos.
         } @else {
           No hay recompensas canjeadas con este filtro de estado.
         }

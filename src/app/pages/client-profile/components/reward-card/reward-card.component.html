@@ -1,7 +1,7 @@
 <article
-  class="bg-white border border-[#E8E2DA] shadow-xs hover:shadow-lg transition-shadow duration-300 flex flex-col overflow-hidden h-full"
+  class="bg-white border border-[#E8E2DA] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] hover:shadow-xl transition-shadow duration-300 flex flex-col overflow-hidden h-full"
 >
-  <div class="relative h-44 bg-mirage overflow-hidden">
+  <div class="relative h-40 sm:h-44 bg-mirage overflow-hidden">
     <img
       [src]="reward().imageUrl || fallbackImage"
       [alt]="reward().name"
@@ -26,17 +26,23 @@
       }
     </div>
 
-    <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-      <span class="font-serif text-xl text-white font-semibold tracking-wider">
+    <div
+      class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2"
+    >
+      <span
+        class="font-serif text-xl text-white font-semibold tracking-wider whitespace-nowrap"
+      >
         {{ reward().pointsCost | number }}
-        <span class="font-sans text-[10px] uppercase tracking-[2px] text-twine font-bold">
+        <span
+          class="font-sans text-[10px] uppercase tracking-[2px] text-twine font-bold"
+        >
           pts
         </span>
       </span>
 
       @if (reward().stock !== null && reward().stock !== undefined) {
         <span
-          class="text-[9.5px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-white/90 text-woodsmoke"
+          class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 bg-white/90 text-woodsmoke whitespace-nowrap"
         >
           {{ reward().stock === 0 ? "Sin cupos" : reward().stock + " disp." }}
         </span>
@@ -44,14 +50,14 @@
     </div>
   </div>
 
-  <div class="p-6 flex flex-col flex-1 justify-between gap-5">
+  <div class="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-5">
     <div>
       <h3
-        class="font-serif text-lg uppercase tracking-[1px] text-mirage leading-snug mb-2"
+        class="font-serif text-base sm:text-lg uppercase tracking-[1px] text-mirage leading-snug mb-2"
       >
         {{ reward().name }}
       </h3>
-      <p class="text-xs text-woodsmoke/70 leading-relaxed">
+      <p class="text-sm text-woodsmoke/70 leading-relaxed">
         {{ reward().description }}
       </p>
     </div>

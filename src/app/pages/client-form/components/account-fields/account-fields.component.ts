@@ -10,6 +10,9 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class AccountFieldsComponent {
   form = input.required<FormGroup>();
+  isEditMode = input<boolean>(false);
+
+  showPassword = false;
 
   isFieldInvalid(form: FormGroup, fieldName: string): boolean {
     const field = form.get(fieldName);

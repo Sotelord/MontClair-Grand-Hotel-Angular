@@ -1,4 +1,6 @@
-<div class="bg-white border border-[#E8E2DA] shadow-sm p-8 sm:p-10">
+<div
+  class="bg-white border border-[#E8E2DA] p-5 sm:p-8 lg:p-10 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+>
   <app-edit-header [avatarUrl]="avatarPreview"></app-edit-header>
 
   @if (errorMessage) {
@@ -11,7 +13,11 @@
   }
 
   @if (profileForm) {
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-8">
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6 sm:space-y-8"
+    >
       <app-personal-fields [form]="profileForm"></app-personal-fields>
       <app-avatar-field [form]="profileForm"></app-avatar-field>
       <app-password-fields [form]="profileForm"></app-password-fields>
@@ -38,4 +44,3 @@
     </form>
   }
 </div>
-

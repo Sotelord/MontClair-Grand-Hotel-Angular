@@ -2,7 +2,10 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RoomType } from '../../../../models/roomType.model';
 import { Room } from '../../../../models/room.model';
-import { OccupiedRoomRange, RoomService } from '../../../../service/room.service';
+import {
+  OccupiedRoomRange,
+  RoomService,
+} from '../../../../service/room.service';
 
 @Component({
   selector: 'app-room-type-step',
@@ -35,6 +38,11 @@ export class RoomTypeStepComponent implements OnInit {
     const selectedId = this.selectedRoomType()?.id;
     if (!selectedId) return [];
     return this.allRooms.filter((r) => r.roomType?.id === selectedId);
+  }
+
+  get availableCount(): number {
+    return this.roomsOfSelectedType.filter((room) => this.isRoomAvailable(room))
+      .length;
   }
 
   isRoomAvailable(room: Room): boolean {

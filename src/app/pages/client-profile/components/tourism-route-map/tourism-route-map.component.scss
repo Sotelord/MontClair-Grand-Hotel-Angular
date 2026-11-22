@@ -5,7 +5,7 @@
 
 .route-map {
   width: 100%;
-  height: clamp(340px, 50vw, 480px);
+  height: clamp(300px, 50vw, 480px);
   border: 1px solid #e8e2da;
   background: #f4f0eb;
   position: relative;
@@ -18,5 +18,5 @@
   border: 1px solid #d9d0c4;
   padding: 0.75rem 1rem;
   color: #746d64;
-  font-size: 0.74rem;
+  font-size: 0.8rem;
 }

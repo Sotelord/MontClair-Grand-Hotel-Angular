@@ -12,4 +12,9 @@ import { RoomType } from '../../../../models/roomType.model';
 export class CategoryFieldsComponent {
   form = input.required<FormGroup>();
   roomTypes = input.required<RoomType[]>();
+
+  isInvalid(name: string): boolean {
+    const field = this.form().get(name);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
 }

@@ -1,4 +1,4 @@
-<section class="max-w-[90rem] w-full mx-auto p-6 sm:p-8 lg:p-12">
+<section class="max-w-[90rem] w-full mx-auto px-4 py-6 sm:p-8 lg:p-12">
   <app-admin-page-header
     superiorText="PANEL DE OPERARIO & GESTIÓN"
     title="Reservas del Hotel"
@@ -19,11 +19,15 @@
       (closed)="errorMessage = null"
     ></app-error-alert>
   }
-  <app-reservation-filters
-    [(selectedStatus)]="selectedStatus"
-    [(selectedPayment)]="selectedPayment"
-    [total]="filteredReservations.length"
-  ></app-reservation-filters>
+
+  <!-- Mismo espacio entre filtros y listado que en el portal del operador -->
+  <div class="mb-8 sm:mb-10">
+    <app-reservation-filters
+      [(selectedStatus)]="selectedStatus"
+      [(selectedPayment)]="selectedPayment"
+      [total]="filteredReservations.length"
+    ></app-reservation-filters>
+  </div>
 
   <app-reservations-table
     [reservations]="filteredReservations"

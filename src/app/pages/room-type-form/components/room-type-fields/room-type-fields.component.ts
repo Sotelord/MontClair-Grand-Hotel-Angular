@@ -15,4 +15,8 @@ export class RoomTypeFieldsComponent {
     const control = this.form().get(name);
     return !!(control?.touched && control.invalid);
   }
+
+  get imageUrl(): string {
+    return (this.form().get('imageUrl')?.value || '').trim();
+  }
 }

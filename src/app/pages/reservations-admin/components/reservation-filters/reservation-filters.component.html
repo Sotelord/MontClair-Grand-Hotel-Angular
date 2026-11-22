@@ -1,39 +1,81 @@
 <div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between"
+  class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-3 sm:items-end"
 >
-  <div class="flex flex-wrap items-center gap-3">
-    <div class="flex items-center gap-2">
-      <label class="text-[10px] uppercase tracking-wider text-woodsmoke/60 font-semibold">Estado:</label>
+  <label class="block min-w-0">
+    <span
+      class="block text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold mb-1.5"
+      >Estado</span
+    >
+    <span class="relative block">
       <select
         [ngModel]="selectedStatus()"
         (ngModelChange)="selectedStatus.set($event)"
-        class="py-2 px-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
+        class="w-full appearance-none h-11 pl-3 pr-9 text-base sm:text-sm bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
       >
-        <option value="ALL">Todos los Estados</option>
+        <option value="ALL">Todos los estados</option>
         <option value="CONFIRMED">Confirmada</option>
-        <option value="ACTIVE">Activa (En Estadía)</option>
-        <option value="INACTIVE">Inactiva (Finalizada)</option>
+        <option value="ACTIVE">Activa (en estadía)</option>
+        <option value="INACTIVE">Inactiva (finalizada)</option>
         <option value="CANCELLED">Cancelada</option>
       </select>
-    </div>
+      <svg
+        class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-twine"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          d="M6 9l6 6 6-6"
+        />
+      </svg>
+    </span>
+  </label>
 
-    <div class="flex items-center gap-2">
-      <label class="text-[10px] uppercase tracking-wider text-woodsmoke/60 font-semibold">Cuenta:</label>
+  <label class="block min-w-0">
+    <span
+      class="block text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold mb-1.5"
+      >Cuenta</span
+    >
+    <span class="relative block">
       <select
         [ngModel]="selectedPayment()"
         (ngModelChange)="selectedPayment.set($event)"
-        class="py-2 px-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
+        class="w-full appearance-none h-11 pl-3 pr-9 text-base sm:text-sm bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
       >
-        <option value="ALL">Todos los Pagos</option>
-        <option value="PAID">Cuenta Pagada (Limpia)</option>
-        <option value="UNPAID">Cuenta con Saldo Pendiente</option>
+        <option value="ALL">Todos los pagos</option>
+        <option value="PAID">Cuenta pagada</option>
+        <option value="UNPAID">Saldo pendiente</option>
       </select>
-    </div>
-
-    <span
-      class="text-[11px] font-mono text-twine-dark font-semibold whitespace-nowrap bg-pampas px-3 py-2 rounded-[2px] border border-[#E8E2DA]"
-    >
-      Total: {{ total() }}
+      <svg
+        class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-twine"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          d="M6 9l6 6 6-6"
+        />
+      </svg>
     </span>
+  </label>
+
+  <div
+    class="h-11 flex items-center justify-between sm:justify-center gap-3 px-4 bg-mirage text-white rounded-[2px]"
+    aria-live="polite"
+  >
+    <span class="text-[10px] uppercase tracking-[2px] text-twine font-bold"
+      >Total</span
+    >
+    <span class="font-serif text-lg font-semibold tabular-nums">{{
+      total()
+    }}</span>
   </div>
 </div>

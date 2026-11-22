@@ -1,43 +1,93 @@
 <div
-  class="p-5 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-3 h-full"
+  class="p-5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] h-full flex flex-col"
 >
   <span
-    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block"
+    class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block mb-3"
   >
-    2. FECHAS DE ESTANCIA
+    2. Fechas de estancia
   </span>
 
-  <div class="grid grid-cols-2 gap-3 pt-1">
-    <div class="p-3 bg-white border border-[#E8E2DA] rounded-[2px]">
+  <div
+    class="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-2 sm:gap-3 flex-1"
+  >
+    <!-- LLEGADA -->
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[2px] p-3 text-center flex flex-col justify-center"
+    >
       <span
-        class="text-[9px] uppercase tracking-wider text-woodsmoke/50 block font-semibold"
-        >Check-In (Llegada)</span
+        class="text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke/50"
+        >Llegada</span
       >
+      <span class="font-serif text-3xl text-woodsmoke leading-none mt-1.5">{{
+        checkIn().day
+      }}</span>
       <span
-        class="font-sans text-base font-semibold text-woodsmoke block mt-0.5"
-        >{{ checkInDate() }}</span
+        class="text-xs uppercase tracking-wider font-semibold text-woodsmoke mt-1"
+        >{{ checkIn().monthYear }}</span
       >
-      <span class="text-[10px] text-woodsmoke/50"
-        >A partir de las 15:00 hrs</span
+      <span class="text-[11px] text-woodsmoke/50 mt-1 capitalize">{{
+        checkIn().weekday
+      }}</span>
+      <span class="text-[11px] text-twine-hover font-semibold mt-1.5"
+        >desde 15:00</span
       >
     </div>
-    <div class="p-3 bg-white border border-[#E8E2DA] rounded-[2px]">
-      <span
-        class="text-[9px] uppercase tracking-wider text-woodsmoke/50 block font-semibold"
-        >Check-Out (Salida)</span
+
+    <!-- NOCHES -->
+    <div
+      class="flex flex-col items-center justify-center gap-1 px-1"
+      aria-hidden="true"
+    >
+      <svg
+        class="w-5 h-5 text-twine"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
       >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+          d="M14 5l7 7m0 0l-7 7m7-7H3"
+        />
+      </svg>
+      <span class="font-serif text-lg text-woodsmoke leading-none">{{
+        nightsCount()
+      }}</span>
       <span
-        class="font-sans text-base font-semibold text-woodsmoke block mt-0.5"
-        >{{ checkOutDate() }}</span
+        class="text-[9px] uppercase tracking-[1.5px] text-woodsmoke/55 font-bold"
       >
-      <span class="text-[10px] text-woodsmoke/50">Hasta las 12:00 hrs</span>
+        {{ nightsCount() === 1 ? "noche" : "noches" }}
+      </span>
+    </div>
+
+    <!-- SALIDA -->
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[2px] p-3 text-center flex flex-col justify-center"
+    >
+      <span
+        class="text-[10px] uppercase tracking-[2px] font-bold text-woodsmoke/50"
+        >Salida</span
+      >
+      <span class="font-serif text-3xl text-woodsmoke leading-none mt-1.5">{{
+        checkOut().day
+      }}</span>
+      <span
+        class="text-xs uppercase tracking-wider font-semibold text-woodsmoke mt-1"
+        >{{ checkOut().monthYear }}</span
+      >
+      <span class="text-[11px] text-woodsmoke/50 mt-1 capitalize">{{
+        checkOut().weekday
+      }}</span>
+      <span class="text-[11px] text-twine-hover font-semibold mt-1.5"
+        >hasta 12:00</span
+      >
     </div>
   </div>
 
-  <div class="flex justify-between items-center text-xs text-woodsmoke/80 pt-1">
-    <span>Duración calculada:</span>
-    <span class="font-mono font-semibold text-twine-dark">
-      {{ nightsCount() }} {{ nightsCount() === 1 ? "Noche" : "Noches" }}
-    </span>
-  </div>
+  <p class="sr-only">
+    Estancia de {{ nightsCount() }}
+    {{ nightsCount() === 1 ? "noche" : "noches" }}, del {{ checkInDate() }} al
+    {{ checkOutDate() }}.
+  </p>
 </div>

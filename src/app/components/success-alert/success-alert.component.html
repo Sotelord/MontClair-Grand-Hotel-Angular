@@ -1,12 +1,14 @@
 <div
-  class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-[2px] text-xs text-emerald-800 flex items-center justify-between animate-fade-in"
+  class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-[2px] text-sm text-emerald-800 flex items-start justify-between gap-3 animate-fade-in"
+  role="status"
 >
-  <div class="flex items-center gap-2">
+  <div class="flex items-start gap-2 min-w-0">
     <svg
-      class="w-4 h-4 text-emerald-600 flex-shrink-0"
+      class="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      aria-hidden="true"
     >
       <path
         stroke-linecap="round"
@@ -15,14 +17,15 @@
         d="M5 13l4 4L19 7"
       />
     </svg>
-    <span>{{ message() }}</span>
+    <span class="leading-snug">{{ message() }}</span>
   </div>
 
   @if (dismissible()) {
     <button
       type="button"
       (click)="closed.emit()"
-      class="text-emerald-600 hover:text-emerald-800 text-sm"
+      class="shrink-0 text-emerald-600 hover:text-emerald-800 text-sm cursor-pointer"
+      aria-label="Cerrar aviso"
     >
       ✕
     </button>

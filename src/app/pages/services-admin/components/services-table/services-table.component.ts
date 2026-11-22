@@ -20,8 +20,11 @@ export class ServicesTableComponent {
   }
 
   formatPrice(price: number): string {
-    if (price === 0) return 'Sin cargo';
-    return '€ ' + price.toFixed(2).replace('.', ',');
+    if (!price) return 'Sin cargo';
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(price);
   }
 
   onEdit(service: Service): void {
@@ -29,19 +32,10 @@ export class ServicesTableComponent {
   }
 
   onDelete(service: Service): void {
-    if (confirm(`¿Estás seguro de que quieres eliminar el servicio "${service.name}"?`)) {
-      this.delete.emit(service);
-    }
+    this.delete.emit(service);
   }
 
   onToggleVisibility(service: Service): void {
-    const action = service.hidden ? 'mostrar' : 'ocultar';
-    if (
-      confirm(
-        `¿Estás seguro de que quieres ${action} el servicio "${service.name}"?`,
-      )
-    ) {
-      this.toggleVisibility.emit(service);
-    }
+    this.toggleVisibility.emit(service);
   }
 }

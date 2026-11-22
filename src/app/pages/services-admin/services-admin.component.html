@@ -1,4 +1,4 @@
-<section class="max-w-6xl w-full mx-auto p-6 sm:p-8 lg:p-12">
+<section class="max-w-6xl w-full mx-auto px-4 py-6 sm:p-8 lg:p-12">
   <app-admin-page-header
     superiorText="GESTIÓN DE CATÁLOGO"
     title="Servicios del Hotel"
@@ -6,16 +6,63 @@
     buttonText="Añadir Servicio"
     (buttonClick)="onAdd()"
   />
+
+  @if (successMessage) {
+    <app-success-alert
+      [message]="successMessage"
+      [dismissible]="true"
+      (closed)="successMessage = null"
+    ></app-success-alert>
+  }
+
   @if (errorMessage) {
     <app-error-alert
       [message]="errorMessage"
       (closed)="errorMessage = null"
     ></app-error-alert>
   }
+
   <app-services-table
     [services]="services"
     (edit)="onEdit($event)"
-    (delete)="onDelete($event)"
-    (toggleVisibility)="onToggleVisibility($event)"
+    (delete)="requestDelete($event)"
+    (toggleVisibility)="requestToggle($event)"
   />
+
+  @if (pendingAction; as action) {
+    <app-confirm-modal
+      [title]="
+        action.type === 'delete'
+          ? 'Eliminar servicio'
+          : action.service.hidden
+            ? 'Mostrar servicio'
+            : 'Ocultar servicio'
+      "
+      [confirmLabel]="
+        action.type === 'delete'
+          ? 'Eliminar'
+          : action.service.hidden
+            ? 'Mostrar'
+            : 'Ocultar'
+      "
+      [variant]="action.type === 'delete' ? 'danger' : 'primary'"
+      (confirmed)="executePendingAction()"
+      (cancelled)="pendingAction = null"
+    >
+      @if (action.type === "delete") {
+        ¿Deseas eliminar el servicio
+        <strong class="text-woodsmoke">{{ action.service.name }}</strong
+        >? No se podrá eliminar si está asociado a alguna reservación.
+      } @else if (action.service.hidden) {
+        ¿Deseas volver a mostrar
+        <strong class="text-woodsmoke">{{ action.service.name }}</strong
+        >? Los huéspedes podrán verlo y contratarlo de nuevo.
+      } @else {
+        ¿Deseas ocultar
+        <strong class="text-woodsmoke">{{ action.service.name }}</strong
+        >? Dejará de aparecer en la página pública y en las reservas, pero no se
+        elimina.
+      }
+    </app-confirm-modal>
+  }
 </section>

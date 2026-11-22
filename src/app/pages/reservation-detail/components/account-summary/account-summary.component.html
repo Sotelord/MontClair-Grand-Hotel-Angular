@@ -1,87 +1,114 @@
-<div class="flex justify-end">
+<div
+  class="h-full bg-[#FAF8F5] border border-[#E8E2DA] p-5 rounded-[2px] space-y-3 text-sm"
+>
+  <span
+    class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block border-b border-[#E8E2DA] pb-2"
+  >
+    6. Desglose de cuenta
+  </span>
+
+  <div class="flex justify-between gap-4 text-woodsmoke/70">
+    <span
+      >Estancia ({{ nightsCount() }}
+      {{ nightsCount() === 1 ? "noche" : "noches" }})</span
+    >
+    <span class="text-woodsmoke tabular-nums whitespace-nowrap">{{
+      formatPrice(roomSubtotal())
+    }}</span>
+  </div>
+
+  <div class="flex justify-between gap-4 text-woodsmoke/70">
+    <span>Servicios adicionales</span>
+    <span class="text-woodsmoke tabular-nums whitespace-nowrap">{{
+      formatPrice(servicesSubtotal())
+    }}</span>
+  </div>
+
   <div
-    class="w-full sm:w-80 bg-pampas/30 border border-[#E8E2DA] p-5 rounded-[2px] space-y-3 text-xs"
+    class="pt-3 border-t-2 border-[#E8E2DA] flex justify-between items-baseline gap-4"
   >
     <span
-      class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block border-b border-[#E8E2DA] pb-2"
+      class="font-sans uppercase tracking-wider text-xs font-bold text-woodsmoke"
+      >Total reserva</span
     >
-      DESGLOSE DE CUENTA
-    </span>
-
-    <div class="flex justify-between text-woodsmoke/70">
-      <span>Estancia ({{ nightsCount() }} noches):</span>
-      <span class="font-mono text-woodsmoke">{{
-        formatPrice(roomSubtotal())
-      }}</span>
-    </div>
-
-    <div class="flex justify-between text-woodsmoke/70">
-      <span>Servicios Adicionales:</span>
-      <span class="font-mono text-woodsmoke">{{
-        formatPrice(servicesSubtotal())
-      }}</span>
-    </div>
-
-    <div
-      class="pt-3 border-t-2 border-[#E8E2DA] flex justify-between items-baseline"
+    <span
+      class="font-serif text-2xl font-bold text-twine-hover whitespace-nowrap"
+      >{{ formatPrice(grandTotal()) }}</span
     >
-      <span
-        class="font-sans uppercase tracking-wider text-xs font-bold text-woodsmoke"
-        >TOTAL RESERVA:</span
-      >
-      <span class="font-mono text-2xl font-bold text-twine-dark">{{
-        formatPrice(grandTotal())
-      }}</span>
-    </div>
+  </div>
 
-    <!-- ESTADO FINANCIERO DE LA CUENTA -->
-    <div class="pt-2 border-t border-[#E8E2DA] space-y-1 text-[11px]">
-      <div class="flex justify-between items-center">
-        <span class="text-woodsmoke/60">Estado de Cuenta:</span>
-        @if (paid()) {
-          <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[2px] border border-emerald-200">
-            ✓ Cuenta Pagada
-          </span>
-        } @else {
-          <span class="font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-[2px] border border-amber-300">
-            ⚠ Pendiente de Pago
-          </span>
-        }
-      </div>
-
-      @if (paidAmount() > 0 && !paid()) {
-        <div class="flex justify-between items-center text-[11px] font-semibold text-emerald-700">
-          <span>Monto Abonado:</span>
-          <span class="font-mono">-{{ formatPrice(paidAmount()) }}</span>
-        </div>
-      }
-
-      <div class="flex justify-between items-center text-xs font-bold">
-        <span class="text-woodsmoke/80">Saldo Pendiente:</span>
-        <span class="font-mono" [class.text-emerald-700]="paid()" [class.text-amber-800]="!paid()">
-          {{ paid() ? "0,00 €" : formatPrice(pendingBalance() || grandTotal()) }}
-        </span>
-      </div>
-    </div>
-
-    @if (!paid() && canPayWithBold()) {
-      <div class="pt-2">
-        <button
-          type="button"
-          (click)="payWithBoldClicked.emit()"
-          [disabled]="isPayingWithBold()"
-          class="w-full bg-twine hover:bg-twine-hover disabled:opacity-50 disabled:cursor-not-allowed text-white border border-twine text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer inline-flex items-center justify-center gap-2 shadow-xs"
+  <!-- ESTADO FINANCIERO DE LA CUENTA -->
+  <div class="pt-3 border-t border-[#E8E2DA] space-y-2 text-[13px]">
+    <div class="flex justify-between items-center gap-3">
+      <span class="text-woodsmoke/60">Estado de cuenta</span>
+      @if (paid()) {
+        <span
+          class="whitespace-nowrap text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[2px] border border-emerald-200"
         >
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-          </svg>
-          {{ isPayingWithBold() ? "Abriendo Pasarela Bold..." : "Pagar Cuenta con Bold" }}
-        </button>
+          ✓ Pagada
+        </span>
+      } @else {
+        <span
+          class="whitespace-nowrap text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-[2px] border border-amber-300"
+        >
+          ⚠ Pendiente
+        </span>
+      }
+    </div>
+
+    @if (paidAmount() > 0 && !paid()) {
+      <div
+        class="flex justify-between items-center gap-3 font-semibold text-emerald-700"
+      >
+        <span>Monto abonado</span>
+        <span class="tabular-nums">-{{ formatPrice(paidAmount()) }}</span>
       </div>
     }
 
-    <p class="text-[10px] text-woodsmoke/50 text-right pt-1">
-      Impuestos y tasas de estancia incluidos.
-    </p>
+    <div class="flex justify-between items-center gap-3 font-bold">
+      <span class="text-woodsmoke/80">Saldo pendiente</span>
+      <span
+        class="tabular-nums"
+        [class.text-emerald-700]="paid()"
+        [class.text-amber-800]="!paid()"
+      >
+        {{ paid() ? "0,00 €" : formatPrice(pendingBalance() || grandTotal()) }}
+      </span>
+    </div>
   </div>
+
+  @if (!paid() && canPayWithBold()) {
+    <div class="pt-2">
+      <button
+        type="button"
+        (click)="payWithBoldClicked.emit()"
+        [disabled]="isPayingWithBold()"
+        class="w-full bg-twine hover:bg-twine-hover disabled:opacity-50 disabled:cursor-not-allowed text-white border border-twine text-[10px] uppercase tracking-[1.5px] font-bold py-3 px-4 rounded-[2px] transition cursor-pointer inline-flex items-center justify-center gap-2 shadow-xs"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          />
+        </svg>
+        {{
+          isPayingWithBold()
+            ? "Abriendo pasarela Bold..."
+            : "Pagar cuenta con Bold"
+        }}
+      </button>
+    </div>
+  }
+
+  <p class="text-[11px] text-woodsmoke/50 text-right pt-1">
+    Impuestos y tasas de estancia incluidos.
+  </p>
 </div>

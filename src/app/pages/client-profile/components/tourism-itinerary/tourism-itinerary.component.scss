@@ -2,25 +2,31 @@
   display: block;
 }
 
+/* El encabezado va sobre el fondo beige (como el resto de secciones del perfil)
+   y solo el contenido va en tarjeta blanca */
 .itinerary-shell {
+  color: #141e26;
+}
+
+.itinerary-layout,
+.itinerary-empty,
+.itinerary-state {
   border: 1px solid #e8e2da;
   background: #fff;
-  box-shadow: 0 1px 3px rgb(17 20 19 / 5%);
-  color: #141e26;
+  box-shadow: 0 10px 30px -12px rgb(20 30 38 / 22%);
 }
 
 .itinerary-header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  border-bottom: 1px solid #ece6de;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .itinerary-eyebrow {
   color: #bf925a;
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   line-height: 1.7;
@@ -43,7 +49,7 @@
 .itinerary-empty p {
   margin: 0;
   color: #746d64;
-  font-size: 0.79rem;
+  font-size: 0.875rem;
   line-height: 1.7;
 }
 
@@ -72,7 +78,7 @@
 
 .itinerary-alert,
 .itinerary-pending {
-  margin: 1rem 1.5rem 0;
+  margin: 0 0 1rem;
   border: 1px solid #d6c6af;
   padding: 0.8rem 1rem;
   background: #fbf8f3;
@@ -225,7 +231,7 @@
 
 .itinerary-stop__copy > span {
   color: #bf925a;
-  font-size: 0.54rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -245,13 +251,13 @@
   display: block;
   margin: 0.25rem 0 0;
   color: #746d64;
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   line-height: 1.5;
 }
 
 .itinerary-stop small {
   color: #75634f;
-  font-size: 0.6rem;
+  font-size: 0.72rem;
 }
 
 .itinerary-stop__credit {
@@ -269,7 +275,7 @@
   align-items: center;
   gap: 0.35rem;
   color: #bf925a;
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -330,11 +336,16 @@
 }
 
 .itinerary-route__controls select {
-  min-height: 42px;
+  min-height: 44px;
   border: 1px solid #d9d0c4;
   border-radius: 0;
-  padding: 0.6rem 0.75rem;
-  background: white;
+  padding: 0.6rem 2.5rem 0.6rem 0.75rem;
+  -webkit-appearance: none;
+  appearance: none;
+  /* Flecha dorada propia (la nativa se ve distinta en cada navegador) */
+  background: white
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BF925A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 0.75rem center / 16px;
   color: #141e26;
   font: inherit;
   font-size: 0.76rem;
@@ -374,7 +385,7 @@
   background: #141e26;
   color: #fff;
   cursor: pointer;
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.13em;
   text-align: center;
@@ -412,7 +423,7 @@
 
 .itinerary-route__summary span {
   color: #82786e;
-  font-size: 0.53rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -481,14 +492,37 @@
     flex-direction: column;
   }
 
+  .itinerary-section-heading h3 {
+    font-size: 1.5rem;
+  }
+
   .itinerary-stop {
-    grid-template-columns: 1.8rem minmax(4rem, 6rem) minmax(0, 1fr) 1.8rem;
-    gap: 0.65rem;
-    padding: 0.6rem;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.85rem;
+    padding: 0.7rem;
+  }
+
+  .itinerary-stop__number {
+    position: absolute;
+    top: 0.3rem;
+    left: 0.3rem;
+    z-index: 1;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-color: #bf925a;
+    background: #141e26;
+    color: #fff;
+    font-size: 0.62rem;
   }
 
   .itinerary-stop__image {
-    height: 6rem;
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .itinerary-stop__copy {
+    padding-right: 2rem;
   }
 
   .itinerary-stop h4 {
@@ -496,31 +530,55 @@
   }
 
   .itinerary-stop p {
-    display: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .itinerary-stop__actions {
+    margin-top: 0.4rem;
+  }
+
+  .itinerary-stop__remove {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .itinerary-route__controls {
     align-items: stretch;
     flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .itinerary-route__controls > label:first-child,
+  .itinerary-route__controls > label:first-child {
+    flex: none;
+    width: 100%;
+  }
+
+  /* 16px evita el zoom automático de Safari al tocar el select */
+  .itinerary-route__controls select {
+    font-size: 16px;
+  }
+
   .itinerary-route__controls > button {
     width: 100%;
   }
 
   .itinerary-route__return {
-    min-height: 32px;
-  }
-}
-
-@media (max-width: 400px) {
-  .itinerary-stop {
-    grid-template-columns: 1.6rem minmax(0, 1fr) 1.7rem;
+    min-height: 36px;
+    font-size: 0.85rem;
   }
 
-  .itinerary-stop__image {
-    display: none;
+  .itinerary-route__summary {
+    gap: 1rem 1.5rem;
+  }
+
+  .itinerary-maps-button {
+    width: 100%;
   }
 }
 

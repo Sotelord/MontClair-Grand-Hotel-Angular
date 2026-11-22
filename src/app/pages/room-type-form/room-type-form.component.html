@@ -1,23 +1,54 @@
-<div class="flex items-center justify-center p-6 py-12">
+<div class="max-w-2xl w-full mx-auto px-4 py-6 sm:p-8 lg:py-12">
+  <a
+    routerLink="/admin/rooms-types"
+    class="inline-flex items-center gap-2 mb-5 text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/60 hover:text-twine transition-colors"
+  >
+    <svg
+      class="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+      />
+    </svg>
+    Tipos de habitación
+  </a>
+
   <div
-    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl w-full max-w-xl p-8 sm:p-10 relative overflow-hidden"
+    class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] w-full p-5 sm:p-8 lg:p-10 relative overflow-hidden"
   >
     <div
-      class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+      class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-twine-hover via-twine to-twine"
     ></div>
+
     <app-room-type-form-header
       [isEditMode]="isEditMode"
     ></app-room-type-form-header>
 
+    @if (errorMessage) {
+      <app-error-alert
+        [message]="errorMessage"
+        (closed)="errorMessage = null"
+      ></app-error-alert>
+    }
+
     <form
       [formGroup]="roomTypeForm"
       (ngSubmit)="handleSubmit()"
-      class="space-y-5"
+      class="space-y-8"
+      novalidate
     >
       <app-room-type-fields [form]="roomTypeForm"></app-room-type-fields>
       <app-room-type-form-actions
         [isEditMode]="isEditMode"
         [isInvalid]="roomTypeForm.invalid"
+        [isSubmitting]="isSubmitting"
       ></app-room-type-form-actions>
     </form>
   </div>

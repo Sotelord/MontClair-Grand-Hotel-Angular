@@ -1,22 +1,48 @@
 <div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between"
+  class="bg-white border border-[#E8E2DA] rounded-[4px] p-4 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,320px)_auto] sm:justify-between gap-3 items-end"
 >
-  <div class="flex items-center gap-3">
-    <select
-      [ngModel]="selectedRole()"
-      (ngModelChange)="selectedRole.set($event)"
-      class="py-2.5 px-3 text-xs bg-pampas/40 border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
-    >
-      <option value="ALL">Todos los Roles</option>
-      <option value="CLIENT">Clientes</option>
-      <option value="OPERATOR">Operarios</option>
-      <option value="ADMIN">Administradores</option>
-    </select>
-
+  <label class="block min-w-0">
     <span
-      class="text-[11px] font-mono text-twine-dark font-semibold whitespace-nowrap bg-pampas px-3 py-2 rounded-[2px] border border-[#E8E2DA]"
+      class="block text-[10px] uppercase tracking-[2px] text-woodsmoke/60 font-bold mb-1.5"
+      >Rol</span
     >
-      Total: {{ total() }}
+    <span class="relative block">
+      <select
+        [ngModel]="selectedRole()"
+        (ngModelChange)="selectedRole.set($event)"
+        class="w-full appearance-none h-11 pl-3 pr-9 text-base sm:text-sm bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] text-woodsmoke focus:border-twine outline-none cursor-pointer"
+      >
+        <option value="ALL">Todos los roles</option>
+        <option value="CLIENT">Clientes</option>
+        <option value="OPERATOR">Operarios</option>
+        <option value="ADMIN">Administradores</option>
+      </select>
+      <svg
+        class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-twine"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.2"
+          d="M6 9l6 6 6-6"
+        />
+      </svg>
     </span>
+  </label>
+
+  <div
+    class="h-11 flex items-center gap-3 px-4 bg-mirage text-white rounded-[2px]"
+    aria-live="polite"
+  >
+    <span class="text-[10px] uppercase tracking-[2px] text-twine font-bold"
+      >Total</span
+    >
+    <span class="font-serif text-lg font-semibold tabular-nums">{{
+      total()
+    }}</span>
   </div>
 </div>

@@ -1,11 +1,15 @@
 <article
-  class="reservation-card-item bg-white border border-[#E8E2DA] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row overflow-hidden group"
+  class="reservation-card-item bg-white border border-[#E8E2DA] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row overflow-hidden group"
   [ngClass]="{
-    'opacity-85': reservation().status === 'INACTIVE' || reservation().status === 'CANCELLED'
+    'opacity-85':
+      reservation().status === 'INACTIVE' ||
+      reservation().status === 'CANCELLED',
   }"
 >
   <!-- COLUMNA IZQUIERDA: FOTOGRAFÍA DE LA SUITE (ESTILO SERVICIOS / HABITACIONES) -->
-  <div class="md:w-64 lg:w-72 shrink-0 relative overflow-hidden bg-mirage min-h-[200px] md:min-h-full">
+  <div
+    class="md:w-64 lg:w-72 shrink-0 relative overflow-hidden bg-mirage min-h-[200px] md:min-h-full"
+  >
     <img
       [src]="roomImageUrl()"
       [alt]="roomName"
@@ -17,7 +21,9 @@
     ></div>
 
     <!-- Código de Reserva sobre la foto -->
-    <div class="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+    <div
+      class="absolute top-4 left-4 right-4 flex items-center justify-between gap-2"
+    >
       <span
         class="res-card-id bg-[#141e26]/85 backdrop-blur-xs border border-twine/50 text-twine px-3 py-1 text-[9.5px] uppercase tracking-[2px] font-bold"
       >
@@ -35,10 +41,14 @@
 
     <!-- Pie de foto con categoría y noches -->
     <div class="absolute bottom-4 left-4 right-4 text-white">
-      <span class="font-sans text-[9px] uppercase tracking-[2.5px] text-twine font-bold block mb-0.5">
+      <span
+        class="font-sans text-[9px] uppercase tracking-[2.5px] text-twine font-bold block mb-0.5"
+      >
         {{ roomTypeName }}
       </span>
-      <p class="font-serif text-base tracking-[1px] uppercase leading-snug text-white">
+      <p
+        class="font-serif text-base tracking-[1px] uppercase leading-snug text-white"
+      >
         {{ roomName }}
       </p>
     </div>
@@ -52,13 +62,19 @@
         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-[#E8E2DA]"
       >
         <div>
-          <span class="font-sans text-[9px] uppercase tracking-[2.5px] text-twine font-bold block mb-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2.5px] text-twine font-bold block mb-1"
+          >
             ESTANCIA EN MONTCLAIR GRAND HOTEL
           </span>
-          <h3 class="font-serif text-lg sm:text-xl text-woodsmoke tracking-[1px] uppercase">
+          <h3
+            class="font-serif text-lg sm:text-xl text-woodsmoke tracking-[1px] uppercase"
+          >
             {{ roomName }}
             @if (roomNumber) {
-              <span class="text-woodsmoke/60 text-sm">(Suite {{ roomNumber }})</span>
+              <span class="text-woodsmoke/60 text-sm"
+                >(Suite {{ roomNumber }})</span
+              >
             }
           </h3>
         </div>
@@ -66,22 +82,24 @@
         <!-- BADGES DE ESTADO Y PAGO -->
         <div class="flex flex-wrap items-center gap-2">
           @switch (reservation().status) {
-            @case ('ACTIVE') {
+            @case ("ACTIVE") {
               <span
                 class="res-card-status bg-emerald-900 text-white px-3 py-1.5 text-[9px] uppercase tracking-[1.5px] font-bold flex items-center gap-1.5"
               >
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"></span>
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse"
+                ></span>
                 En Estadía
               </span>
             }
-            @case ('INACTIVE') {
+            @case ("INACTIVE") {
               <span
                 class="res-card-status bg-pampas border border-[#E8E2DA] text-woodsmoke/70 px-3 py-1.5 text-[9px] uppercase tracking-[1.5px] font-bold"
               >
                 Estadía Finalizada
               </span>
             }
-            @case ('CANCELLED') {
+            @case ("CANCELLED") {
               <span
                 class="res-card-status bg-rose-50 border border-rose-200 text-rose-800 px-3 py-1.5 text-[9px] uppercase tracking-[1.5px] font-bold"
               >
@@ -106,7 +124,7 @@
             </span>
           } @else {
             <span
-              class="res-card-paid-badge border border-twine text-twine-dark bg-twine/10 px-3 py-1.5 text-[9px] uppercase tracking-[1.5px] font-bold"
+              class="res-card-paid-badge border border-twine text-twine-hover bg-twine/10 px-3 py-1.5 text-[9px] uppercase tracking-[1.5px] font-bold"
               title="Pendiente de pago"
             >
               Pendiente de Pago
@@ -120,23 +138,33 @@
         class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 sm:divide-x divide-[#E8E2DA] py-4 border-b border-[#E8E2DA]"
       >
         <div class="sm:pr-4">
-          <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+          >
             Check-In / Check-Out
           </span>
           <span class="font-sans text-xs font-semibold text-woodsmoke block">
             {{ reservation().checkInDate }} → {{ reservation().checkOutDate }}
           </span>
           <span class="text-[10.5px] text-woodsmoke/55 block mt-0.5">
-            {{ reservation().nights }} {{ reservation().nights === 1 ? 'noche de estancia' : 'noches de estancia' }}
+            {{ reservation().nights }}
+            {{
+              reservation().nights === 1
+                ? "noche de estancia"
+                : "noches de estancia"
+            }}
           </span>
         </div>
 
         <div class="sm:px-4">
-          <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+          >
             Huéspedes
           </span>
           <span class="font-sans text-xs font-semibold text-woodsmoke block">
-            {{ reservation().numberOfPeople }} {{ reservation().numberOfPeople === 1 ? 'Persona' : 'Personas' }}
+            {{ reservation().numberOfPeople }}
+            {{ reservation().numberOfPeople === 1 ? "Persona" : "Personas" }}
           </span>
           <span class="text-[10.5px] text-woodsmoke/55 block mt-0.5">
             Categoría {{ roomTypeName }}
@@ -144,7 +172,9 @@
         </div>
 
         <div class="sm:px-4">
-          <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+          >
             Tarifa Noche
           </span>
           <span class="font-serif text-sm font-semibold text-woodsmoke block">
@@ -156,19 +186,30 @@
         </div>
 
         <div class="sm:pl-4">
-          <span class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-twine font-bold block mb-1"
+          >
             Total Estancia
           </span>
           <span class="font-serif font-bold text-woodsmoke text-base block">
             {{ formatPrice(reservation().totalPrice) }}
           </span>
           @if (reservation().paid) {
-            <span class="text-[10.5px] text-emerald-700 block font-semibold mt-0.5">
+            <span
+              class="text-[10.5px] text-emerald-700 block font-semibold mt-0.5"
+            >
               Saldo pendiente: 0,00 €
             </span>
           } @else {
-            <span class="text-[10.5px] text-twine-dark block font-semibold mt-0.5">
-              Saldo: {{ formatPrice(reservation().pendingBalance || reservation().totalPrice) }}
+            <span
+              class="text-[10.5px] text-twine-hover block font-semibold mt-0.5"
+            >
+              Saldo:
+              {{
+                formatPrice(
+                  reservation().pendingBalance || reservation().totalPrice
+                )
+              }}
             </span>
           }
         </div>
@@ -177,7 +218,9 @@
       <!-- SERVICIOS / EXPERIENCIAS ADICIONALES -->
       @if (servicesList.length > 0) {
         <div class="pt-3.5 flex flex-wrap items-center gap-2">
-          <span class="font-sans text-[9px] uppercase tracking-[2px] text-woodsmoke/60 font-bold mr-1">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-woodsmoke/60 font-bold mr-1"
+          >
             Experiencias:
           </span>
 
@@ -186,28 +229,45 @@
               class="border border-[#E8E2DA] bg-pampas/40 px-2.5 py-1 text-[9.5px] uppercase tracking-[1px] text-woodsmoke font-semibold inline-flex items-center gap-1.5"
             >
               <span class="w-1 h-1 rotate-45 bg-twine inline-block"></span>
-              {{ svc.quantity }}x {{ svc.name }} ({{ formatPrice(svc.unitPrice) }})
+              {{ svc.quantity }}x {{ svc.name }} ({{
+                formatPrice(svc.unitPrice)
+              }})
             </span>
           }
         </div>
       }
     </div>
 
-    <!-- BARRA DE ACCIONES INFERIOR -->
+    <!--
+      BARRA DE ACCIONES INFERIOR
+      Celular: cuadrícula de 2 columnas con botones del mismo ancho
+      (el de pagar ocupa toda la fila). Desde sm: todos en una fila CENTRADA.
+    -->
     <div
-      class="mt-5 pt-4 border-t border-[#E8E2DA]/70 flex flex-wrap items-center justify-between gap-2"
+      class="mt-5 pt-4 border-t border-[#E8E2DA]/70 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center"
     >
-      <div class="flex flex-wrap items-center gap-2">
-        @if (!reservation().paid && reservation().status !== 'CANCELLED') {
+      <div class="contents">
+        @if (!reservation().paid && reservation().status !== "CANCELLED") {
           <button
             type="button"
             (click)="payRequested.emit(reservation())"
             [disabled]="isPaying()"
-            class="bg-twine hover:bg-twine-hover disabled:opacity-50 disabled:cursor-not-allowed text-white border border-twine text-[9.5px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 transition-colors duration-300 cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap shadow-xs"
+            class="col-span-2 justify-center bg-twine hover:bg-twine-hover disabled:opacity-50 disabled:cursor-not-allowed text-white border border-twine text-[10px] uppercase tracking-[1.5px] font-bold py-3 sm:py-2.5 px-4 transition-colors duration-300 cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap shadow-xs"
             title="Pagar en línea con pasarela segura Bold"
           >
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
             </svg>
             {{ isPaying() ? "Abriendo Bold..." : "Pagar con Bold" }}
           </button>
@@ -215,7 +275,7 @@
 
         <a
           [routerLink]="['/reservations', reservation().id]"
-          class="border border-twine text-twine hover:bg-twine hover:text-white text-[9.5px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+          class="justify-center border border-twine text-twine hover:bg-twine hover:text-white text-[10px] uppercase tracking-[1.5px] font-bold py-3 sm:py-2.5 px-4 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
         >
           Ver Detalle
         </a>
@@ -223,21 +283,32 @@
         <button
           type="button"
           (click)="generatePdf()"
-          class="border border-[#E8E2DA] hover:border-twine text-woodsmoke/80 hover:text-twine text-[9.5px] uppercase tracking-[1.5px] font-bold py-2.5 px-3.5 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+          class="justify-center border border-[#E8E2DA] hover:border-twine text-woodsmoke/80 hover:text-twine text-[10px] uppercase tracking-[1.5px] font-bold py-3 sm:py-2.5 px-3.5 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
           title="Descargar comprobante en PDF"
         >
-          <svg class="w-3.5 h-3.5 text-twine" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <svg
+            class="w-3.5 h-3.5 text-twine"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           PDF
         </button>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        @if (reservation().status === 'CONFIRMED') {
+      <div class="contents">
+        @if (reservation().status === "CONFIRMED") {
           <a
             [routerLink]="['/reservations/edit', reservation().id]"
-            class="border border-[#E8E2DA] hover:border-twine text-woodsmoke/80 hover:text-twine text-[9.5px] uppercase tracking-[1.5px] font-bold py-2.5 px-3.5 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            class="justify-center border border-[#E8E2DA] hover:border-twine text-woodsmoke/80 hover:text-twine text-[10px] uppercase tracking-[1.5px] font-bold py-3 sm:py-2.5 px-3.5 transition-colors duration-300 inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
           >
             Modificar
           </a>
@@ -247,14 +318,14 @@
               type="button"
               (click)="cancelRequested.emit(reservation())"
               [disabled]="isCancelling()"
-              class="border border-[#E8E2DA] hover:border-rose-300 hover:bg-rose-50 text-woodsmoke/65 hover:text-rose-700 disabled:opacity-50 disabled:cursor-not-allowed text-[9.5px] uppercase tracking-[1.5px] font-bold py-2.5 px-3.5 transition-colors duration-300 cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
+              class="justify-center border border-[#E8E2DA] hover:border-rose-300 hover:bg-rose-50 text-woodsmoke/65 hover:text-rose-700 disabled:opacity-50 disabled:cursor-not-allowed text-[10px] uppercase tracking-[1.5px] font-bold py-3 sm:py-2.5 px-3.5 transition-colors duration-300 cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
               title="Cancela la reserva sin borrarla de tu historial"
             >
               {{ isCancelling() ? "Cancelando..." : "Cancelar" }}
             </button>
           } @else {
             <span
-              class="border border-[#E8E2DA] bg-pampas/30 text-woodsmoke/35 text-[9.5px] uppercase tracking-[1.5px] font-semibold py-2.5 px-3.5 inline-flex items-center gap-1.5 cursor-not-allowed whitespace-nowrap"
+              class="justify-center border border-[#E8E2DA] bg-pampas/30 text-woodsmoke/40 text-[10px] uppercase tracking-[1.5px] font-semibold py-3 sm:py-2.5 px-3.5 inline-flex items-center gap-1.5 cursor-not-allowed whitespace-nowrap"
               title="Solo se pueden cancelar reservas cuya fecha de inicio sea posterior a la fecha actual"
             >
               No cancelable

@@ -21,6 +21,7 @@ export class RowActionsComponent {
 
   reservation = input.required<ReservationDTO>();
   isOperatorMode = input<boolean>(false);
+  labeled = input<boolean>(false);
 
   viewClicked = output<void>();
   editClicked = output<void>();

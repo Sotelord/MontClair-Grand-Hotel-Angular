@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoomService } from '../../service/room.service';
 import { RoomTypeService } from '../../service/room-type.service';
 import { RoomType } from '../../models/roomType.model';
@@ -23,6 +23,7 @@ import { RoomFormActionsComponent } from './components/room-form-actions/room-fo
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     RoomFormHeaderComponent,
     IdentityFieldsComponent,
     ErrorAlertComponent,

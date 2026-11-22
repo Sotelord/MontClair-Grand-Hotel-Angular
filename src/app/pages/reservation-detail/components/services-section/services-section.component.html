@@ -1,37 +1,59 @@
-<div class="pb-8 border-b border-[#E8E2DA]">
+<div class="pb-6 sm:pb-8 border-b border-[#E8E2DA]">
   <span
-    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block mb-4"
+    class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block mb-3 sm:mb-4"
   >
-    4. SERVICIOS Y EXPERIENCIAS CONTRATADAS
+    4. Servicios y experiencias contratadas
   </span>
 
   @if (services().length > 0) {
-    <div class="border border-[#E8E2DA] rounded-[2px] overflow-hidden">
-      <table class="w-full text-left text-xs">
+    <ul
+      class="sm:hidden border border-[#E8E2DA] rounded-[2px] divide-y divide-[#E8E2DA] bg-white"
+    >
+      @for (acq of services(); track acq.id) {
+        <li class="p-4 flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-woodsmoke">
+              {{ getServiceName(acq) }}
+            </p>
+            <p class="text-xs text-woodsmoke/55 mt-0.5 tabular-nums">
+              {{ acq.quantity }} × {{ formatPrice(acq.unitPrice) }}
+            </p>
+          </div>
+          <span
+            class="font-serif text-base font-semibold text-twine-hover whitespace-nowrap"
+          >
+            {{ formatPrice(acq.quantity * acq.unitPrice) }}
+          </span>
+        </li>
+      }
+    </ul>
+
+    <div
+      class="hidden sm:block border border-[#E8E2DA] rounded-[2px] overflow-hidden"
+    >
+      <table class="w-full text-left text-sm">
         <thead
-          class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
+          class="bg-[#FAF8F5] text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
         >
           <tr>
             <th class="py-3 px-4">Servicio</th>
             <th class="py-3 px-4 text-center">Cantidad</th>
-            <th class="py-3 px-4 text-right">Precio Unitario</th>
+            <th class="py-3 px-4 text-right">Precio unitario</th>
             <th class="py-3 px-4 text-right">Subtotal</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
           @for (acq of services(); track acq.id) {
-            <tr class="hover:bg-pampas/20">
-              <td class="py-3 px-4 font-semibold">
-                {{ getServiceName(acq) }}
-              </td>
-              <td class="py-3 px-4 text-center font-mono">
+            <tr class="hover:bg-[#FAF8F5]">
+              <td class="py-3 px-4 font-semibold">{{ getServiceName(acq) }}</td>
+              <td class="py-3 px-4 text-center tabular-nums">
                 {{ acq.quantity }}
               </td>
-              <td class="py-3 px-4 text-right font-mono">
+              <td class="py-3 px-4 text-right tabular-nums">
                 {{ formatPrice(acq.unitPrice) }}
               </td>
               <td
-                class="py-3 px-4 text-right font-mono font-semibold text-twine-dark"
+                class="py-3 px-4 text-right font-serif font-semibold text-twine-hover whitespace-nowrap"
               >
                 {{ formatPrice(acq.quantity * acq.unitPrice) }}
               </td>
@@ -42,7 +64,7 @@
     </div>
   } @else {
     <div
-      class="p-4 bg-pampas/30 border border-[#E8E2DA] rounded-[2px] text-xs text-woodsmoke/60 italic"
+      class="p-4 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] text-sm text-woodsmoke/60 italic"
     >
       Esta reserva no incluye servicios adicionales contratados.
     </div>

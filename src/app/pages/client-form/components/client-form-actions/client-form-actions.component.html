@@ -1,16 +1,18 @@
-<div class="pt-4 flex flex-col sm:flex-row gap-3">
-  <button
-    type="submit"
-    id="client-submit-btn"
-    class="flex-1 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
-  >
-    {{ isEditMode() ? "Guardar Cambios" : "Registrarme e Ingresar" }}
-  </button>
-
+<div
+  class="pt-6 border-t border-[#E8E2DA] flex flex-col-reverse sm:flex-row sm:justify-end gap-3"
+>
   <a
     [routerLink]="isAdminView() ? '/admin/clients' : '/login'"
-    class="sm:w-auto text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300"
+    class="text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 hover:text-woodsmoke text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 rounded-[2px] transition duration-300"
   >
     Cancelar
   </a>
+
+  <button
+    type="submit"
+    id="client-submit-btn"
+    class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-8 rounded-[2px] transition duration-300 shadow-sm cursor-pointer"
+  >
+    {{ isEditMode() ? "Guardar cambios" : "Registrarme e ingresar" }}
+  </button>
 </div>
