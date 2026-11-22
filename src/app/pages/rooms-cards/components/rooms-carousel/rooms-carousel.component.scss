@@ -1,74 +1,94 @@
-.carousel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+:host {
+  display: block;
 }
 
-.carousel-viewport {
-  flex: 1;
+.rooms-carousel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   min-width: 0;
-  overflow: hidden;
 }
 
 .carousel-track {
-  display: flex;
-  margin: 0 -14px;
-  transition: transform 0.5s ease;
-}
+  flex: 1;
+  min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
-.carousel-slide {
-  flex: 0 0 100%;
-  padding: 0 14px;
-  display: flex;
-}
-
-@media (min-width: 640px) {
-  .carousel-slide {
-    flex-basis: 50%;
+  &::-webkit-scrollbar {
+    display: none;
   }
-}
-
-@media (min-width: 1024px) {
-  .carousel-slide {
-    flex-basis: 25%;
-  }
-}
-
-.carousel-slide app-room-card {
-  display: block;
-  width: 100%;
 }
 
 .carousel-btn {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: transparent;
-  color: var(--twine);
-  font-size: 32px;
-  line-height: 1;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-}
-
-.carousel-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 32px;
-}
-
-.carousel-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1px solid var(--twine);
-  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
   padding: 0;
+  border: 1px solid var(--twine, #bf925a);
+  border-radius: 50%;
+  background-color: var(--twine, #bf925a);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--twine-hover, #73503c);
+    border-color: var(--twine-hover, #73503c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--twine, #bf925a);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .rooms-carousel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+  }
+
+  .carousel-track {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .carousel-btn--prev {
+    justify-self: end;
+  }
+
+  .carousel-btn--next {
+    justify-self: start;
+  }
 }

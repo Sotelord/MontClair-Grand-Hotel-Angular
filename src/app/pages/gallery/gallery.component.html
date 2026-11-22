@@ -12,14 +12,15 @@
   (categorySelected)="setCategory($event)"
 ></app-category-filter>
 
-<main class="bg-pampas/40 py-16 px-6 min-h-[500px]">
+<main class="bg-pampas/40 py-8 sm:py-12 lg:py-16 px-4 sm:px-6 min-h-[500px]">
   <div class="max-w-6xl mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-6">
       @for (item of filteredItems; track item.id) {
         <div
-          [class.md:col-span-2]="item.isWide"
-          [class.h-96]="item.isWide"
-          [class.h-80]="!item.isWide"
+          [class.col-span-2]="item.isWide"
+          [class]="
+            item.isWide ? 'h-52 sm:h-72 lg:h-96' : 'h-44 sm:h-64 lg:h-80'
+          "
         >
           <app-gallery-card
             [item]="item"

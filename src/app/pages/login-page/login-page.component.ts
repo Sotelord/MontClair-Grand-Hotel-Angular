@@ -4,7 +4,6 @@ import { AuthService } from '../../service/auth.service';
 import { LoginHeaderComponent } from './components/login-header/login-header.component';
 import { LoginAlertComponent } from './components/login-alert/login-alert.component';
 import { LoginFormComponent } from './components/login-form/login-form.component';
-import { DemoAccessComponent } from './components/demo-access/demo-access.component';
 import { RegisterPromptComponent } from './components/register-prompt/register-prompt.component';
 
 @Component({
@@ -14,7 +13,6 @@ import { RegisterPromptComponent } from './components/register-prompt/register-p
     LoginHeaderComponent,
     LoginAlertComponent,
     LoginFormComponent,
-    DemoAccessComponent,
     RegisterPromptComponent,
   ],
   templateUrl: './login-page.component.html',

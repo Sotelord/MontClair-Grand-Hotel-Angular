@@ -1,6 +1,8 @@
-<div
-  class="relative group cursor-pointer rounded-[3px] overflow-hidden shadow-sm bg-white border border-[#E8E2DA] transition-all duration-500 hover:shadow-xl hover:border-twine h-full"
+<button
+  type="button"
+  class="relative block w-full h-full text-left group cursor-pointer rounded-[3px] overflow-hidden shadow-sm bg-white border border-[#E8E2DA] transition-all duration-500 hover:shadow-xl hover:border-twine focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-twine"
   (click)="opened.emit(item())"
+  [attr.aria-label]="'Ampliar fotografía: ' + item().title"
 >
   <img
     [src]="item().imageUrl"
@@ -10,23 +12,27 @@
   />
 
   <div
-    class="absolute inset-0 bg-gradient-to-t from-mirage/85 via-mirage/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+    class="absolute inset-0 bg-gradient-to-t from-mirage/85 via-mirage/30 to-transparent opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 [@media(hover:none)]:via-transparent transition-opacity duration-300 flex flex-col justify-end p-3 sm:p-5 lg:p-6"
   >
-    <span class="text-[9px] uppercase tracking-[3px] font-bold text-twine mb-1">
+    <span
+      class="text-[9px] sm:text-[10px] uppercase tracking-[2px] sm:tracking-[3px] font-bold text-twine mb-0.5 sm:mb-1"
+    >
       {{ item().categoryLabel }}
     </span>
     <h3
-      class="font-serif text-lg sm:text-xl text-white uppercase tracking-[1px] mb-1"
+      class="font-serif text-[13px] leading-tight sm:text-lg lg:text-xl text-white uppercase tracking-[1px] sm:mb-1"
     >
       {{ item().title }}
     </h3>
-    <p class="text-xs text-white/80 font-light line-clamp-2">
+    <p
+      class="hidden sm:block text-xs text-white/80 font-light line-clamp-2 [@media(hover:none)]:hidden"
+    >
       {{ item().description }}
     </p>
     <div
-      class="mt-3 flex items-center text-twine-light text-[10px] tracking-wider uppercase font-semibold"
+      class="mt-3 hidden sm:flex items-center text-twine text-[10px] tracking-wider uppercase font-semibold [@media(hover:none)]:hidden"
     >
       Ampliar Fotografía <span class="ml-1 text-sm">→</span>
     </div>
   </div>
-</div>
+</button>

@@ -1,27 +1,28 @@
 <div
-  class="p-6 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] hover:border-twine transition-all group h-full"
+  class="p-5 lg:p-6 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] hover:border-twine transition-all group h-full"
 >
   <span
-    class="text-[9px] uppercase tracking-wider font-bold text-twine block mb-1"
+    class="text-[10px] uppercase tracking-wider font-bold text-twine block mb-1"
   >
     {{ poi().category }}
   </span>
 
   <h3
-    class="font-serif text-lg text-woodsmoke uppercase mb-2 group-hover:text-twine-dark transition"
+    class="font-serif text-base lg:text-lg text-woodsmoke uppercase mb-2 group-hover:text-twine-hover transition"
   >
     {{ poi().name }}
   </h3>
 
   <div
-    class="flex items-center gap-2 mb-3 text-xs font-sans text-twine font-semibold tracking-wide"
+    class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3 text-xs font-sans text-twine font-semibold tracking-wide"
   >
     <span class="inline-flex items-center gap-1">
       <svg
-        class="w-3.5 h-3.5 text-twine"
+        class="w-3.5 h-3.5 text-twine shrink-0"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
+        aria-hidden="true"
       >
         <path
           stroke-linecap="round"
@@ -38,13 +39,14 @@
       </svg>
       {{ poi().distance }}
     </span>
-    <span class="text-woodsmoke/30">•</span>
+    <span class="text-woodsmoke/30" aria-hidden="true">•</span>
     <span class="inline-flex items-center gap-1">
       <svg
-        class="w-3.5 h-3.5 text-twine"
+        class="w-3.5 h-3.5 text-twine shrink-0"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
+        aria-hidden="true"
       >
         <path
           stroke-linecap="round"
@@ -57,7 +59,7 @@
     </span>
   </div>
 
-  <p class="text-[11px] text-woodsmoke/70 leading-relaxed font-light">
+  <p class="text-[13px] text-woodsmoke/70 leading-relaxed font-light">
     {{ poi().description }}
   </p>
 </div>

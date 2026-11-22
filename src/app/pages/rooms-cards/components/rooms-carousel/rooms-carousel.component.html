@@ -1,32 +1,36 @@
-<section class="bg-pampas py-14 px-4 sm:px-6 lg:px-12 relative group overflow-hidden w-full max-w-full">
-  <div class="max-w-7xl mx-auto relative">
-    
+<section
+  class="bg-pampas py-10 sm:py-14 px-4 sm:px-6 lg:px-12 w-full max-w-full overflow-hidden"
+>
+  <div class="rooms-carousel max-w-7xl mx-auto">
     <!-- Botón Anterior -->
     <button
       type="button"
-      (click)="scrollLeft()"
-      class="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-twine shadow-lg rounded-full w-10 h-10 flex items-center justify-center opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+      class="carousel-btn carousel-btn--prev"
+      (click)="scrollPrev()"
+      [disabled]="!canScrollPrev()"
       aria-label="Habitación anterior"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15 5l-7 7 7 7" />
       </svg>
     </button>
 
-    <!-- Contenedor del Carrusel Native -->
-    <div 
+    <!-- Carrusel nativo con scroll-snap -->
+    <div
       #carousel
-      class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scroll-smooth scrollbar-hide max-w-full"
-      style="scrollbar-width: none; -ms-overflow-style: none;"
+      class="carousel-track flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scroll-smooth"
+      (scroll)="updateButtons()"
     >
       @for (room of roomsArray(); track room.id) {
-        <div class="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] flex">
+        <div
+          class="carousel-slide snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] flex justify-center"
+        >
           <app-room-card
             [room]="room"
             [showFeatures]="false"
             actionText="Reservar"
             [linkToDetail]="false"
-            class="w-full flex"
+            class="w-full max-w-[380px] sm:max-w-none flex"
           />
         </div>
       }
@@ -35,14 +39,14 @@
     <!-- Botón Siguiente -->
     <button
       type="button"
-      (click)="scrollRight()"
-      class="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-twine shadow-lg rounded-full w-10 h-10 flex items-center justify-center opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+      class="carousel-btn carousel-btn--next"
+      (click)="scrollNext()"
+      [disabled]="!canScrollNext()"
       aria-label="Habitación siguiente"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 5l7 7-7 7" />
       </svg>
     </button>
-
   </div>
 </section>
