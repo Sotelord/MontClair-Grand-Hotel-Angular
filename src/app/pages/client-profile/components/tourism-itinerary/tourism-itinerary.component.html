@@ -1,0 +1,235 @@
+<section class="itinerary-shell" aria-labelledby="itinerary-heading">
+  <header class="itinerary-header">
+    <div>
+      <span class="itinerary-eyebrow">MONTCLAIR GRAND HOTEL · CONCIERGE</span>
+      <h2 id="itinerary-heading">Mi itinerario</h2>
+      <p>Una selección personal para descubrir Mónaco a tu propio ritmo.</p>
+    </div>
+    <a routerLink="/discover-monaco" class="itinerary-add-link">
+      <span aria-hidden="true">＋</span>
+      Descubre más lugares
+    </a>
+  </header>
+
+  @if (errorMessage) {
+    <div class="itinerary-alert itinerary-alert--error" role="alert">
+      <span>{{ errorMessage }}</span>
+      @if (pendingPlaceId !== null) {
+        <button type="button" (click)="retryPendingPlace()">
+          Reintentar agregar el destino
+        </button>
+      } @else if (!itinerary.length && !isLoading) {
+        <button type="button" (click)="retryLoad()">Intentar de nuevo</button>
+      }
+    </div>
+  }
+  @if (successMessage) {
+    <div class="itinerary-alert" role="status">{{ successMessage }}</div>
+  }
+  @if (addingPendingPlace) {
+    <div class="itinerary-pending" role="status">
+      Agregando el lugar que elegiste…
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="itinerary-state" role="status" aria-live="polite">
+      <span class="itinerary-state__line"></span>
+      Cargando tu itinerario…
+    </div>
+  } @else if (!itinerary.length && errorMessage) {
+    <div class="itinerary-empty">
+      <span class="itinerary-eyebrow">ITINERARIO NO DISPONIBLE</span>
+      <h3>No pudimos cargar tus lugares</h3>
+      <p>Comprueba tu conexión e inténtalo de nuevo.</p>
+      <button
+        type="button"
+        class="itinerary-primary-button"
+        (click)="retryLoad()"
+      >
+        Intentar de nuevo
+      </button>
+    </div>
+  } @else if (!itinerary.length) {
+    <div class="itinerary-empty">
+      <span class="itinerary-eyebrow">UNA PÁGINA EN BLANCO</span>
+      <h3>Tu próxima historia comienza aquí</h3>
+      <p>
+        Guarda los lugares que quieras visitar y los encontrarás reunidos en
+        este espacio privado.
+      </p>
+      <a routerLink="/discover-monaco" class="itinerary-primary-button">
+        Explorar Mónaco
+      </a>
+    </div>
+  } @else {
+    <div class="itinerary-layout">
+      <div class="itinerary-main">
+        <section class="itinerary-list" aria-labelledby="saved-places-heading">
+          <div class="itinerary-section-heading">
+            <div>
+              <span class="itinerary-eyebrow">TU SELECCIÓN</span>
+              <h3 id="saved-places-heading">
+                {{ itinerary.length }}
+                {{ itinerary.length === 1 ? "lugar guardado" : "lugares guardados" }}
+              </h3>
+            </div>
+            @if (route) {
+              <button
+                type="button"
+                class="itinerary-reset-route"
+                (click)="route = null; showMapLegs = false"
+              >
+                Borrar recorrido
+              </button>
+            }
+          </div>
+
+          <ol class="itinerary-stops">
+            @for (stop of orderedItinerary; track stop.place.id; let index = $index) {
+              <li class="itinerary-stop">
+                <span class="itinerary-stop__number">{{ index + 1 }}</span>
+                @if (stop.place.imageUrls.length) {
+                  <img
+                    class="itinerary-stop__image"
+                    [src]="stop.place.imageUrls[0]"
+                    [alt]="stop.place.name"
+                    loading="lazy"
+                  />
+                } @else {
+                  <div class="itinerary-stop__image itinerary-stop__image--empty">
+                    <span>MONACO</span>
+                  </div>
+                }
+                <div class="itinerary-stop__copy">
+                  <span>{{ stop.place.category }}</span>
+                  <h4>{{ stop.place.name }}</h4>
+                  <p>{{ stop.place.shortDescription }}</p>
+                  <small>
+                    {{ stop.place.suggestedDurationMinutes }} min ·
+                    {{ stop.place.address }}
+                  </small>
+                  <div class="itinerary-stop__actions">
+                    <a
+                      [href]="getDirectionsUrl(stop.place)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="itinerary-stop__directions"
+                      title="Abrir cómo llegar en Google Maps partiendo de MontClair Grand Hotel"
+                    >
+                      Cómo llegar ↗
+                    </a>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="itinerary-stop__remove"
+                  [disabled]="removingPlaceIds.has(stop.place.id)"
+                  [attr.aria-label]="'Eliminar ' + stop.place.name"
+                  (click)="removePlace(stop.place.id)"
+                >
+                  {{ removingPlaceIds.has(stop.place.id) ? "…" : "×" }}
+                </button>
+              </li>
+            }
+          </ol>
+        </section>
+
+        <section class="itinerary-route" aria-labelledby="route-heading">
+          <div class="itinerary-section-heading">
+            <div>
+              <span class="itinerary-eyebrow">TU JORNADA EN MÓNACO</span>
+              <h3 id="route-heading">Diseña tu recorrido</h3>
+            </div>
+          </div>
+          <div class="itinerary-route__controls">
+            <label>
+              <span>Medio de transporte</span>
+              <select [value]="mode" (change)="setTransportMode($event)">
+                <option value="WALKING">Caminando</option>
+                <option value="DRIVING">En automóvil</option>
+              </select>
+            </label>
+            <label class="itinerary-route__return">
+              <input
+                type="checkbox"
+                [checked]="returnToHotel"
+                (change)="setReturnToHotel($event)"
+              />
+              <span>Regresar al hotel</span>
+            </label>
+            <button
+              type="button"
+              class="itinerary-primary-button"
+              [disabled]="isOptimizing"
+              (click)="optimizeRoute()"
+            >
+              {{ isOptimizing ? "Calculando recorrido…" : "Optimizar mi recorrido" }}
+            </button>
+          </div>
+
+          @if (route) {
+            <div class="itinerary-route__summary">
+              @if (route.distanceMeters > 0) {
+                <div>
+                  <span>Distancia estimada</span>
+                  <strong>{{ formatDistance(route.distanceMeters) }}</strong>
+                </div>
+              }
+              @if (route.durationSeconds > 0) {
+                <div>
+                  <span>Duración estimada</span>
+                  <strong>{{ formatDuration(route.durationSeconds) }}</strong>
+                </div>
+              }
+            </div>
+
+            @if (route.geometry.length > 1) {
+              @defer (on immediate) {
+                <app-tourism-route-map [route]="route"></app-tourism-route-map>
+              } @placeholder {
+                <div class="itinerary-map-unavailable" role="status">
+                  Cargando el mapa del recorrido…
+                </div>
+              }
+            }
+
+            @if (googleMapsLegs.length === 1) {
+              <a
+                class="itinerary-maps-button"
+                [href]="googleMapsLegs[0].url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Abrir recorrido completo en Google Maps
+              </a>
+            } @else if (googleMapsLegs.length > 1) {
+              <div class="itinerary-map-legs">
+                <button
+                  type="button"
+                  class="itinerary-maps-button"
+                  (click)="showMapLegs = !showMapLegs"
+                >
+                  {{ showMapLegs ? "Ocultar tramos" : "Abrir recorrido completo en Google Maps" }}
+                </button>
+                @if (showMapLegs) {
+                  <div class="itinerary-map-legs__links">
+                    @for (leg of googleMapsLegs; track leg.url) {
+                      <a
+                        [href]="leg.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {{ leg.label }}
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
+        </section>
+      </div>
+    </div>
+  }
+</section>
