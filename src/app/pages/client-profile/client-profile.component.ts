@@ -27,6 +27,8 @@ import { RewardsCatalogComponent } from './components/rewards-catalog/rewards-ca
 import { RedeemedRewardsListComponent } from './components/redeemed-rewards-list/redeemed-rewards-list.component';
 import { PointTransactionsListComponent } from './components/point-transactions-list/point-transactions-list.component';
 import { ProfileTab } from './profile-tab.type';
+import { TourismItineraryComponent } from './components/tourism-itinerary/tourism-itinerary.component';
+import { PendingTouristPlaceService } from '../../service/pending-tourist-place.service';
 
 /**
  * Componente del perfil de usuario / historial de reservas y programa de fidelidad del huésped.
@@ -45,6 +47,7 @@ import { ProfileTab } from './profile-tab.type';
     RewardsCatalogComponent,
     RedeemedRewardsListComponent,
     PointTransactionsListComponent,
+    TourismItineraryComponent,
     ErrorAlertComponent,
     SuccessAlertComponent,
     ReservationsListComponent,
@@ -62,6 +65,7 @@ export class ClientProfileComponent implements OnInit {
   private rewardService = inject(RewardService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private pendingTouristPlaceService = inject(PendingTouristPlaceService);
 
   client: Client | null = null;
   reservations: ReservationDTO[] = [];
@@ -105,6 +109,11 @@ export class ClientProfileComponent implements OnInit {
       isStaff && idParam > 0 && idParam !== sessionClient?.id;
     this.isViewingOwnProfile = !viewingOtherClient;
 
+    const tabParam = this.route.snapshot.queryParamMap.get('tab') as ProfileTab | null;
+    if (tabParam && ['overview', 'details', 'edit', 'reservations', 'itinerary', 'rewards', 'redeemed', 'transactions', 'security'].includes(tabParam)) {
+      this.activeTab = tabParam;
+    }
+
     // El personal puede ver el perfil de otra persona por id; el cliente siempre ve el suyo (lo identifica el JWT)
     const client$ = viewingOtherClient
       ? this.clientService.findById(idParam)
@@ -113,6 +122,15 @@ export class ClientProfileComponent implements OnInit {
     client$.subscribe({
       next: (client) => {
         this.client = client;
+        if (
+          this.isViewingOwnProfile &&
+          client.role?.toUpperCase() === 'CLIENT' &&
+          this.pendingTouristPlaceService.hasPending()
+        ) {
+          this.activeTab = 'itinerary';
+        } else if (tabParam) {
+          this.activeTab = tabParam;
+        }
         if (!sessionClient || sessionClient.id === client.id) {
           this.authService.saveSession(client);
         }
@@ -125,6 +143,13 @@ export class ClientProfileComponent implements OnInit {
         this.authService.clearSession();
         this.router.navigate(['/login']);
       },
+    });
+
+    this.route.queryParamMap.subscribe((params) => {
+      const tab = params.get('tab') as ProfileTab | null;
+      if (tab && ['overview', 'details', 'edit', 'reservations', 'itinerary', 'rewards', 'redeemed', 'transactions', 'security'].includes(tab)) {
+        this.activeTab = tab;
+      }
     });
   }
 

@@ -1,0 +1,531 @@
+:host {
+  display: block;
+}
+
+.itinerary-shell {
+  border: 1px solid #e8e2da;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(17 20 19 / 5%);
+  color: #141e26;
+}
+
+.itinerary-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-bottom: 1px solid #ece6de;
+}
+
+.itinerary-eyebrow {
+  color: #bf925a;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  line-height: 1.7;
+  text-transform: uppercase;
+}
+
+.itinerary-header h2,
+.itinerary-empty h3,
+.itinerary-section-heading h3 {
+  margin: 0.45rem 0;
+  color: #141e26;
+  font-family: "Cormorant Garamond", "Cinzel", Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.1;
+  text-transform: none;
+}
+
+.itinerary-header p,
+.itinerary-empty p {
+  margin: 0;
+  color: #746d64;
+  font-size: 0.79rem;
+  line-height: 1.7;
+}
+
+.itinerary-add-link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #bf925a;
+  padding: 0.55rem 0;
+  color: #73503c;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.itinerary-add-link span {
+  font-size: 1rem;
+}
+
+.itinerary-add-link:hover {
+  color: #141e26;
+}
+
+.itinerary-alert,
+.itinerary-pending {
+  margin: 1rem 1.5rem 0;
+  border: 1px solid #d6c6af;
+  padding: 0.8rem 1rem;
+  background: #fbf8f3;
+  color: #604d37;
+  font-size: 0.78rem;
+}
+
+.itinerary-alert--error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-color: #b66c58;
+  background: #fbf4f1;
+  color: #8d3e2e;
+}
+
+.itinerary-alert button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.itinerary-state {
+  display: flex;
+  min-height: 250px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.9rem;
+  color: #746d64;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.15rem;
+}
+
+.itinerary-state__line {
+  width: 4.5rem;
+  height: 1px;
+  background: #bf925a;
+  animation: itinerary-wait 1s ease-in-out infinite alternate;
+}
+
+.itinerary-empty {
+  display: flex;
+  min-height: 340px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem;
+  text-align: center;
+}
+
+.itinerary-empty h3 {
+  max-width: 34rem;
+  margin-top: 0.8rem;
+}
+
+.itinerary-empty p {
+  max-width: 28rem;
+  margin-bottom: 1.5rem;
+}
+
+.itinerary-layout {
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.itinerary-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.4rem;
+}
+
+.itinerary-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.itinerary-section-heading h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.8rem;
+}
+
+.itinerary-reset-route {
+  border: 0;
+  background: transparent;
+  color: #73503c;
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.itinerary-stops {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.itinerary-stop {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(5rem, 8rem) minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #ede7df;
+  padding: 0.8rem;
+  background: #fcfaf7;
+}
+
+.itinerary-stop__number {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border: 1px solid #bf925a;
+  border-radius: 50%;
+  color: #73503c;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 0.68rem;
+}
+
+.itinerary-stop__image {
+  width: 100%;
+  height: 7rem;
+  object-fit: cover;
+  background: #e7e0d7;
+}
+
+.itinerary-stop__image--empty {
+  display: grid;
+  place-items: center;
+  color: #817464;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+}
+
+.itinerary-stop__copy {
+  min-width: 0;
+}
+
+.itinerary-stop__copy > span {
+  color: #bf925a;
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.itinerary-stop h4 {
+  margin: 0.22rem 0;
+  color: #141e26;
+  font-family: "Cormorant Garamond", "Cinzel", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.itinerary-stop p,
+.itinerary-stop small {
+  display: block;
+  margin: 0.25rem 0 0;
+  color: #746d64;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.itinerary-stop small {
+  color: #75634f;
+  font-size: 0.6rem;
+}
+
+.itinerary-stop__credit {
+  color: #82786e !important;
+  font-size: 0.52rem !important;
+  overflow-wrap: anywhere;
+}
+
+.itinerary-stop__actions {
+  margin-top: 0.6rem;
+}
+
+.itinerary-stop__directions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #bf925a;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 160ms ease;
+
+  &:hover {
+    color: #73503c;
+    text-decoration: underline;
+  }
+}
+
+.itinerary-stop__remove {
+  display: grid;
+  width: 1.9rem;
+  height: 1.9rem;
+  place-items: center;
+  border: 1px solid #e2d9cf;
+  background: #fff;
+  color: #73503c;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.itinerary-stop__remove:hover:not(:disabled) {
+  border-color: #8d3e2e;
+  color: #8d3e2e;
+}
+
+.itinerary-stop__remove:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+.itinerary-route {
+  border-top: 1px solid #e8e2da;
+  padding-top: 1.8rem;
+}
+
+.itinerary-route__controls {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.2rem 0 0.8rem;
+}
+
+.itinerary-route__controls > label:first-child {
+  display: grid;
+  flex: 1 1 12rem;
+  gap: 0.4rem;
+  color: #746d64;
+  font-size: 0.61rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.itinerary-route__controls select {
+  min-height: 42px;
+  border: 1px solid #d9d0c4;
+  border-radius: 0;
+  padding: 0.6rem 0.75rem;
+  background: white;
+  color: #141e26;
+  font: inherit;
+  font-size: 0.76rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.itinerary-route__return {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 0.5rem;
+  color: #554a3f;
+  cursor: pointer;
+  font-size: 0.71rem;
+}
+
+.itinerary-route__return input {
+  accent-color: #bf925a;
+}
+
+.itinerary-route__note {
+  margin: 0;
+  color: #82786e;
+  font-size: 0.67rem;
+  line-height: 1.6;
+}
+
+.itinerary-primary-button,
+.itinerary-maps-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #141e26;
+  padding: 0.7rem 1rem;
+  background: #141e26;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 160ms ease;
+}
+
+.itinerary-primary-button:hover:not(:disabled),
+.itinerary-maps-button:hover {
+  border-color: #73503c;
+  background: #73503c;
+}
+
+.itinerary-primary-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.itinerary-route__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.3rem 2rem;
+  margin: 1.2rem 0;
+  border: 1px solid #ede7df;
+  padding: 1rem;
+  background: #fcfaf7;
+}
+
+.itinerary-route__summary div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.itinerary-route__summary span {
+  color: #82786e;
+  font-size: 0.53rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.itinerary-route__summary strong {
+  color: #141e26;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.itinerary-route__summary p {
+  flex: 1 1 100%;
+  margin: 0;
+  color: #746d64;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.itinerary-map-unavailable {
+  margin: 1rem 0;
+  border: 1px solid #d9d0c4;
+  padding: 1.2rem;
+  background: #fcfaf7;
+  color: #746d64;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.itinerary-maps-button {
+  margin-top: 1rem;
+}
+
+.itinerary-map-legs {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.itinerary-map-legs__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+.itinerary-map-legs__links a {
+  color: #73503c;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes itinerary-wait {
+  to {
+    transform: scaleX(0.35);
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 700px) {
+  .itinerary-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .itinerary-stop {
+    grid-template-columns: 1.8rem minmax(4rem, 6rem) minmax(0, 1fr) 1.8rem;
+    gap: 0.65rem;
+    padding: 0.6rem;
+  }
+
+  .itinerary-stop__image {
+    height: 6rem;
+  }
+
+  .itinerary-stop h4 {
+    font-size: 1.12rem;
+  }
+
+  .itinerary-stop p {
+    display: none;
+  }
+
+  .itinerary-route__controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .itinerary-route__controls > label:first-child,
+  .itinerary-route__controls > button {
+    width: 100%;
+  }
+
+  .itinerary-route__return {
+    min-height: 32px;
+  }
+}
+
+@media (max-width: 400px) {
+  .itinerary-stop {
+    grid-template-columns: 1.6rem minmax(0, 1fr) 1.7rem;
+  }
+
+  .itinerary-stop__image {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .itinerary-state__line {
+    animation-duration: 0.01ms;
+  }
+}
