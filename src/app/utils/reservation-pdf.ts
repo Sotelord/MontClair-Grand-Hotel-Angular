@@ -230,20 +230,74 @@ function imageUrlsForRoom(
   return [...urls];
 }
 
-function loadImage(source: string): Promise<HTMLImageElement | null> {
-  if (!source) {
-    return Promise.resolve(null);
-  }
+function loadImageElement(
+  src: string,
+  useCrossOrigin: boolean,
+): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const image = new Image();
-    const imageUrl = new URL(source, document.baseURI);
-    if (imageUrl.origin !== window.location.origin) {
+    if (useCrossOrigin) {
       image.crossOrigin = 'anonymous';
     }
     image.onload = () => resolve(image);
     image.onerror = () => resolve(null);
-    image.src = imageUrl.href;
+    image.src = src;
   });
+}
+
+async function loadImage(source: string): Promise<HTMLImageElement | null> {
+  if (!source) {
+    return null;
+  }
+
+  let imageUrl: URL;
+  try {
+    imageUrl = new URL(source, document.baseURI);
+  } catch {
+    return null;
+  }
+
+  // En producción (HTTPS), evitar bloqueo de Mixed Content si la URL viene con http://
+  if (
+    window.location.protocol === 'https:' &&
+    imageUrl.protocol === 'http:' &&
+    imageUrl.hostname !== 'localhost' &&
+    imageUrl.hostname !== '127.0.0.1'
+  ) {
+    imageUrl.protocol = 'https:';
+  }
+
+  const isCrossOrigin = imageUrl.origin !== window.location.origin;
+
+  // 1) Para orígenes externos, usar fetch con cache: 'no-store' evita el bug de caché
+  //    CORS de Chrome (cuando la misma imagen ya se cargó en <img> sin crossorigin).
+  if (isCrossOrigin) {
+    try {
+      const response = await fetch(imageUrl.href, {
+        mode: 'cors',
+        cache: 'no-store',
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.type.startsWith('image/')) {
+          const objectUrl = URL.createObjectURL(blob);
+          const img = await loadImageElement(objectUrl, false);
+          URL.revokeObjectURL(objectUrl);
+          if (img) {
+            return img;
+          }
+        }
+      }
+    } catch {
+      // Continuar al fallback con Image + cache-buster
+    }
+
+    const cacheBusted = new URL(imageUrl.href);
+    cacheBusted.searchParams.set('_pdf_cors', '1');
+    return loadImageElement(cacheBusted.href, true);
+  }
+
+  return loadImageElement(imageUrl.href, false);
 }
 
 async function loadRoomImage(
