@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { Service } from '../../models/service.model';
 import { RoomType } from '../../models/roomType.model';
@@ -12,7 +11,6 @@ import { GalleryBannerComponent } from './components/gallery-banner/gallery-bann
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
 import { RoomTypeService } from '../../service/room-type.service';
-import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -33,15 +31,11 @@ export class LandingPageComponent implements OnInit {
 
   private serviceService = inject(ServicesService);
   private roomTypeService = inject(RoomTypeService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
 
   serviceArray: Service[] = [];
   roomTypesArray: RoomType[] = [];
 
   ngOnInit(): void {
-    this.redirectIfLoggedIn();
-
     this.serviceService.findNotHidden().subscribe({
       next: (services) => {
         this.serviceArray = services || [];
@@ -58,20 +52,6 @@ export class LandingPageComponent implements OnInit {
       error: () => {
         this.roomTypesArray = [];
       },
-    });
-  }
-
-  /*Si hay una sesión (JWT o cookie), el backend confirma quién es y se redirige según su rol.
-  Si no hay sesión o ya no es válida, se queda en el home.*/
-  private redirectIfLoggedIn(): void {
-    if (!this.authService.getToken() && !this.authService.currentUser) {
-      return;
-    }
-
-    this.authService.restoreSession().subscribe((client) => {
-      if (client) {
-        this.router.navigate(this.authService.getRedirectForClient(client));
-      }
     });
   }
 }

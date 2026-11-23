@@ -26,12 +26,14 @@ import { ServicesStepComponent } from './components/services-step/services-step.
 import { QuoteSummaryComponent } from './components/quote-summary/quote-summary.component';
 import { BookingBenefitsComponent } from './components/booking-benefits/booking-benefits.component';
 import { QuoteActionsComponent } from './components/quote-actions/quote-actions.component';
+import { PageHeaderComponent } from '../../components/page-header/page-header.component';
 
 @Component({
   selector: 'app-client-reservation',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    PageHeaderComponent,
     BookingBreadcrumbComponent,
     LoginRequiredComponent,
     GuestBannerComponent,
@@ -97,7 +99,7 @@ export class ClientReservationComponent implements OnInit {
 
     const sessionClient = this.authService.getSession();
 
-    if (!this.authService.getToken()) {
+    if (!this.authService.getToken() && !sessionClient) {
       this.currentUser = null;
     } else {
       if (sessionClient) {

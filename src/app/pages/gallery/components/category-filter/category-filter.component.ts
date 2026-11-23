@@ -17,4 +17,14 @@ export class CategoryFilterComponent {
   categories = input.required<GalleryCategory[]>();
   selectedId = input.required<string>();
   categorySelected = output<string>();
+
+  select(id: string, event: Event): void {
+    this.categorySelected.emit(id);
+    const button = event.currentTarget as HTMLElement | null;
+    button?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    });
+  }
 }

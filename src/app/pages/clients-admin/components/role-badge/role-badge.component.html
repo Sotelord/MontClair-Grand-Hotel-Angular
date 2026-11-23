@@ -1,18 +1,18 @@
 @if (role() === "ADMIN") {
   <span
-    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-amber-50 text-amber-800 border border-amber-200"
+    class="inline-flex w-[84px] items-center justify-center py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap"
   >
     ADMIN
   </span>
 } @else if (role() === "OPERATOR" || role() === "OPERARIO") {
   <span
-    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+    class="inline-flex w-[84px] items-center justify-center py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 whitespace-nowrap"
   >
     OPERARIO
   </span>
 } @else {
   <span
-    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"
+    class="inline-flex w-[84px] items-center justify-center py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200 whitespace-nowrap"
   >
     CLIENTE
   </span>

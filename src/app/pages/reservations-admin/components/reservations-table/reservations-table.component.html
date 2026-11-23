@@ -1,5 +1,5 @@
 <div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden"
+  class="hidden xl:block bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden"
 >
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse text-xs">
@@ -9,11 +9,9 @@
         >
           <th class="py-4 px-5 font-semibold">ID</th>
           <th class="py-4 px-5 font-semibold">Cliente</th>
-          <th class="py-4 px-5 font-semibold">Habitación Asignada</th>
+          <th class="py-4 px-5 font-semibold">Habitación</th>
           <th class="py-4 px-5 font-semibold">Fechas & Estancia</th>
-          <th class="py-4 px-5 font-semibold">
-            Servicios Contratados (Cuenta)
-          </th>
+          <th class="py-4 px-5 font-semibold">Servicios (Cuenta)</th>
           <th class="py-4 px-5 font-semibold">Estado</th>
           <th class="py-4 px-5 font-semibold text-right">Acciones</th>
         </tr>
@@ -21,9 +19,12 @@
 
       <tbody class="divide-y divide-[#E8E2DA]">
         @for (res of reservations(); track res.id) {
-          <tr class="hover:bg-pampas/60 transition group reservation-table-row" [attr.data-id]="res.id">
+          <tr
+            class="hover:bg-pampas/60 transition group reservation-table-row"
+            [attr.data-id]="res.id"
+          >
             <td
-              class="py-4 px-5 font-mono text-twine-dark font-semibold text-[11px] res-row-id"
+              class="py-4 px-5 text-twine-hover font-semibold text-[11px] tabular-nums res-row-id"
             >
               {{ formatId(res.id) }}
             </td>
@@ -39,47 +40,23 @@
                   removeServiceRequested.emit({
                     reservation: res,
                     serviceId: $event.id,
-                    serviceName: $event.name
+                    serviceName: $event.name,
                   })
                 "
               />
             </td>
 
             <td class="py-4 px-5">
-              @switch (res.status) {
-                @case ('ACTIVE') {
-                  <span
-                    class="res-row-status status-activa inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-emerald-50 text-emerald-800 border border-emerald-300"
-                  >
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                    Activa
-                  </span>
-                }
-                @case ('INACTIVE') {
-                  <span
-                    class="res-row-status status-inactiva inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-slate-100 text-slate-700 border border-slate-300"
-                  >
-                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                    Inactiva
-                  </span>
-                }
-                @case ('CANCELLED') {
-                  <span
-                    class="res-row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-rose-50 text-rose-700 border border-rose-300"
-                  >
-                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                    Cancelada
-                  </span>
-                }
-                @default {
-                  <span
-                    class="res-row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold bg-blue-50 text-blue-800 border border-blue-200"
-                  >
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                    Confirmada
-                  </span>
-                }
-              }
+              <span
+                class="res-row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold border whitespace-nowrap"
+                [class]="statusStyle(res.status).badge"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full"
+                  [class]="statusStyle(res.status).dot"
+                ></span>
+                {{ statusStyle(res.status).label }}
+              </span>
             </td>
 
             <td class="py-4 px-5 text-right">
@@ -110,4 +87,134 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- Celular y tablet -->
+<div class="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+  @for (res of reservations(); track res.id) {
+    <article
+      class="reservation-table-row bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden flex flex-col"
+      [attr.data-id]="res.id"
+    >
+      <!-- CABECERA: ID + estado / cliente -->
+      <header
+        class="px-4 sm:px-5 pt-4 pb-3 border-b border-[#E8E2DA] bg-[#FAF8F5]"
+      >
+        <div class="flex items-center justify-between gap-3 mb-2">
+          <span
+            class="res-row-id text-[11px] font-bold tracking-[1.5px] text-twine-hover tabular-nums"
+          >
+            RESERVA {{ formatId(res.id) }}
+          </span>
+          <span
+            class="res-row-status inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold border whitespace-nowrap"
+            [class]="statusStyle(res.status).badge"
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full"
+              [class]="statusStyle(res.status).dot"
+            ></span>
+            {{ statusStyle(res.status).label }}
+          </span>
+        </div>
+
+        <h3
+          class="font-serif text-lg text-woodsmoke uppercase tracking-[1px] leading-tight"
+        >
+          {{ res.clientFirstName }} {{ res.clientLastName || "" }}
+        </h3>
+        <p class="text-xs text-woodsmoke/60 mt-0.5 break-all">
+          {{ res.clientEmail }}
+          <span class="text-woodsmoke/30 mx-1">•</span>
+          <span class="tabular-nums whitespace-nowrap">{{
+            res.clientPhone || "Sin teléfono"
+          }}</span>
+        </p>
+      </header>
+
+      <div class="p-4 sm:p-5 space-y-4 flex-1 flex flex-col">
+        <!-- HABITACIÓN + FECHAS -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="border border-[#E8E2DA] rounded-[2px] p-3 min-w-0">
+            <span
+              class="block text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/50 mb-1"
+              >Habitación</span
+            >
+            <p
+              class="font-serif text-sm text-woodsmoke uppercase leading-tight truncate"
+            >
+              {{ res.roomTypeName || res.roomName || "—" }}
+            </p>
+            <p class="text-xs text-woodsmoke/70 mt-0.5 tabular-nums">
+              Hab. #{{ res.roomNumber }}
+            </p>
+            <p
+              class="text-[11px] text-twine-hover font-semibold mt-1 tabular-nums"
+            >
+              {{ formatPrice(res.pricePerNight) }} / noche
+            </p>
+          </div>
+
+          <div class="border border-[#E8E2DA] rounded-[2px] p-3 min-w-0">
+            <span
+              class="block text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/50 mb-1"
+              >Estancia</span
+            >
+            <p class="text-xs text-woodsmoke tabular-nums leading-snug">
+              <span class="text-[10px] font-bold text-twine-hover">IN</span>
+              {{ res.checkInDate }}<br />
+              <span class="text-[10px] font-bold text-twine-hover">OUT</span>
+              {{ res.checkOutDate }}
+            </p>
+            <p class="text-[11px] text-woodsmoke/60 mt-1">
+              {{ res.nights }} {{ res.nights === 1 ? "noche" : "noches" }} ·
+              {{ res.numberOfPeople }} huésp.
+            </p>
+          </div>
+        </div>
+
+        <!-- CUENTA -->
+        <div class="border border-[#E8E2DA] rounded-[2px] p-3 bg-[#FAF8F5]">
+          <span
+            class="block text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/50 mb-2"
+            >Cuenta</span
+          >
+          <app-account-cell
+            [reservation]="res"
+            [allowRemoveService]="isOperatorMode()"
+            (removeServiceClicked)="
+              removeServiceRequested.emit({
+                reservation: res,
+                serviceId: $event.id,
+                serviceName: $event.name,
+              })
+            "
+          />
+        </div>
+
+        <!-- ACCIONES CON NOMBRE (en celular los íconos solos no se entienden) -->
+        <div class="pt-4 mt-auto border-t border-[#E8E2DA]">
+          <app-row-actions
+            [reservation]="res"
+            [isOperatorMode]="isOperatorMode()"
+            [labeled]="true"
+            (viewClicked)="viewRequested.emit(res.id)"
+            (editClicked)="editRequested.emit(res.id)"
+            (activateClicked)="activateRequested.emit(res)"
+            (addServiceClicked)="addServiceRequested.emit(res)"
+            (payClicked)="payRequested.emit(res)"
+            (finishClicked)="finishRequested.emit(res)"
+            (cancelClicked)="cancelRequested.emit(res)"
+            (deleteClicked)="deleteRequested.emit(res)"
+          />
+        </div>
+      </div>
+    </article>
+  } @empty {
+    <div
+      class="md:col-span-2 bg-white border border-[#E8E2DA] rounded-[4px] py-12 px-6 text-center text-woodsmoke/50 italic text-sm"
+    >
+      No se encontraron reservas registradas actualmente.
+    </div>
+  }
 </div>

@@ -20,4 +20,11 @@ export class ClientsTableComponent {
   formatId(id: number): string {
     return '#' + String(id).padStart(3, '0');
   }
+
+  roleLabel(role?: string): string {
+    const r = role?.toUpperCase();
+    if (r === 'ADMIN') return 'Personal Administrativo';
+    if (r === 'OPERATOR' || r === 'OPERARIO') return 'Personal Operativo';
+    return 'Huésped Registrado';
+  }
 }

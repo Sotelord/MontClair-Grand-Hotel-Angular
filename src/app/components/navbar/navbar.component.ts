@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { Client } from '../../models/client.model';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, NgClass],
+  imports: [RouterLink, RouterLinkActive, NgClass],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
@@ -22,10 +22,18 @@ export class NavbarComponent {
   }
 
   get isBlueHeaderPage(): boolean {
-    return (
-      this.router.url.startsWith('/profile') ||
-      this.router.url.startsWith('/reservations/book')
-    );
+    return false;
+  }
+
+  navLinkClass(isActive: boolean): string {
+    if (this.isBlueHeaderPage) {
+      return isActive
+        ? 'text-[#D9C08E] border-[#D9C08E] font-bold'
+        : 'text-white hover:text-[#E8D8B5] border-transparent';
+    }
+    return isActive
+      ? 'text-twine border-twine font-bold'
+      : 'text-woodsmoke hover:text-twine border-transparent';
   }
 
   toggleMenu(): void {

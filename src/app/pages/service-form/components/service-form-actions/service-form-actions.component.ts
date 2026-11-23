@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -8,4 +8,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './service-form-actions.component.scss',
   standalone: true,
 })
-export class ServiceFormActionsComponent {}
+export class ServiceFormActionsComponent {
+  isEditMode = input<boolean>(false);
+
+  isSubmitting = input<boolean>(false);
+}

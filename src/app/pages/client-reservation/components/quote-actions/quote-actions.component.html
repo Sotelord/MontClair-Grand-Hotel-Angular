@@ -1,9 +1,9 @@
-<div class="space-y-3 pt-2">
+<div class="space-y-3 pt-1">
   <button
     type="submit"
     id="btn-confirmar-reserva"
     [disabled]="isDisabled()"
-    class="w-full bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold py-4 px-4 rounded-[2px] transition duration-300 shadow-md cursor-pointer disabled:opacity-50"
+    class="w-full bg-twine hover:bg-twine-hover text-white text-[10.5px] uppercase tracking-[2px] font-bold py-4 px-4 transition-colors duration-300 shadow-sm cursor-pointer disabled:opacity-50"
   >
     {{
       isSubmitting()
@@ -16,7 +16,7 @@
 
   <a
     [routerLink]="isEditMode() ? ['/profile', clientId()] : ['/rooms/cards']"
-    class="w-full text-center block border border-[#E8E2DA] hover:bg-pampas text-woodsmoke/70 text-[10px] uppercase tracking-wider font-semibold py-2.5 px-4 rounded-[2px] transition"
+    class="w-full text-center block border border-[#E8E2DA] hover:border-twine text-woodsmoke/75 hover:text-twine text-[10px] uppercase tracking-[2px] font-bold py-3 px-4 transition-colors duration-300"
   >
     {{
       isEditMode() ? "Cancelar y Volver a Mi Perfil" : "Ver Otras Habitaciones"

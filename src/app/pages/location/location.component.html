@@ -3,18 +3,20 @@
   title="Nuestra Ubicación"
   description="Situados en el corazón del Mediterráneo, ofreciendo vistas inigualables y acceso directo a lo mejor de Mónaco. Descubra cómo llegar a su escape perfecto."
 ></app-page-header>
-<main class="bg-[#F5F1EB] py-16 px-6 flex-grow">
-  <div class="max-w-6xl mx-auto space-y-16">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-      <div class="lg:col-span-1 space-y-10">
+<main class="bg-[#F5F1EB] py-8 sm:py-12 lg:py-16 px-4 sm:px-6 flex-grow">
+  <div class="max-w-6xl mx-auto space-y-8 sm:space-y-12 lg:space-y-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12 items-start">
+      <div
+        class="lg:col-span-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6 lg:gap-10"
+      >
         <app-address-card></app-address-card>
         <app-contact-card></app-contact-card>
-        <app-access-card></app-access-card>
+        <app-access-card class="sm:col-span-2 lg:col-span-1"></app-access-card>
       </div>
       <app-location-map class="lg:col-span-2"></app-location-map>
     </div>
     <app-poi-section [points]="pointsOfInterest"></app-poi-section>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
       @for (transfer of transferServices; track transfer.title) {
         <app-transfer-card [transfer]="transfer"></app-transfer-card>
       }

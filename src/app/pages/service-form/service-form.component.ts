@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ServicesService } from '../../service/services.service';
 import { Service } from '../../models/service.model';
 import { ServiceFormBannerComponent } from './components/service-form-banner/service-form-banner.component';
@@ -13,17 +13,20 @@ import { ServiceMainFieldsComponent } from './components/service-main-fields/ser
 import { ServiceDetailsFieldsComponent } from './components/service-details-fields/service-details-fields.component';
 import { ServiceImageFieldComponent } from './components/service-image-field/service-image-field.component';
 import { ServiceFormActionsComponent } from './components/service-form-actions/service-form-actions.component';
+import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
 
 @Component({
   selector: 'app-service-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     ServiceFormBannerComponent,
     ServiceMainFieldsComponent,
     ServiceDetailsFieldsComponent,
     ServiceImageFieldComponent,
     ServiceFormActionsComponent,
+    ErrorAlertComponent,
   ],
   templateUrl: './service-form.component.html',
   styleUrl: './service-form.component.scss',
@@ -38,6 +41,9 @@ export class ServiceFormComponent implements OnInit {
   isEditMode: boolean = false;
   currentServiceId?: number;
   private currentService?: Service;
+
+  errorMessage: string | null = null;
+  isSubmitting = false;
 
   constructor() {
     this.serviceForm = this.fb.group({
@@ -72,8 +78,16 @@ export class ServiceFormComponent implements OnInit {
   }
 
   handleSubmit(): void {
+    this.errorMessage = null;
+
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
+      this.errorMessage =
+        'Por favor completa correctamente los campos marcados.';
+      return;
+    }
+
+    if (this.isSubmitting) {
       return;
     }
 
@@ -85,24 +99,34 @@ export class ServiceFormComponent implements OnInit {
       galleryImages: [],
       hidden: false,
       ...this.currentService,
-      name: formValue.name,
-      description: formValue.description,
+      name: formValue.name.trim(),
+      description: formValue.description.trim(),
       price: Number(formValue.price),
-      imageUrl: formValue.imageUrl,
-      tag: formValue.tag,
-      schedule: formValue.schedule,
+      imageUrl: formValue.imageUrl.trim(),
+      tag: formValue.tag.trim(),
+      schedule: formValue.schedule.trim(),
     };
 
-    if (this.isEditMode && this.currentServiceId) {
-      this.servicesService.update(this.currentServiceId, service).subscribe({
-        next: () => this.router.navigate(['/admin/services']),
-        error: () => {},
-      });
-    } else {
-      this.servicesService.add(service).subscribe({
-        next: () => this.router.navigate(['/admin/services']),
-        error: () => {},
-      });
-    }
+    this.isSubmitting = true;
+
+    const request$ =
+      this.isEditMode && this.currentServiceId
+        ? this.servicesService.update(this.currentServiceId, service)
+        : this.servicesService.add(service);
+
+    request$.subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.router.navigate(['/admin/services']);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage =
+          err?.error?.message ||
+          (this.isEditMode
+            ? 'No se pudo actualizar el servicio. Intenta nuevamente.'
+            : 'No se pudo guardar el servicio. Verifica que el nombre no exista ya.');
+      },
+    });
   }
 }

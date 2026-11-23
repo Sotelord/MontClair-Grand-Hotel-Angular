@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ClientService } from '../../service/client.service';
 import { Client } from '../../models/client.model';
@@ -22,6 +22,7 @@ import { LoginLinkComponent } from './components/login-link/login-link.component
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     ClientFormHeaderComponent,
     PersonalInfoFieldsComponent,
     ErrorAlertComponent,
@@ -141,6 +142,9 @@ export class ClientFormComponent implements OnInit {
           },
         });
     } else {
+      if (!this.isAdminView) {
+        this.authService.clearSession();
+      }
       this.clientService.add(clientData).subscribe({
         next: (savedClient) => {
           if (this.isAdminView) {

@@ -1,0 +1,128 @@
+<div class="space-y-5 sm:space-y-6">
+  <!-- Encabezado sobre el fondo beige -->
+  <header>
+    <span
+      class="font-sans text-[10px] uppercase tracking-[3px] text-twine font-bold block mb-2"
+    >
+      PROGRAMA MONTCLAIR PRIVILÈGE
+    </span>
+    <h2
+      class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-woodsmoke"
+    >
+      Catálogo de Recompensas
+    </h2>
+    <div class="flex items-center gap-3 mt-3" aria-hidden="true">
+      <div class="h-[1px] w-12 bg-twine"></div>
+      <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+    </div>
+    <p class="text-sm text-woodsmoke/70 mt-3 max-w-2xl leading-relaxed">
+      Canjee sus puntos acumulados por experiencias exclusivas, gastronomía de
+      autor, sesiones de spa y ascensos de suite.
+    </p>
+  </header>
+
+  <!--
+    FRANJA DE SALDO
+    Celular: saldo y categoría lado a lado; el enlace a canjeados debajo, a todo el ancho.
+    Desde sm: todo en una fila.
+  -->
+  <div
+    class="shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] bg-mirage text-white border-l-4 border-twine px-5 py-4 sm:px-6 grid grid-cols-2 gap-x-4 gap-y-3 sm:flex sm:items-center sm:gap-8"
+  >
+    <div>
+      <span
+        class="font-sans text-[10px] uppercase tracking-[2px] text-twine font-bold block whitespace-nowrap"
+      >
+        Saldo disponible
+      </span>
+      <span
+        class="font-serif text-2xl text-white font-semibold whitespace-nowrap"
+      >
+        {{ userPoints() | number }}
+        <span class="text-xs text-twine font-sans uppercase">pts</span>
+      </span>
+    </div>
+
+    <div class="sm:border-l sm:border-white/15 sm:pl-8">
+      <span
+        class="font-sans text-[10px] uppercase tracking-[2px] text-[#C2C9D1] font-bold block"
+      >
+        Categoría
+      </span>
+      <span class="font-serif text-lg text-twine uppercase tracking-wider">
+        {{ summary()?.tierLabel || "Classic" }}
+      </span>
+    </div>
+
+    <button
+      type="button"
+      (click)="viewRedeemedClicked.emit()"
+      class="col-span-2 sm:ml-auto text-left sm:text-right pt-3 sm:pt-0 border-t border-white/10 sm:border-0 text-[10px] uppercase tracking-[2px] font-bold text-twine hover:text-white transition-colors cursor-pointer"
+    >
+      Mis canjeados ({{ summary()?.redeemedCount || 0 }}) &rarr;
+    </button>
+  </div>
+
+  <!-- FILTRO DE CATEGORÍAS: fila que se desliza horizontalmente si no cabe -->
+  <div
+    class="-mx-4 sm:mx-0 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    role="group"
+    aria-label="Filtrar recompensas por categoría"
+  >
+    <div class="flex flex-nowrap gap-2 w-max px-4 sm:px-0">
+      @for (cat of categories(); track cat) {
+        <button
+          type="button"
+          (click)="selectedCategory.set(cat)"
+          [attr.aria-pressed]="selectedCategory() === cat"
+          class="shrink-0 whitespace-nowrap px-4 py-2.5 text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-200 cursor-pointer border"
+          [ngClass]="
+            selectedCategory() === cat
+              ? 'bg-mirage text-white border-mirage shadow-sm'
+              : 'bg-white text-woodsmoke/75 border-[#E8E2DA] hover:border-twine hover:text-twine'
+          "
+        >
+          {{ categoryLabel(cat) }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- GRILLA DE RECOMPENSAS -->
+  @if (filteredRewards().length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+      @for (reward of filteredRewards(); track reward.id) {
+        <app-reward-card
+          [reward]="reward"
+          [userPoints]="userPoints()"
+          [userTier]="userTier()"
+          [isRedeeming]="redeemingRewardId() === reward.id"
+          [canRedeemAction]="canRedeemAction()"
+          (redeemClicked)="openConfirmModal($event)"
+        ></app-reward-card>
+      }
+    </div>
+  } @else {
+    <div
+      class="bg-white border border-[#E8E2DA] py-14 px-6 text-center text-sm text-woodsmoke/65 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+    >
+      No hay recompensas disponibles en esta categoría en este momento.
+    </div>
+  }
+</div>
+
+<!-- REUTILIZACIÓN DE APP-CONFIRM-MODAL PARA CONFIRMAR EL CANJE -->
+@if (pendingReward(); as reward) {
+  <app-confirm-modal
+    title="Confirmar Canje de Recompensa"
+    confirmLabel="Confirmar Canje"
+    variant="primary"
+    (confirmed)="confirmRedemption()"
+    (cancelled)="closeConfirmModal()"
+  >
+    ¿Desea canjear <strong>{{ reward.name }}</strong> por
+    <strong>{{ reward.pointsCost | number }} puntos</strong>? Se descontarán
+    inmediatamente de su saldo disponible ({{ userPoints() | number }} pts) y
+    recibirá un código único en su sección <strong>Canjeados</strong>.
+  </app-confirm-modal>
+}

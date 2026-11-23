@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .map-section {
   padding: 80px 16px;
   background-color: #ffffff;
@@ -45,4 +49,25 @@
   border: none;
   border-radius: 12px;
   display: block;
+}
+
+/* Celular */
+@media (max-width: 639px) {
+  .map-section {
+    padding: 56px 16px;
+  }
+
+  .map-header {
+    margin-bottom: 24px;
+  }
+
+  .map-container {
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  .map-container iframe {
+    height: 300px;
+    border-radius: 8px;
+  }
 }

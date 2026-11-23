@@ -1,13 +1,16 @@
-<div class="mb-6 flex items-center gap-2 text-xs text-woodsmoke/60">
-  <a routerLink="/rooms/cards" class="hover:text-twine transition"
+<nav
+  aria-label="Ruta de navegación"
+  class="mb-5 sm:mb-6 flex items-center gap-2 text-sm text-woodsmoke/60 min-w-0"
+>
+  <a routerLink="/rooms/cards" class="hover:text-twine transition shrink-0"
     >Habitaciones</a
   >
-  <span>/</span>
-  <span class="text-woodsmoke font-semibold">
+  <span aria-hidden="true">/</span>
+  <span class="text-woodsmoke font-semibold truncate">
     {{
       isEditMode()
         ? "Modificar Reserva #" + reservationId()
         : "Reserva de Huésped"
     }}
   </span>
-</div>
+</nav>

@@ -10,5 +10,6 @@ import { RouterLink } from '@angular/router';
 })
 export class RoomTypeFormActionsComponent {
   isEditMode = input.required<boolean>();
-  isInvalid = input.required<boolean>();
+  isInvalid = input<boolean>(false);
+  isSubmitting = input<boolean>(false);
 }

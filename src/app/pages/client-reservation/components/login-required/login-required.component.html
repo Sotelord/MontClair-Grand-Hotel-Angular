@@ -1,5 +1,5 @@
 <div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] p-8 sm:p-12 text-center shadow-lg max-w-2xl mx-auto"
+  class="bg-white border border-[#E8E2DA] rounded-[4px] px-6 py-10 sm:p-12 text-center shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] max-w-2xl mx-auto"
 >
   <div
     class="w-16 h-16 rounded-full bg-twine/10 text-twine flex items-center justify-center mx-auto mb-4"
@@ -9,6 +9,7 @@
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      aria-hidden="true"
     >
       <path
         stroke-linecap="round"
@@ -19,26 +20,30 @@
     </svg>
   </div>
 
-  <h2 class="font-serif text-2xl uppercase tracking-[1px] text-woodsmoke mb-3">
+  <h2
+    class="font-serif text-xl sm:text-2xl uppercase tracking-[1px] text-woodsmoke mb-3"
+  >
     Identifíquese para Reservar
   </h2>
 
-  <p class="text-xs text-woodsmoke/70 leading-relaxed mb-6 font-light">
+  <p
+    class="text-sm text-woodsmoke/70 leading-relaxed mb-6 font-light max-w-md mx-auto"
+  >
     Para formalizar su reserva y vincularla a su historial de huésped
     distinguido, por favor inicie sesión con su cuenta o regístrese.
   </p>
 
-  <div class="flex flex-wrap justify-center gap-4">
+  <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
     <a
       routerLink="/login"
-      class="bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold py-3.5 px-8 rounded-[2px] transition shadow-md"
+      class="block text-center bg-twine hover:bg-twine-hover text-white text-xs uppercase tracking-widest font-bold py-3.5 px-8 rounded-[2px] transition shadow-md"
     >
       Iniciar Sesión
     </a>
 
     <a
       routerLink="/rooms/cards"
-      class="border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold py-3.5 px-6 rounded-[2px] transition"
+      class="block text-center border border-[#E8E2DA] hover:bg-pampas text-woodsmoke text-xs uppercase tracking-widest font-bold py-3.5 px-6 rounded-[2px] transition"
     >
       Ver Habitaciones
     </a>

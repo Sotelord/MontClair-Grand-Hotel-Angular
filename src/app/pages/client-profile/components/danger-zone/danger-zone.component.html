@@ -1,15 +1,24 @@
 <div
-  class="bg-white border border-red-200 rounded-[4px] shadow-lg p-6 sm:p-8 mt-8"
+  class="bg-white border border-[#E8E2DA] border-l-4 border-l-rose-300 p-6 sm:p-8 transition-shadow hover:shadow-xl shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
 >
   <div
-    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
   >
     <div>
-      <h2 class="font-serif text-lg uppercase tracking-[1px] text-red-800">
-        Zona de peligro
-      </h2>
-      <p class="text-xs text-woodsmoke/60 mt-1">
-        Eliminar tu perfil borra permanentemente tu cuenta.
+      <span
+        class="font-sans text-[10px] uppercase tracking-[3px] text-rose-700 font-bold block mb-2"
+      >
+        ZONA DE RIESGO
+      </span>
+      <h3
+        class="font-serif text-lg sm:text-xl uppercase tracking-[1.5px] text-woodsmoke"
+      >
+        Desactivación de Perfil
+      </h3>
+      <p class="text-sm text-woodsmoke/65 mt-2 max-w-xl leading-relaxed">
+        Si desea dar de baja su perfil de huésped de forma permanente, tenga en
+        cuenta que esta acción no se puede deshacer y requiere no tener
+        estancias activas asociadas.
       </p>
     </div>
 
@@ -17,7 +26,7 @@
       type="button"
       (click)="deleteRequested.emit()"
       [disabled]="isDeleting()"
-      class="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer"
+      class="w-full sm:w-auto border border-rose-200 hover:border-rose-700 hover:bg-rose-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-rose-700 text-[10px] uppercase tracking-[2px] font-bold py-3.5 px-6 transition-colors duration-300 cursor-pointer shrink-0"
     >
       {{ isDeleting() ? "Eliminando..." : "Eliminar Perfil" }}
     </button>

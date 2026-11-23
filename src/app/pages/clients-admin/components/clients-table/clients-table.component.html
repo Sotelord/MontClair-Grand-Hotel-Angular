@@ -1,5 +1,5 @@
 <div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden"
+  class="hidden lg:block bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden"
 >
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse text-xs">
@@ -21,7 +21,7 @@
         @for (c of clients(); track c.id) {
           <tr class="hover:bg-pampas/60 transition group">
             <td
-              class="py-4 px-6 font-mono text-twine-dark font-semibold text-[11px]"
+              class="py-4 px-6 text-twine-hover font-semibold text-[11px] tabular-nums"
             >
               {{ formatId(c.id) }}
             </td>
@@ -30,7 +30,7 @@
               <div class="flex items-center gap-3">
                 <img
                   [src]="c.avatarUrl || defaultAvatar"
-                  alt="Avatar"
+                  [alt]="c.firstName"
                   class="w-9 h-9 rounded-full object-cover border border-twine/40 shadow-xs"
                 />
                 <div>
@@ -38,25 +38,19 @@
                     {{ c.firstName }} {{ c.lastName || "" }}
                   </p>
                   <span
-                    class="text-[10px] uppercase tracking-wider text-twine-dark font-medium"
+                    class="text-[10px] uppercase tracking-wider text-twine-hover font-medium"
                   >
-                    {{
-                      c.role === "ADMIN"
-                        ? "Personal Administrativo"
-                        : c.role === "OPERATOR" || c.role === "OPERARIO"
-                          ? "Personal Operativo"
-                          : "Huésped Registrado"
-                    }}
+                    {{ roleLabel(c.role) }}
                   </span>
                 </div>
               </div>
             </td>
 
-            <td class="py-4 px-6 text-woodsmoke/80 font-mono text-xs">
+            <td class="py-4 px-6 text-woodsmoke/80 text-xs tabular-nums">
               {{ c.username }}
             </td>
             <td class="py-4 px-6 text-woodsmoke/80 text-xs">{{ c.email }}</td>
-            <td class="py-4 px-6 text-woodsmoke/80 font-mono text-xs">
+            <td class="py-4 px-6 text-woodsmoke/80 text-xs tabular-nums">
               {{ c.phone || "—" }}
             </td>
 
@@ -71,6 +65,7 @@
                   (click)="editRequested.emit(c.id)"
                   class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
                   title="Editar Cliente"
+                  aria-label="Editar cliente"
                 >
                   <svg
                     class="w-4 h-4"
@@ -95,6 +90,7 @@
                   (click)="deleteRequested.emit(c)"
                   class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
                   title="Eliminar Cliente"
+                  aria-label="Eliminar cliente"
                 >
                   <svg
                     class="w-4 h-4"
@@ -127,4 +123,120 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- Celular y tablet -->
+<div class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+  @for (c of clients(); track c.id) {
+    <article
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden flex flex-col"
+    >
+      <!-- CABECERA: foto, nombre, tipo de cuenta y rol -->
+      <header
+        class="flex items-center gap-3 px-4 py-4 bg-[#FAF8F5] border-b border-[#E8E2DA]"
+      >
+        <img
+          [src]="c.avatarUrl || defaultAvatar"
+          [alt]="c.firstName"
+          class="w-12 h-12 rounded-full object-cover border-2 border-twine/50 shrink-0"
+        />
+        <div class="min-w-0 flex-1">
+          <span
+            class="block text-[10px] font-bold tracking-[1.5px] text-twine-hover tabular-nums"
+          >
+            {{ formatId(c.id) }}
+          </span>
+          <h3
+            class="font-serif text-base text-woodsmoke uppercase tracking-[0.5px] leading-tight truncate"
+          >
+            {{ c.firstName }} {{ c.lastName || "" }}
+          </h3>
+          <span
+            class="text-[10px] uppercase tracking-wider text-woodsmoke/55"
+            >{{ roleLabel(c.role) }}</span
+          >
+        </div>
+        <div class="shrink-0 self-start">
+          <app-role-badge [role]="c.role" />
+        </div>
+      </header>
+
+      <!-- DATOS DE CONTACTO -->
+      <dl class="px-4 py-3 text-sm divide-y divide-[#F0EAE2] flex-1">
+        <div class="flex justify-between gap-4 py-2">
+          <dt class="text-woodsmoke/55 shrink-0">Usuario</dt>
+          <dd class="text-woodsmoke text-right min-w-0 truncate">
+            &#64;{{ c.username }}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4 py-2">
+          <dt class="text-woodsmoke/55 shrink-0">Correo</dt>
+          <dd class="text-woodsmoke text-right min-w-0 break-all">
+            {{ c.email }}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4 py-2">
+          <dt class="text-woodsmoke/55 shrink-0">Teléfono</dt>
+          <dd class="text-woodsmoke text-right tabular-nums">
+            {{ c.phone || "—" }}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="grid grid-cols-2 gap-2 px-4 pb-4 pt-1">
+        <button
+          type="button"
+          (click)="editRequested.emit(c.id)"
+          class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 text-[10px] uppercase tracking-[1px] font-bold text-blue-700 border border-blue-200 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
+        >
+          <svg
+            class="w-4 h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path
+              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+            ></path>
+            <path
+              d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+            ></path>
+          </svg>
+          Editar
+        </button>
+        <button
+          type="button"
+          (click)="deleteRequested.emit(c)"
+          class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 text-[10px] uppercase tracking-[1px] font-bold text-red-600 border border-red-200 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
+        >
+          <svg
+            class="w-4 h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            ></path>
+          </svg>
+          Eliminar
+        </button>
+      </div>
+    </article>
+  } @empty {
+    <div
+      class="sm:col-span-2 bg-white border border-[#E8E2DA] rounded-[4px] py-12 px-6 text-center text-woodsmoke/50 italic text-sm"
+    >
+      No se encontraron clientes que coincidan con la búsqueda.
+    </div>
+  }
 </div>

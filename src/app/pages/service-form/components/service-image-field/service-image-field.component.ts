@@ -10,19 +10,18 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class ServiceImageFieldComponent {
   form = input.required<FormGroup>();
+
+  get imageUrl(): string {
+    return (this.form().get('imageUrl')?.value || '').trim();
+  }
+
   getFieldError(form: FormGroup, fieldName: string): string | null {
     const control = form.get(fieldName);
     if (!control || !control.touched || !control.errors) {
       return null;
     }
     if (control.errors['required']) {
-      return 'Este campo es obligatorio.';
-    }
-    if (control.errors['minlength']) {
-      return `Debe tener al menos ${control.errors['minlength'].requiredLength} caracteres.`;
-    }
-    if (control.errors['min']) {
-      return `El valor mínimo es ${control.errors['min'].min}.`;
+      return 'La imagen es obligatoria: se usa en la tarjeta del servicio.';
     }
     return 'Valor no válido.';
   }

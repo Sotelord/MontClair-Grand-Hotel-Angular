@@ -102,6 +102,12 @@ export class ReservationService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  //Dispara manualmente una llamada telefónica del Agente de Voz Conversacional (Sofía) para una reserva.
+  triggerVoiceCall(reservationId: number, phoneNumber?: string): Observable<any> {
+    const body = phoneNumber && phoneNumber.trim() ? { phoneNumber: phoneNumber.trim() } : {};
+    return this.http.post<any>(`${environment.apiUrl}/ai/voice/call/reservation/${reservationId}`, body);
+  }
+
   /*Convierte una fecha "YYYY-MM-DD" a milisegundos en UTC a medianoche. Se usa UTC para que la zona horaria o el horario de verano no alteren
   la diferencia de días entre dos fechas.*/
   private parseIsoDateUtc(dateStr: string): number | null {

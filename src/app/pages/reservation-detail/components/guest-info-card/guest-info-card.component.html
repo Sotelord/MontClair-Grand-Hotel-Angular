@@ -1,37 +1,37 @@
-<div
-  class="p-5 bg-pampas/40 border border-[#E8E2DA] rounded-[2px] space-y-3 h-full"
->
+<div class="p-5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] h-full">
   <span
-    class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark block"
+    class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block mb-3"
   >
-    1. INFORMACIÓN DEL HUÉSPED
+    1. Información del huésped
   </span>
-  <div class="space-y-1.5 text-xs text-woodsmoke">
-    <div class="flex justify-between">
-      <span class="text-woodsmoke/60">Nombre Completo:</span>
-      <span class="font-semibold uppercase">
+
+  <dl class="text-sm text-woodsmoke divide-y divide-[#E8E2DA]/70">
+    <div class="flex justify-between gap-4 py-2">
+      <dt class="text-woodsmoke/60 shrink-0">Nombre</dt>
+      <dd class="font-semibold uppercase text-right min-w-0">
         {{ guestFullName }}
-      </span>
+      </dd>
     </div>
-    <div class="flex justify-between">
-      <span class="text-woodsmoke/60">Correo Electrónico:</span>
-      <span class="font-mono">{{ guestEmail }}</span>
+    <div class="flex justify-between gap-4 py-2">
+      <dt class="text-woodsmoke/60 shrink-0">Correo</dt>
+      <dd class="text-right min-w-0 break-all">{{ guestEmail }}</dd>
     </div>
-    <div class="flex justify-between">
-      <span class="text-woodsmoke/60">Teléfono:</span>
-      <span class="font-mono">{{ guestPhone }}</span>
+    <div class="flex justify-between gap-4 py-2">
+      <dt class="text-woodsmoke/60 shrink-0">Teléfono</dt>
+      <dd class="text-right tabular-nums">{{ guestPhone }}</dd>
     </div>
-    <div class="flex justify-between">
-      <span class="text-woodsmoke/60">Número de Huéspedes:</span>
-      <span class="font-semibold"
-        >{{ reservation().numberOfPeople }} Huéspedes</span
-      >
+    <div class="flex justify-between gap-4 py-2">
+      <dt class="text-woodsmoke/60 shrink-0">Huéspedes</dt>
+      <dd class="font-semibold text-right">
+        {{ reservation().numberOfPeople }}
+        {{ reservation().numberOfPeople === 1 ? "persona" : "personas" }}
+      </dd>
     </div>
-    <div class="flex justify-between pt-1 border-t border-[#E8E2DA]/60">
-      <span class="text-woodsmoke/60">Código de Cliente:</span>
-      <span class="font-mono text-twine-dark font-semibold"
-        >#CLI-{{ guestId }}</span
-      >
+    <div class="flex justify-between gap-4 pt-2">
+      <dt class="text-woodsmoke/60 shrink-0">Código de cliente</dt>
+      <dd class="text-twine-hover font-semibold text-right tabular-nums">
+        #CLI-{{ guestId }}
+      </dd>
     </div>
-  </div>
+  </dl>
 </div>

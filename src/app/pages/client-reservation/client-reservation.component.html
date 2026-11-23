@@ -1,75 +1,97 @@
-<section class="max-w-6xl w-full mx-auto p-6 sm:p-8 lg:p-12">
-  <app-booking-breadcrumb
-    [isEditMode]="isEditMode"
-    [reservationId]="reservationId"
-  ></app-booking-breadcrumb>
-  @if (!currentUser) {
-    <app-login-required></app-login-required>
-  } @else {
-    <app-guest-banner
-      [client]="currentUser"
-      [isEditMode]="isEditMode"
-      [reservationId]="reservationId"
-    ></app-guest-banner>
-    @if (errorMessage) {
-      <app-error-alert
-        [message]="errorMessage"
-        (closed)="errorMessage = null"
-      ></app-error-alert>
-    }
+<div class="bg-pampas min-h-screen pb-16 sm:pb-24">
+  <app-page-header
+    superiorText="MONTCLAIR GRAND HOTEL"
+    [title]="
+      isEditMode ? 'Modificar Reserva #' + reservationId : 'Reservar Estancia'
+    "
+    description="Seleccione su suite de preferencia, fechas de estancia y experiencias de conserjería con tarifa oficial directa garantizada."
+  ></app-page-header>
+  <section class="max-w-6xl w-full mx-auto px-4 sm:px-6 mt-6 sm:mt-10 lg:mt-12">
+    @if (!currentUser) {
+      <app-login-required></app-login-required>
+    } @else {
+      <app-guest-banner
+        [client]="currentUser"
+        [isEditMode]="isEditMode"
+        [reservationId]="reservationId"
+      ></app-guest-banner>
 
-    @if (successMessage) {
-      <app-success-alert [message]="successMessage"></app-success-alert>
-    }
+      <app-booking-breadcrumb
+        [isEditMode]="isEditMode"
+        [reservationId]="reservationId"
+      ></app-booking-breadcrumb>
 
-    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-8">
-          <!-- PASO 1 -->
-          <app-room-type-step
-            [form]="bookingForm"
-            [roomTypes]="roomTypes"
-            [selectedRoomType]="selectedRoomType"
-          ></app-room-type-step>
-          <!-- PASO 2 -->
-          <app-dates-step
-            [form]="bookingForm"
-            [isEditMode]="isEditMode"
-            [todayDate]="todayDate"
-            [minCheckOutDate]="minCheckOutDate"
-            [nightsCount]="nightsCount"
-          ></app-dates-step>
-          <!-- PASO 3 -->
-          <app-services-step
-            [services]="services"
-            [selectedIds]="selectedServiceIds"
-            (toggled)="toggleService($event)"
-          ></app-services-step>
+      @if (errorMessage) {
+        <div class="mb-6">
+          <app-error-alert
+            [message]="errorMessage"
+            (closed)="errorMessage = null"
+          ></app-error-alert>
         </div>
+      }
 
-        <!-- RESUMEN -->
-        <div class="lg:col-span-1">
-          <div
-            class="bg-white border border-[#E8E2DA] rounded-[4px] p-6 sm:p-8 shadow-lg sticky top-24 space-y-6"
-          >
-            <app-quote-summary
+      @if (successMessage) {
+        <div class="mb-6">
+          <app-success-alert [message]="successMessage"></app-success-alert>
+        </div>
+      }
+
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start"
+        >
+          <div class="lg:col-span-8 space-y-6 lg:space-y-8 min-w-0">
+            <!-- PASO 1 -->
+            <app-room-type-step
+              [form]="bookingForm"
+              [roomTypes]="roomTypes"
               [selectedRoomType]="selectedRoomType"
-              [nightsCount]="nightsCount"
-              [roomTotal]="roomTotal"
-              [servicesCount]="selectedServiceIds.size"
-              [servicesTotal]="servicesTotal"
-              [grandTotal]="grandTotal"
-            ></app-quote-summary>
-            <app-booking-benefits></app-booking-benefits>
-            <app-quote-actions
-              [isSubmitting]="isSubmitting"
-              [isDisabled]="isSubmitting || !selectedRoomType"
+            ></app-room-type-step>
+            <!-- PASO 2 -->
+            <app-dates-step
+              [form]="bookingForm"
               [isEditMode]="isEditMode"
-              [clientId]="currentUser.id"
-            ></app-quote-actions>
+              [todayDate]="todayDate"
+              [minCheckOutDate]="minCheckOutDate"
+              [nightsCount]="nightsCount"
+            ></app-dates-step>
+            <!-- PASO 3 -->
+            <app-services-step
+              [services]="services"
+              [selectedIds]="selectedServiceIds"
+              (toggled)="toggleService($event)"
+            ></app-services-step>
+          </div>
+
+          <!-- RESUMEN DE COTIZACIÓN (sticky en PC) -->
+          <div class="lg:col-span-4 lg:sticky lg:top-24">
+            <div
+              class="bg-white border border-[#E8E2DA] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden"
+            >
+              <app-quote-summary
+                [selectedRoomType]="selectedRoomType"
+                [nightsCount]="nightsCount"
+                [roomTotal]="roomTotal"
+                [servicesCount]="selectedServiceIds.size"
+                [servicesTotal]="servicesTotal"
+                [grandTotal]="grandTotal"
+              ></app-quote-summary>
+
+              <div
+                class="px-5 sm:px-7 pb-6 sm:pb-7 space-y-5 sm:space-y-6 bg-white"
+              >
+                <app-booking-benefits></app-booking-benefits>
+                <app-quote-actions
+                  [isSubmitting]="isSubmitting"
+                  [isDisabled]="isSubmitting || !selectedRoomType"
+                  [isEditMode]="isEditMode"
+                  [clientId]="currentUser.id"
+                ></app-quote-actions>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </form>
-  }
-</section>
+      </form>
+    }
+  </section>
+</div>

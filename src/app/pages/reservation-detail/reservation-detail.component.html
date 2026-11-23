@@ -1,4 +1,4 @@
-<section class="max-w-5xl w-full mx-auto p-6 sm:p-8 lg:p-12">
+<section class="max-w-5xl w-full mx-auto px-4 py-6 sm:p-8 lg:p-12">
   <app-detail-toolbar
     [reservationId]="isOperatorView ? null : (reservation?.id ?? null)"
     [isAdminView]="isAdminView"
@@ -34,11 +34,12 @@
   } @else {
     <!-- DETALLE DE RESERVA -->
     <div
-      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-xl overflow-hidden relative"
+      id="reservation-voucher"
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden relative"
     >
-      <!-- TOP GOLD ACCENT -->
+      <!-- TOP GOLD ACCENT (twine-dark / twine-light no existen en la config; se usan los colores reales) -->
       <div
-        class="h-2 bg-gradient-to-r from-twine-dark via-twine to-twine-light"
+        class="h-1.5 sm:h-2 bg-gradient-to-r from-twine-hover via-twine to-twine"
       ></div>
 
       <app-reservation-header
@@ -47,10 +48,10 @@
         [paid]="reservation.paid"
       ></app-reservation-header>
       <!-- MAIN CONTENT GRID -->
-      <div class="p-6 sm:p-10 space-y-8">
+      <div class="p-5 sm:p-8 lg:p-10 space-y-6 sm:space-y-8">
         <!-- SECCIÓN 1: HUÉSPED & ESTANCIA -->
         <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8 border-b border-[#E8E2DA]"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-[#E8E2DA]"
         >
           <!-- DATOS DEL HUÉSPED -->
           <app-guest-info-card
@@ -75,24 +76,76 @@
         <app-services-section
           [services]="acquiredServices"
         ></app-services-section>
-        <!-- SECCIÓN 4: LIQUIDACIÓN FINANCIERA -->
-        <app-account-summary
-          [nightsCount]="nightsCount"
-          [roomSubtotal]="roomSubtotal"
-          [servicesSubtotal]="servicesSubtotal"
-          [grandTotal]="grandTotal"
-          [paid]="reservation.paid"
-          [paidAmount]="reservation.paidAmount || 0"
-          [pendingBalance]="reservation.pendingBalance"
-          [canPayWithBold]="reservation.status !== 'CANCELLED'"
-          [isPayingWithBold]="isPayingWithBold"
-          (payWithBoldClicked)="payWithBold()"
-        ></app-account-summary>
+        <!-- SECCIÓN 4 & 5: CONSERJERÍA Y LIQUIDACIÓN FINANCIERA -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch"
+        >
+          <div
+            class="p-5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] space-y-4 text-sm h-full flex flex-col justify-between"
+          >
+            <div class="space-y-2.5">
+              <span
+                class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block border-b border-[#E8E2DA] pb-2"
+              >
+                5. CONSERJERÍA &amp; ATENCIÓN TELEFÓNICA
+              </span>
+              <p class="text-woodsmoke/70 leading-relaxed">
+                Nuestro servicio de conserjería puede comunicarse directamente a
+                su teléfono registrado para confirmar su itinerario de llegada,
+                resolver inquietudes o coordinar servicios adicionales para su
+                estancia.
+              </p>
+            </div>
+
+            <div class="pt-2">
+              <button
+                type="button"
+                (click)="requestVoiceCall()"
+                [disabled]="isCallingConcierge"
+                class="w-full bg-white hover:bg-pampas/60 disabled:opacity-50 disabled:cursor-not-allowed text-woodsmoke border border-[#E8E2DA] hover:border-twine text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer inline-flex items-center justify-center gap-2 shadow-xs"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-twine"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                <span>
+                  {{
+                    isCallingConcierge
+                      ? "Conectando con su teléfono..."
+                      : "Solicitar Llamada de Conserjería"
+                  }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <app-account-summary
+            [nightsCount]="nightsCount"
+            [roomSubtotal]="roomSubtotal"
+            [servicesSubtotal]="servicesSubtotal"
+            [grandTotal]="grandTotal"
+            [paid]="reservation.paid"
+            [paidAmount]="reservation.paidAmount || 0"
+            [pendingBalance]="reservation.pendingBalance"
+            [canPayWithBold]="reservation.status !== 'CANCELLED'"
+            [isPayingWithBold]="isPayingWithBold"
+            (payWithBoldClicked)="payWithBold()"
+          ></app-account-summary>
+        </div>
       </div>
 
       <!-- VOUCHER FOOTER -->
       <div
-        class="p-6 bg-pampas/40 border-t border-[#E8E2DA] text-center text-[10px] text-woodsmoke/50 font-light"
+        class="px-5 py-5 sm:p-6 bg-[#FAF8F5] border-t border-[#E8E2DA] text-center text-[11px] text-woodsmoke/55 font-light leading-relaxed"
       >
         MontClair Grand Hotel • Luxury Stay & Concierge Experience • Emitido
         electrónicamente sin necesidad de firma física.

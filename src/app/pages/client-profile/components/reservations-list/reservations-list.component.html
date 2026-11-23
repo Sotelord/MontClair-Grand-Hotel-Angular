@@ -1,103 +1,83 @@
-<div
-  class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg p-6 sm:p-8"
->
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-    <div>
+<div>
+  <header class="flex items-end justify-between gap-4 mb-5 sm:mb-6">
+    <div class="min-w-0">
       <span
-        class="text-[9px] uppercase tracking-[3px] text-twine font-bold block mb-1"
+        class="font-sans text-[10px] uppercase tracking-[3px] text-twine font-bold block mb-2"
       >
-        HISTORIAL DE ESTANCIAS & RESERVAS
+        HISTORIAL DE ESTANCIAS &amp; RESERVAS
       </span>
-      <h2 class="font-serif text-xl uppercase tracking-[1px] text-woodsmoke">
+      <h2
+        class="font-serif text-2xl sm:text-3xl uppercase tracking-[1.5px] text-woodsmoke"
+      >
         Mis Reservas
       </h2>
+      <div class="flex items-center gap-3 mt-3" aria-hidden="true">
+        <div class="h-[1px] w-12 bg-twine"></div>
+        <div class="w-1.5 h-1.5 rotate-45 border border-twine bg-twine"></div>
+      </div>
     </div>
 
     <a
       routerLink="/reservations/book"
       [queryParams]="{ clientId: clientId() }"
-      class="bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-2.5 px-4 rounded-[2px] transition shadow-xs inline-flex items-center gap-1.5"
+      class="shrink-0 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-4 sm:py-3.5 sm:px-6 transition-colors duration-300 inline-flex items-center gap-2 shadow-sm"
     >
-      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      <svg
+        class="w-3.5 h-3.5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 4v16m8-8H4"
+        />
       </svg>
-      Nueva Reserva
+      <span>Nueva<span class="hidden sm:inline"> Reserva</span></span>
     </a>
-  </div>
+  </header>
 
-  <!-- PESTAÑAS DE FILTRO DE HISTORIAL -->
-  <div class="flex flex-wrap gap-2 pb-4 mb-6 border-b border-[#E8E2DA] text-xs">
-    <button
-      type="button"
-      (click)="activeTab.set('ALL')"
-      class="px-3 py-1.5 rounded-[2px] text-[10px] uppercase tracking-wider font-semibold transition cursor-pointer flex items-center gap-1.5 border"
-      [ngClass]="activeTab() === 'ALL'
-        ? 'bg-mirage text-white border-mirage shadow-xs'
-        : 'bg-pampas/60 text-woodsmoke/70 border-[#E8E2DA] hover:bg-pampas hover:text-woodsmoke'"
-    >
-      Todas
-      <span
-        class="px-1.5 py-0.2 rounded-full text-[9px] font-mono"
-        [ngClass]="activeTab() === 'ALL' ? 'bg-white/20 text-white' : 'bg-[#E8E2DA] text-woodsmoke'"
+  <!--
+    FILTRO COMO CONTROL SEGMENTADO: todos los botones del mismo ancho.
+    Celular: 2 x 2. Desde sm: una sola fila de 4.
+  -->
+  <div
+    class="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 bg-white border border-[#E8E2DA] mb-6 sm:mb-8 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+    role="group"
+    aria-label="Filtrar reservas"
+  >
+    @for (filter of filters; track filter.id) {
+      <button
+        type="button"
+        (click)="activeTab.set(filter.id)"
+        [attr.aria-pressed]="activeTab() === filter.id"
+        class="flex items-center justify-center gap-2 px-2 py-2.5 text-[10px] uppercase tracking-[1.5px] font-bold transition-colors duration-300 cursor-pointer whitespace-nowrap"
+        [ngClass]="
+          activeTab() === filter.id
+            ? 'bg-mirage text-white shadow-xs'
+            : 'text-woodsmoke/70 hover:bg-[#FAF8F5] hover:text-twine'
+        "
       >
-        {{ reservations().length }}
-      </span>
-    </button>
-
-    <button
-      type="button"
-      (click)="activeTab.set('ACTIVE_OR_CONFIRMED')"
-      class="px-3 py-1.5 rounded-[2px] text-[10px] uppercase tracking-wider font-semibold transition cursor-pointer flex items-center gap-1.5 border"
-      [ngClass]="activeTab() === 'ACTIVE_OR_CONFIRMED'
-        ? 'bg-twine text-white border-twine shadow-xs'
-        : 'bg-pampas/60 text-woodsmoke/70 border-[#E8E2DA] hover:bg-pampas hover:text-woodsmoke'"
-    >
-      Activas / Próximas
-      <span
-        class="px-1.5 py-0.2 rounded-full text-[9px] font-mono"
-        [ngClass]="activeTab() === 'ACTIVE_OR_CONFIRMED' ? 'bg-white/20 text-white' : 'bg-[#E8E2DA] text-woodsmoke'"
-      >
-        {{ countConfirmedOrActive() }}
-      </span>
-    </button>
-
-    <button
-      type="button"
-      (click)="activeTab.set('INACTIVE')"
-      class="px-3 py-1.5 rounded-[2px] text-[10px] uppercase tracking-wider font-semibold transition cursor-pointer flex items-center gap-1.5 border"
-      [ngClass]="activeTab() === 'INACTIVE'
-        ? 'bg-slate-700 text-white border-slate-700 shadow-xs'
-        : 'bg-pampas/60 text-woodsmoke/70 border-[#E8E2DA] hover:bg-pampas hover:text-woodsmoke'"
-    >
-      Finalizadas
-      <span
-        class="px-1.5 py-0.2 rounded-full text-[9px] font-mono"
-        [ngClass]="activeTab() === 'INACTIVE' ? 'bg-white/20 text-white' : 'bg-[#E8E2DA] text-woodsmoke'"
-      >
-        {{ countInactive() }}
-      </span>
-    </button>
-
-    <button
-      type="button"
-      (click)="activeTab.set('CANCELLED')"
-      class="px-3 py-1.5 rounded-[2px] text-[10px] uppercase tracking-wider font-semibold transition cursor-pointer flex items-center gap-1.5 border"
-      [ngClass]="activeTab() === 'CANCELLED'
-        ? 'bg-rose-700 text-white border-rose-700 shadow-xs'
-        : 'bg-pampas/60 text-woodsmoke/70 border-[#E8E2DA] hover:bg-pampas hover:text-woodsmoke'"
-    >
-      Canceladas
-      <span
-        class="px-1.5 py-0.2 rounded-full text-[9px] font-mono"
-        [ngClass]="activeTab() === 'CANCELLED' ? 'bg-white/20 text-white' : 'bg-[#E8E2DA] text-woodsmoke'"
-      >
-        {{ countCancelled() }}
-      </span>
-    </button>
+        {{ filter.label }}
+        <span
+          class="min-w-[1.25rem] px-1.5 py-0.5 text-[9px] text-center"
+          [ngClass]="
+            activeTab() === filter.id
+              ? 'bg-twine text-white'
+              : 'bg-pampas text-woodsmoke/70'
+          "
+        >
+          {{ countFor(filter.id) }}
+        </span>
+      </button>
+    }
   </div>
 
   @if (filteredReservations().length > 0) {
-    <div class="space-y-4">
+    <div class="space-y-5 sm:space-y-6">
       @for (res of filteredReservations(); track res.id) {
         <app-reservation-card
           [reservation]="res"
@@ -109,9 +89,12 @@
       }
     </div>
   } @else {
-    <div class="py-12 text-center text-woodsmoke/50 italic text-xs bg-pampas/20 border border-dashed border-[#E8E2DA] rounded-[2px]">
+    <div
+      class="py-14 px-6 text-center text-woodsmoke/60 text-sm bg-white border border-[#E8E2DA] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+    >
       @if (reservations().length === 0) {
-        Aún no tienes reservaciones en tu historial. Explora nuestras suites de lujo y planifica tu estancia.
+        Aún no tienes reservaciones en tu historial. Explora nuestras suites de
+        lujo y planifica tu estancia.
       } @else {
         No hay reservaciones en este filtro del historial.
       }

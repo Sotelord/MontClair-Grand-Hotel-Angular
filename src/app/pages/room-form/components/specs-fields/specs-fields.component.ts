@@ -10,4 +10,9 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class SpecsFieldsComponent {
   form = input.required<FormGroup>();
+
+  isInvalid(name: string): boolean {
+    const field = this.form().get(name);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
 }

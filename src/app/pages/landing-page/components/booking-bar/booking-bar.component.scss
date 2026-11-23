@@ -1,6 +1,11 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .booking-section {
   width: 100%;
-  max-width: 980px;
+  max-width: 1200px;
   margin: -45px auto 0 auto;
   padding: 0 16px;
   position: relative;
@@ -9,7 +14,7 @@
 }
 
 .booking-bar {
-  background-color: var(--mirage, #191E24);
+  background-color: var(--mirage, #191e24);
   color: #ffffff;
   padding: 20px 28px;
   border-radius: 4px;
@@ -35,7 +40,9 @@
   cursor: pointer;
   border-radius: 3px;
   padding: 4px 6px;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.04);
@@ -46,7 +53,7 @@
   }
 
   &:focus-visible {
-    outline: 1px solid var(--twine, #C5A880);
+    outline: 1px solid var(--twine, #c5a880);
   }
 }
 
@@ -107,6 +114,10 @@
   user-select: none;
 }
 
+.date-short {
+  display: none;
+}
+
 .hidden-picker-input {
   position: absolute;
   bottom: 0;
@@ -131,6 +142,7 @@
   width: 100%;
   cursor: pointer;
   box-sizing: border-box;
+  padding: 0;
 
   option {
     background-color: #191e24;
@@ -142,13 +154,16 @@
 
 .arrow-down {
   display: none;
-  color: var(--twine, #C5A880);
-  font-size: 12px;
-  font-weight: 700;
+  width: 16px;
+  height: 16px;
   margin-left: 10px;
   flex-shrink: 0;
+  fill: none;
+  stroke: var(--twine, #c5a880);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transition: transform 0.2s ease;
-  user-select: none;
   pointer-events: none;
 }
 
@@ -161,7 +176,7 @@
 }
 
 .submit-btn {
-  background-color: var(--twine, #C5A880);
+  background-color: var(--twine, #c5a880);
   color: #ffffff;
   font-family: inherit;
   font-size: 11px;
@@ -172,13 +187,16 @@
   border: none;
   border-radius: 2px;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    background-color: var(--twine-hover, #B08E5C);
+    background-color: var(--twine-hover, #b08e5c);
     transform: translateY(-1px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
   }
@@ -188,6 +206,7 @@
   }
 }
 
+/* PC */
 @media (min-width: 820px) {
   .booking-bar {
     flex-direction: row;
@@ -202,15 +221,39 @@
   }
 }
 
+/* Tablet y celular */
 @media (max-width: 819px) {
   .booking-section {
-    margin: -30px auto 0 auto;
-    padding: 0 12px;
+    margin: -36px auto 0 auto;
+    padding: 0 16px;
   }
 
   .booking-bar {
-    padding: 18px 16px;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 16px;
+    margin: 0 auto;
+  }
+
+  .booking-group {
+    padding: 10px;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .guests-group,
+  .submit-btn {
+    grid-column: 1 / -1;
+  }
+
+  .booking-item {
+    gap: 10px;
+  }
+
+  .booking-item .icon {
+    height: 18px;
   }
 
   .date-display,
@@ -220,11 +263,41 @@
 
   .arrow-down {
     display: block;
+    margin-left: 6px;
   }
 
   .submit-btn {
     width: 100%;
-    padding: 13px;
+    padding: 14px;
     text-align: center;
+  }
+}
+
+@media (max-width: 519px) {
+  .date-full {
+    display: none;
+  }
+
+  .date-short {
+    display: inline;
+  }
+
+  .booking-info label {
+    letter-spacing: 1.5px;
+  }
+
+  .date-display {
+    font-size: 13px;
+  }
+
+  .date-group .arrow-down {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .guests-select,
+  .hidden-picker-input {
+    font-size: 16px;
   }
 }

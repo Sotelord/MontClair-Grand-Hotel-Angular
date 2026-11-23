@@ -1,9 +1,5 @@
-.services-title {
-  font-family: var(--font-serif);
-  font-size: 28px;
-  text-align: center;
-  letter-spacing: 2px;
-  margin-bottom: 15px;
+:host {
+  display: block;
 }
 
 .services-section {
@@ -11,21 +7,38 @@
   background-color: var(--pampas);
 }
 
+.services-title {
+  font-family: var(--font-serif);
+  font-size: var(--fs-h2, clamp(26px, 4vw, 40px));
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+  padding: 0 16px;
+}
+
 .services-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 32px;
   text-align: center;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 1024px) {
   .services-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1024px) {
+@media (max-width: 639px) {
+  .services-section {
+    padding: 56px 0;
+  }
+
+  .services-title {
+    margin-bottom: 24px;
+  }
+
   .services-grid {
-    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 12px;
   }
 }

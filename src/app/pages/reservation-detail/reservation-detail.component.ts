@@ -51,6 +51,7 @@ export class ReservationDetailComponent implements OnInit {
   roomDetails: Room | null = null;
   isLoading = true;
   isPayingWithBold = false;
+  isCallingConcierge = false;
   errorMessage: string | null = null;
   paymentSuccessMessage: string | null = null;
   paymentErrorMessage: string | null = null;
@@ -127,6 +128,28 @@ export class ReservationDetailComponent implements OnInit {
           err?.error?.message ||
           err?.message ||
           'No se pudo inicializar el botón de pagos Bold.';
+      },
+    });
+  }
+
+  requestVoiceCall(): void {
+    if (!this.reservation || this.isCallingConcierge) {
+      return;
+    }
+    this.isCallingConcierge = true;
+    this.paymentErrorMessage = null;
+
+    this.reservationService.triggerVoiceCall(this.reservation.id).subscribe({
+      next: (res) => {
+        this.isCallingConcierge = false;
+        const phone = res?.toPhone || this.reservation?.clientPhone || 'su teléfono registrado';
+        this.paymentSuccessMessage = `Se ha iniciado la llamada de conserjería hacia ${phone} para la reserva #${this.reservation?.id}.`;
+      },
+      error: (err) => {
+        this.isCallingConcierge = false;
+        this.paymentErrorMessage =
+          err?.error?.message ||
+          'No fue posible establecer la llamada con conserjería en este momento.';
       },
     });
   }

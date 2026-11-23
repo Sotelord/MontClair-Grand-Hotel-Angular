@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { RoomType } from '../../models/roomType.model';
 import { SuccessAlertComponent } from '../../components/success-alert/success-alert.component';
 import { ErrorAlertComponent } from '../../components/error-alert/error-alert.component';
+import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-room-types-admin',
@@ -15,6 +16,7 @@ import { ErrorAlertComponent } from '../../components/error-alert/error-alert.co
     RoomTypesTableComponent,
     SuccessAlertComponent,
     ErrorAlertComponent,
+    ConfirmModalComponent,
   ],
   templateUrl: './room-types-admin.component.html',
   styleUrl: './room-types-admin.component.scss',
@@ -26,6 +28,8 @@ export class RoomTypesAdminComponent implements OnInit {
   roomTypes: RoomType[] = [];
   errorMessage: string | null = null;
   successMessage: string | null = null;
+
+  typeToDelete: RoomType | null = null;
 
   ngOnInit(): void {
     this.loadRoomTypes();
@@ -48,6 +52,21 @@ export class RoomTypesAdminComponent implements OnInit {
 
   onEdit(roomType: RoomType): void {
     this.router.navigate(['admin/room-types/edit', roomType.id]);
+  }
+
+  confirmDelete(roomType: RoomType): void {
+    this.typeToDelete = roomType;
+  }
+
+  cancelDelete(): void {
+    this.typeToDelete = null;
+  }
+
+  executeDelete(): void {
+    if (!this.typeToDelete) return;
+    const roomType = this.typeToDelete;
+    this.typeToDelete = null;
+    this.onDelete(roomType);
   }
 
   onDelete(roomType: RoomType): void {

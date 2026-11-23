@@ -1,26 +1,36 @@
 <div class="mt-6 pt-6 border-t border-[#E8E2DA] text-center">
-  <p class="text-xs text-woodsmoke/70 mb-3 font-medium">
+  <p class="text-sm text-woodsmoke/70 mb-3 font-medium">
     ¿Aún no eres miembro de Montclair?
   </p>
+  <!--
+    El color del texto va en el <span> interior con "group-hover": así el
+    blanco del hover se aplica aunque algún estilo global de <a> (color: inherit)
+    le gane a la clase puesta directamente en el enlace.
+  -->
   <a
     routerLink="/clients/add"
     id="create-account-btn"
-    class="w-full inline-flex items-center justify-center gap-2 border-2 border-twine text-twine-dark hover:bg-twine hover:text-white text-[10px] uppercase tracking-[2px] font-bold py-3 px-6 rounded-[2px] transition duration-300 shadow-xs"
+    class="group w-full inline-flex items-center justify-center border-2 border-twine bg-white hover:bg-twine py-3 px-6 rounded-[2px] transition-colors duration-300 shadow-xs"
   >
-    <svg
-      class="w-3.5 h-3.5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+    <span
+      class="inline-flex items-center gap-2 text-twine-hover group-hover:text-white text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-300"
     >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <line x1="19" y1="8" x2="19" y2="14"></line>
-      <line x1="22" y1="11" x2="16" y2="11"></line>
-    </svg>
-    Crear Nueva Cuenta
+      <svg
+        class="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <line x1="19" y1="8" x2="19" y2="14"></line>
+        <line x1="22" y1="11" x2="16" y2="11"></line>
+      </svg>
+      Crear Nueva Cuenta
+    </span>
   </a>
 </div>

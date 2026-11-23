@@ -23,3 +23,11 @@
 .form-group input.input-error {
   border-color: #c2593b;
 }
+
+:root {
+  --fs-label: 11px;
+  --fs-body: 15px;
+  --fs-h3: clamp(13px, 1.5vw, 15px);
+  --fs-h2: clamp(26px, 4vw, 40px);
+  --fs-h1: clamp(30px, 7vw, 53px);
+}

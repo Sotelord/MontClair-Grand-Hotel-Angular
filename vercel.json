@@ -5,8 +5,8 @@
       "destination": "https://supabase-camilo-web.mmzlot.easypanel.host/api/:path*"
     },
     {
-      "source": "/login/:path*",
-      "destination": "https://supabase-camilo-web.mmzlot.easypanel.host/login/:path*"
+      "source": "/login/oauth2/:path*",
+      "destination": "https://supabase-camilo-web.mmzlot.easypanel.host/login/oauth2/:path*"
     },
     {
       "source": "/(.*)",

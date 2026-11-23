@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { ReservationDTO } from '../../../../models/reservation.model';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -11,8 +11,7 @@ import { RoomTypeService } from '../../../../service/room-type.service';
 
 /**
  * Componente de tarjeta de reserva individual dentro del historial del cliente.
- * Muestra el estado del ciclo de vida (Confirmada, Activa, Finalizada, Cancelada),
- * el estado financiero de la cuenta (Pagada / Pendiente) y acciones según corresponda.
+ * Incluye fotografía de la suite, estado del ciclo de vida, desglose financiero y barra de acciones.
  */
 @Component({
   selector: 'app-reservation-card',
@@ -21,7 +20,7 @@ import { RoomTypeService } from '../../../../service/room-type.service';
   styleUrl: './reservation-card.component.scss',
   standalone: true,
 })
-export class ReservationCardComponent {
+export class ReservationCardComponent implements OnInit {
   private roomService = inject(RoomService);
   private roomTypeService = inject(RoomTypeService);
 
@@ -30,6 +29,67 @@ export class ReservationCardComponent {
   isPaying = input<boolean>(false);
   cancelRequested = output<ReservationDTO>();
   payRequested = output<ReservationDTO>();
+
+  roomImageUrl = signal<string>('');
+
+  private static readonly FALLBACK_IMAGES: Record<string, string> = {
+    DELUXE:
+      'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=900&q=80',
+    PREMIUM:
+      'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80',
+    GRAND:
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80',
+    ROYALE:
+      'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=900&q=80',
+    SUITE:
+      'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80',
+    DEFAULT:
+      'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80',
+  };
+
+  ngOnInit(): void {
+    const res = this.reservation();
+    this.roomImageUrl.set(this.resolveDefaultImage(res));
+
+    if (res?.roomId) {
+      this.roomService.findById(res.roomId).subscribe({
+        next: (room) => {
+          const img =
+            room?.secondaryImageUrl ||
+            room?.imageUrl ||
+            room?.roomType?.imageUrl;
+          if (img) {
+            this.roomImageUrl.set(img);
+          }
+        },
+        error: () => {},
+      });
+    }
+  }
+
+  onImageError(): void {
+    this.roomImageUrl.set(ReservationCardComponent.FALLBACK_IMAGES['DEFAULT']);
+  }
+
+  private resolveDefaultImage(res: ReservationDTO): string {
+    const label = `${res?.roomName || ''} ${res?.roomTypeName || ''}`.toUpperCase();
+    if (label.includes('ROYALE') || label.includes('PRESIDENTIAL')) {
+      return ReservationCardComponent.FALLBACK_IMAGES['ROYALE'];
+    }
+    if (label.includes('GRAND')) {
+      return ReservationCardComponent.FALLBACK_IMAGES['GRAND'];
+    }
+    if (label.includes('PREMIUM')) {
+      return ReservationCardComponent.FALLBACK_IMAGES['PREMIUM'];
+    }
+    if (label.includes('SUITE')) {
+      return ReservationCardComponent.FALLBACK_IMAGES['SUITE'];
+    }
+    if (label.includes('DELUXE')) {
+      return ReservationCardComponent.FALLBACK_IMAGES['DELUXE'];
+    }
+    return ReservationCardComponent.FALLBACK_IMAGES['DEFAULT'];
+  }
 
   get roomName(): string {
     const res = this.reservation();

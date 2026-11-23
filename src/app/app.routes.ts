@@ -25,6 +25,7 @@ import { operatorGuard } from './guards/operator.guard';
 import { clientGuard } from './guards/client.guard';
 import { staffGuard } from './guards/staff.guard';
 import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
+import { TouristGuideComponent } from './pages/tourist-guide/tourist-guide.component';
 
 export const routes: Routes = [
   {
@@ -198,6 +199,10 @@ export const routes: Routes = [
   {
     path: 'reservations/:id',
     component: ReservationDetailComponent,
+  },
+  {
+    path: 'discover-monaco',
+    component: TouristGuideComponent,
   },
   {
     path: 'services',

@@ -1,10 +1,16 @@
 <div
-  class="bg-white border border-red-200 rounded-[4px] p-8 text-center max-w-lg mx-auto shadow-sm"
+  class="bg-white border border-red-200 rounded-[4px] px-6 py-8 sm:p-8 text-center max-w-lg mx-auto shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
 >
   <div
     class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-3"
   >
-    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      class="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
       <circle cx="12" cy="12" r="10" stroke-width="2" />
       <line
         x1="12"
@@ -24,12 +30,10 @@
       />
     </svg>
   </div>
-  <h3
-    class="font-sans font-bold text-lg uppercase tracking-wide text-woodsmoke mb-2"
-  >
+  <h3 class="font-serif text-xl uppercase tracking-wide text-woodsmoke mb-2">
     Reserva no encontrada
   </h3>
-  <p class="text-xs text-woodsmoke/60 mb-6">{{ message() }}</p>
+  <p class="text-sm text-woodsmoke/60 mb-6">{{ message() }}</p>
   <button type="button" (click)="backClicked.emit()" class="btn btn-outline">
     Volver
   </button>

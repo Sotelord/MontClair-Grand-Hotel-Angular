@@ -1,0 +1,242 @@
+<aside class="space-y-4 lg:space-y-6">
+  <!-- TARJETA DE MEMBRESÍA ESTILO CREDENCIAL DE LUJO -->
+  <div
+    class="bg-mirage text-white p-5 sm:p-6 border border-twine/40 shadow-xl relative overflow-hidden"
+  >
+    <div
+      class="absolute top-0 right-0 w-32 h-32 bg-twine/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"
+      aria-hidden="true"
+    ></div>
+
+    <div class="relative z-10">
+      <div class="flex items-center gap-3.5 min-w-0">
+        <div
+          class="p-0.5 border-2 border-twine rounded-full shrink-0 bg-mirage"
+        >
+          <img
+            [src]="client().avatarUrl || defaultAvatar"
+            [alt]="client().firstName"
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover"
+          />
+        </div>
+        <div class="min-w-0">
+          <span
+            class="font-sans text-[10px] uppercase tracking-[2.5px] text-twine font-bold block"
+          >
+            {{ membershipLabel() }}
+          </span>
+          <h2
+            class="font-serif text-lg text-white uppercase tracking-[1px] leading-tight truncate mt-0.5"
+          >
+            {{ client().firstName }} {{ client().lastName || "" }}
+          </h2>
+          <p class="text-xs text-[#C2C9D1] truncate mt-0.5">
+            &#64;{{ client().username }}
+          </p>
+        </div>
+      </div>
+
+      <div class="h-[1px] w-full bg-white/10 my-4"></div>
+
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-[#C2C9D1]/80 block"
+          >
+            N° DE MIEMBRO
+          </span>
+          <span
+            class="font-serif text-sm tracking-[2px] text-white font-semibold"
+          >
+            {{ memberCode() }}
+          </span>
+        </div>
+
+        <div class="text-right">
+          <span
+            class="font-sans text-[9px] uppercase tracking-[2px] text-[#C2C9D1]/80 block"
+          >
+            BALANCE ACTUAL
+          </span>
+          <span
+            class="font-serif text-lg text-twine font-semibold leading-none whitespace-nowrap"
+          >
+            {{ availablePoints() | number }}
+            <span class="font-sans text-[9px] uppercase tracking-wider"
+              >pts</span
+            >
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENÚ "MI CUENTA" -->
+  <nav
+    aria-label="Navegación de mi cuenta"
+    class="bg-white border border-[#E8E2DA] overflow-hidden shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+  >
+    <!-- Celular/tablet: botón desplegable con la sección actual -->
+    <button
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="profile-nav-list"
+      class="lg:hidden w-full flex items-center justify-between gap-3 px-5 py-3.5 bg-[#FAF8F5] text-left cursor-pointer"
+    >
+      <span class="flex items-center gap-3 min-w-0">
+        <span
+          class="w-9 h-9 shrink-0 grid place-items-center border border-twine/40 bg-white text-twine"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              [attr.d]="iconPaths[activeTab()]"
+            />
+          </svg>
+        </span>
+        <span class="min-w-0">
+          <span
+            class="block font-sans text-[10px] uppercase tracking-[2.5px] text-woodsmoke/55 font-bold"
+          >
+            Mi Cuenta
+          </span>
+          <span class="block text-sm font-semibold text-woodsmoke truncate">
+            {{ activeLabel() }}
+          </span>
+        </span>
+      </span>
+      <svg
+        class="w-4 h-4 text-twine shrink-0 transition-transform duration-300"
+        [class.rotate-180]="menuOpen()"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
+
+    <!-- PC: título fijo -->
+    <div
+      class="hidden lg:block px-5 py-4 border-b border-[#E8E2DA] bg-[#FAF8F5]"
+    >
+      <span
+        class="font-sans text-[10px] uppercase tracking-[3px] text-woodsmoke font-bold"
+      >
+        Mi Cuenta
+      </span>
+    </div>
+
+    <!-- Lista: en celular/tablet solo se ve al abrir el desplegable; en PC siempre -->
+    <div
+      id="profile-nav-list"
+      class="lg:block border-t border-[#E8E2DA] lg:border-t-0"
+      [class.hidden]="!menuOpen()"
+    >
+      <ul class="divide-y divide-[#F0EAE2]">
+        @for (item of navItems; track item.id) {
+          <li>
+            <button
+              type="button"
+              (click)="selectTab(item.id)"
+              [attr.aria-current]="activeTab() === item.id ? 'page' : null"
+              class="w-full flex items-center justify-between gap-3 px-5 py-3.5 text-left transition-colors duration-200 cursor-pointer border-l-3"
+              [ngClass]="
+                activeTab() === item.id
+                  ? 'border-l-twine bg-[#FAF7F2] text-woodsmoke font-semibold'
+                  : 'border-l-transparent text-woodsmoke/75 hover:bg-[#FAF8F5] hover:text-woodsmoke'
+              "
+            >
+              <span class="flex items-center gap-3 min-w-0">
+                <svg
+                  class="w-4 h-4 shrink-0"
+                  [ngClass]="
+                    activeTab() === item.id ? 'text-twine' : 'text-woodsmoke/45'
+                  "
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    [attr.d]="iconPaths[item.id]"
+                  />
+                </svg>
+                <span class="text-sm lg:text-xs tracking-wide truncate">{{
+                  item.label
+                }}</span>
+              </span>
+
+              @if (item.id === "reservations" && reservationsCount() > 0) {
+                <span
+                  class="px-2 py-0.5 text-[10px] font-bold shrink-0"
+                  [ngClass]="
+                    activeTab() === item.id
+                      ? 'bg-twine text-white'
+                      : 'bg-pampas text-woodsmoke/75'
+                  "
+                >
+                  {{ reservationsCount() }}
+                </span>
+              } @else if (item.id === "redeemed" && redeemedCount() > 0) {
+                <span
+                  class="px-2 py-0.5 text-[10px] font-bold shrink-0"
+                  [ngClass]="
+                    activeTab() === item.id
+                      ? 'bg-twine text-white'
+                      : 'bg-pampas text-woodsmoke/75'
+                  "
+                >
+                  {{ redeemedCount() }}
+                </span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+
+      <!-- ACCIÓN DE CIERRE DE SESIÓN -->
+      <div class="p-4 border-t border-[#E8E2DA] bg-[#FAF8F5]">
+        <button
+          type="button"
+          (click)="logoutClicked.emit()"
+          class="w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-[#E8E2DA] hover:border-woodsmoke hover:bg-woodsmoke hover:text-white text-woodsmoke/75 text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-200 cursor-pointer"
+        >
+          <svg
+            class="w-3.5 h-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+</aside>

@@ -1,0 +1,46 @@
+<div
+  class="bg-white border border-[#E8E2DA] p-5 sm:p-8 lg:p-10 shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)]"
+>
+  <app-edit-header [avatarUrl]="avatarPreview"></app-edit-header>
+
+  @if (errorMessage) {
+    <div class="mb-6">
+      <app-error-alert
+        [message]="errorMessage"
+        (closed)="errorMessage = null"
+      ></app-error-alert>
+    </div>
+  }
+
+  @if (profileForm) {
+    <form
+      [formGroup]="profileForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-6 sm:space-y-8"
+    >
+      <app-personal-fields [form]="profileForm"></app-personal-fields>
+      <app-avatar-field [form]="profileForm"></app-avatar-field>
+      <app-password-fields [form]="profileForm"></app-password-fields>
+
+      <div
+        class="pt-6 border-t border-[#E8E2DA] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3"
+      >
+        <button
+          type="button"
+          (click)="cancelRequested.emit()"
+          class="px-6 py-3.5 border border-[#E8E2DA] hover:border-woodsmoke text-woodsmoke/75 hover:text-woodsmoke text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-300 text-center cursor-pointer"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+          class="px-8 py-3.5 bg-twine hover:bg-twine-hover text-white text-[10px] uppercase tracking-[2px] font-bold transition-colors duration-300 shadow-xs cursor-pointer disabled:opacity-50"
+        >
+          {{ isSubmitting ? "Guardando..." : "Guardar Cambios" }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

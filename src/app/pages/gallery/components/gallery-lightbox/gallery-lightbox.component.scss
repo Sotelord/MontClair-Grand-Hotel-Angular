@@ -1,3 +1,25 @@
 :host {
   display: block;
 }
+
+.lightbox-box {
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+
+  @media (min-width: 640px) {
+    max-height: calc(100vh - 64px);
+    max-height: calc(100dvh - 64px);
+  }
+}
+
+.lightbox-img {
+  max-height: 75vh;
+  max-height: 75dvh;
+}
+
+@media (max-width: 639px) {
+  .lightbox-img {
+    max-height: 60vh;
+    max-height: 60dvh;
+  }
+}

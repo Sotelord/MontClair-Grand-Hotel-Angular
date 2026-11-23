@@ -1,84 +1,171 @@
-<div class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-lg overflow-hidden">
+<div
+  class="hidden lg:block bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden"
+>
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse text-xs">
       <thead>
-        <tr class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10">
+        <tr
+          class="bg-mirage text-white font-serif text-[10px] tracking-[1.5px] uppercase border-b border-white/10"
+        >
           <th scope="col" class="py-4 px-6 font-semibold">ID</th>
-          <th scope="col" class="py-4 px-6 font-semibold">Nombre del Servicio</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Servicio</th>
           <th scope="col" class="py-4 px-6 font-semibold">Descripción</th>
-          <th scope="col" class="py-4 px-6 font-semibold">Tarifa Base</th>
-          <th scope="col" class="py-4 px-6 font-semibold text-right">Acciones</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Tarifa base</th>
+          <th scope="col" class="py-4 px-6 font-semibold">Visibilidad</th>
+          <th scope="col" class="py-4 px-6 font-semibold text-right">
+            Acciones
+          </th>
         </tr>
       </thead>
       <tbody class="divide-y divide-[#E8E2DA]">
         @for (service of services(); track service.id) {
-          <tr class="hover:bg-pampas/60 transition group">
-            <td class="py-4 px-6 font-mono text-twine-dark font-semibold text-[11px]">
+          <!-- Los servicios ocultos se ven atenuados -->
+          <tr
+            class="hover:bg-pampas/60 transition group"
+            [class.opacity-60]="service.hidden"
+          >
+            <td
+              class="py-4 px-6 text-twine-hover font-semibold text-[11px] tabular-nums"
+            >
               {{ formatId(service.id) }}
             </td>
             <td class="py-4 px-6">
-              <span class="font-serif font-semibold text-woodsmoke text-sm">{{ service.name }}</span>
+              <span class="font-serif font-semibold text-woodsmoke text-sm">{{
+                service.name
+              }}</span>
             </td>
-            <td class="py-4 px-6 text-woodsmoke/70 max-w-xs">
+            <td class="py-4 px-6 text-woodsmoke/70 max-w-md leading-relaxed">
               {{ service.description }}
             </td>
-            <td class="py-4 px-6 font-semibold text-twine-dark text-[12px]">
-              <span>{{ formatPrice(service.price) }}</span>
+            <td
+              class="py-4 px-6 font-semibold text-twine-hover text-[12px] whitespace-nowrap"
+            >
+              {{ formatPrice(service.price) }}
+            </td>
+            <td class="py-4 px-6">
+              <span
+                class="inline-flex w-[84px] items-center justify-center gap-1.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold border whitespace-nowrap"
+                [class]="
+                  service.hidden
+                    ? 'bg-slate-100 text-slate-600 border-slate-300'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                "
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full"
+                  [class]="service.hidden ? 'bg-slate-400' : 'bg-emerald-600'"
+                ></span>
+                {{ service.hidden ? "Oculto" : "Visible" }}
+              </span>
             </td>
             <td class="py-4 px-6 text-right">
               <div class="inline-flex items-center gap-2">
                 <button
                   type="button"
                   class="p-1.5 text-blue-700 hover:text-blue-900 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
-                  title="Editar Servicio"
-                  aria-label="Editar Servicio"
+                  title="Editar servicio"
+                  aria-label="Editar servicio"
                   (click)="onEdit(service)"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  <svg
+                    class="w-4 h-4 shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                    ></path>
+                    <path
+                      d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                    ></path>
                   </svg>
                 </button>
                 <button
                   type="button"
                   class="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-50 rounded-[2px] transition cursor-pointer"
-                  [title]="service.hidden ? 'Mostrar Servicio' : 'Ocultar Servicio'"
-                  [attr.aria-label]="service.hidden ? 'Mostrar Servicio' : 'Ocultar Servicio'"
+                  [title]="
+                    service.hidden ? 'Mostrar servicio' : 'Ocultar servicio'
+                  "
+                  [attr.aria-label]="
+                    service.hidden ? 'Mostrar servicio' : 'Ocultar servicio'
+                  "
                   (click)="onToggleVisibility(service)"
                 >
                   @if (service.hidden) {
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M2.06 12.35a1 1 0 0 1 0-.7C3.1 8.26 7.1 5 12 5c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7C20.9 15.74 16.9 19 12 19c-4.9 0-8.9-3.26-9.94-6.65Z"></path>
+                    <svg
+                      class="w-4 h-4 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2.06 12.35a1 1 0 0 1 0-.7C3.1 8.26 7.1 5 12 5c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7C20.9 15.74 16.9 19 12 19c-4.9 0-8.9-3.26-9.94-6.65Z"
+                      ></path>
                       <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                   } @else {
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                      class="w-4 h-4 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
                       <path d="m3 3 18 18"></path>
                       <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
-                      <path d="M9.88 4.24A10.9 10.9 0 0 1 12 4c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7 10.9 10.9 0 0 1-4.06 4.83"></path>
-                      <path d="M6.61 6.61A10.9 10.9 0 0 0 2.06 11.65a1 1 0 0 0 0 .7C3.1 15.74 7.1 19 12 19a10.9 10.9 0 0 0 2.12-.24"></path>
+                      <path
+                        d="M9.88 4.24A10.9 10.9 0 0 1 12 4c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7 10.9 10.9 0 0 1-4.06 4.83"
+                      ></path>
+                      <path
+                        d="M6.61 6.61A10.9 10.9 0 0 0 2.06 11.65a1 1 0 0 0 0 .7C3.1 15.74 7.1 19 12 19a10.9 10.9 0 0 0 2.12-.24"
+                      ></path>
                     </svg>
                   }
                 </button>
                 <button
                   type="button"
                   class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
-                  title="Eliminar Servicio"
-                  aria-label="Eliminar Servicio"
+                  title="Eliminar servicio"
+                  aria-label="Eliminar servicio"
                   (click)="onDelete(service)"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg
+                    class="w-4 h-4 shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
                     <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <path
+                      d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                    ></path>
                   </svg>
                 </button>
               </div>
             </td>
           </tr>
-        }
-        @if (services().length === 0) {
+        } @empty {
           <tr>
-            <td colspan="5" class="py-12 text-center text-woodsmoke/50 italic">
+            <td
+              colspan="6"
+              class="py-12 text-center text-woodsmoke/50 italic text-sm"
+            >
               No se encontraron servicios registrados actualmente.
             </td>
           </tr>
@@ -86,4 +173,158 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- Celular y tablet -->
+<div class="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+  @for (service of services(); track service.id) {
+    <article
+      class="bg-white border border-[#E8E2DA] rounded-[4px] shadow-[0_10px_30px_-12px_rgba(20,30,38,0.22)] overflow-hidden flex flex-col"
+      [class.opacity-70]="service.hidden"
+    >
+      <header
+        class="flex items-start justify-between gap-3 px-4 pt-4 pb-3 bg-[#FAF8F5] border-b border-[#E8E2DA]"
+      >
+        <div class="min-w-0">
+          <span
+            class="block text-[10px] font-bold tracking-[1.5px] text-twine-hover tabular-nums"
+          >
+            {{ formatId(service.id) }}
+          </span>
+          <h3
+            class="font-serif text-lg text-woodsmoke uppercase tracking-[0.5px] leading-tight"
+          >
+            {{ service.name }}
+          </h3>
+          <span
+            class="block font-serif text-base font-semibold text-twine-hover mt-1 whitespace-nowrap"
+          >
+            {{ formatPrice(service.price) }}
+          </span>
+        </div>
+        <div class="shrink-0">
+          <span
+            class="inline-flex w-[84px] items-center justify-center gap-1.5 py-1 rounded-[2px] text-[9px] uppercase tracking-wider font-bold border whitespace-nowrap"
+            [class]="
+              service.hidden
+                ? 'bg-slate-100 text-slate-600 border-slate-300'
+                : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+            "
+          >
+            <span
+              class="w-1.5 h-1.5 rounded-full"
+              [class]="service.hidden ? 'bg-slate-400' : 'bg-emerald-600'"
+            ></span>
+            {{ service.hidden ? "Oculto" : "Visible" }}
+          </span>
+        </div>
+      </header>
+
+      <p
+        class="px-4 py-3 text-sm text-woodsmoke/70 leading-relaxed line-clamp-3 flex-1"
+      >
+        {{ service.description || "Sin descripción." }}
+      </p>
+
+      <div class="grid grid-cols-3 gap-2 px-4 pb-4">
+        <button
+          type="button"
+          (click)="onEdit(service)"
+          class="inline-flex items-center justify-center gap-1.5 px-2 py-2.5 text-[10px] uppercase tracking-[1px] font-bold text-blue-700 border border-blue-200 hover:bg-blue-50 rounded-[2px] transition cursor-pointer"
+        >
+          <svg
+            class="w-4 h-4 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path
+              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+            ></path>
+            <path
+              d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+            ></path>
+          </svg>
+          Editar
+        </button>
+        <button
+          type="button"
+          (click)="onToggleVisibility(service)"
+          class="inline-flex items-center justify-center gap-1.5 px-2 py-2.5 text-[10px] uppercase tracking-[1px] font-bold text-amber-800 border border-amber-200 hover:bg-amber-50 rounded-[2px] transition cursor-pointer"
+        >
+          @if (service.hidden) {
+            <svg
+              class="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.06 12.35a1 1 0 0 1 0-.7C3.1 8.26 7.1 5 12 5c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7C20.9 15.74 16.9 19 12 19c-4.9 0-8.9-3.26-9.94-6.65Z"
+              ></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            Mostrar
+          } @else {
+            <svg
+              class="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m3 3 18 18"></path>
+              <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
+              <path
+                d="M9.88 4.24A10.9 10.9 0 0 1 12 4c4.9 0 8.9 3.26 9.94 6.65a1 1 0 0 1 0 .7 10.9 10.9 0 0 1-4.06 4.83"
+              ></path>
+              <path
+                d="M6.61 6.61A10.9 10.9 0 0 0 2.06 11.65a1 1 0 0 0 0 .7C3.1 15.74 7.1 19 12 19a10.9 10.9 0 0 0 2.12-.24"
+              ></path>
+            </svg>
+            Ocultar
+          }
+        </button>
+        <button
+          type="button"
+          (click)="onDelete(service)"
+          class="inline-flex items-center justify-center gap-1.5 px-2 py-2.5 text-[10px] uppercase tracking-[1px] font-bold text-red-600 border border-red-200 hover:bg-red-50 rounded-[2px] transition cursor-pointer"
+        >
+          <svg
+            class="w-4 h-4 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            ></path>
+          </svg>
+          Eliminar
+        </button>
+      </div>
+    </article>
+  } @empty {
+    <div
+      class="sm:col-span-2 bg-white border border-[#E8E2DA] rounded-[4px] py-12 px-6 text-center text-woodsmoke/50 italic text-sm"
+    >
+      No se encontraron servicios registrados actualmente.
+    </div>
+  }
 </div>

@@ -1,45 +1,94 @@
 <header class="w-full max-w-full">
   <nav
-    [ngClass]="isBlueHeaderPage
-      ? 'bg-[#15232F] border-[#B8D7C2]/30'
-      : 'bg-pampas border-[rgba(202,198,198,0.5)]'"
+    [ngClass]="
+      isBlueHeaderPage
+        ? 'bg-[#15232F] border-[#B8D7C2]/30'
+        : 'bg-pampas border-[rgba(202,198,198,0.5)]'
+    "
     class="sticky top-0 z-40 w-full border-b shadow-sm"
-    aria-label="Navegación principal">
-    <div class="max-w-screen-xl flex items-center justify-between mx-auto px-4 sm:px-6 py-2.5 sm:py-3">
+    aria-label="Navegación principal"
+  >
+    <div
+      class="max-w-[1536px] flex items-center justify-between gap-4 mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3"
+    >
       <!-- Logo Grande y Legible -->
-      <a routerLink="/" fragment="inicio" (click)="closeMenu()" class="flex items-center shrink-0 py-0.5">
+      <a
+        routerLink="/"
+        fragment="inicio"
+        (click)="closeMenu()"
+        class="flex items-center shrink-0 py-0.5"
+      >
+        <!-- Celular: solo el monograma (deja espacio para Reservar y el menú) -->
         <img
-          [src]="isBlueHeaderPage ? 'images/Logo_oscuro_cropped.png' : 'images/Logo_cropped.png'"
-          class="h-[46px] sm:h-[58px] w-auto max-w-[200px] sm:max-w-[240px] object-contain transition-transform hover:scale-[1.02]"
+          [src]="
+            isBlueHeaderPage
+              ? 'images/Logo_icon_oscuro.png'
+              : 'images/Logo_icon.png'
+          "
+          class="block sm:hidden h-[44px] w-auto transition-transform hover:scale-[1.02]"
+          alt="Montclair Grand Hotel"
+        />
+        <!-- Tablet y PC: logo completo -->
+        <img
+          [src]="
+            isBlueHeaderPage
+              ? 'images/Logo_oscuro_cropped.png'
+              : 'images/Logo_cropped.png'
+          "
+          class="hidden sm:block h-[54px] lg:h-[50px] xl:h-[58px] w-auto max-w-[240px] object-contain transition-transform hover:scale-[1.02]"
           alt="Montclair Grand Hotel"
         />
       </a>
 
       <!-- Acciones de escritorio y botón menú móvil -->
-      <div class="flex items-center space-x-2 sm:space-x-3 md:order-2 shrink-0">
+      <div class="flex items-center gap-3.5 sm:gap-4 lg:gap-5 xl:gap-6 lg:order-2 shrink-0 lg:ml-6 xl:ml-10">
         @if (currentClient) {
-          <a routerLink="/profile"
+          <a
+            routerLink="/profile"
             id="nav-profile-link"
-            [ngClass]="isBlueHeaderPage
-              ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
-              : 'border-twine text-twine hover:bg-twine hover:text-white'"
-            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 cursor-pointer whitespace-nowrap">
+            [ngClass]="
+              isBlueHeaderPage
+                ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
+                : 'border-twine text-twine hover:bg-twine hover:text-white'
+            "
+            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border px-3.5 sm:px-4 py-2 rounded-sm transition-colors duration-300 cursor-pointer whitespace-nowrap"
+          >
             Mi Perfil
           </a>
+          <button
+            type="button"
+            id="nav-logout-btn"
+            (click)="logout()"
+            [ngClass]="
+              isBlueHeaderPage
+                ? 'border-white/30 text-white/80 hover:border-red-300 hover:text-red-300'
+                : 'border-woodsmoke/25 text-woodsmoke/70 hover:border-red-600 hover:text-red-600'
+            "
+            class="hidden lg:inline-block font-sans text-xs font-bold uppercase tracking-widest border px-3.5 py-2 rounded-sm transition-colors duration-300 cursor-pointer whitespace-nowrap"
+            title="Cerrar Sesión"
+          >
+            Salir
+          </button>
         } @else {
-          <a routerLink="/login"
+          <a
+            routerLink="/login"
             id="nav-login-link"
-            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap">
+            class="hidden sm:inline-block font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine px-3 sm:px-4 py-2 rounded-sm transition-colors duration-300 hover:bg-twine hover:text-white cursor-pointer whitespace-nowrap"
+          >
             Login
           </a>
         }
 
-        <a routerLink="/reservations/book"
+        <a
+          routerLink="/reservations/book"
           id="nav-reservar-link"
-          [ngClass]="isBlueHeaderPage
-            ? 'bg-[#B88A56] hover:bg-[#C49A65] text-white'
-            : 'bg-twine hover:bg-twine-hover text-white'"
-          class="font-sans text-[11px] sm:text-xs font-bold uppercase tracking-widest px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-sm shadow-sm transition-colors duration-300 inline-block whitespace-nowrap">
+          [ngClass]="
+            isBlueHeaderPage
+              ? 'bg-[#B88A56] hover:bg-[#C49A65] text-white'
+              : 'bg-twine hover:bg-twine-hover text-white'
+          "
+          class="font-sans text-[11px] sm:text-xs font-bold uppercase tracking-widest px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-sm shadow-sm transition-colors duration-300 inline-block whitespace-nowrap"
+        >
           Reservar
         </a>
 
@@ -47,51 +96,129 @@
         <button
           type="button"
           (click)="toggleMenu()"
-          [ngClass]="isBlueHeaderPage
-            ? 'text-white hover:bg-white/10 focus:ring-white/40'
-            : 'text-woodsmoke hover:bg-[#F0EBE3] focus:ring-twine/40'"
-          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-sm md:hidden focus:outline-none focus:ring-2 transition cursor-pointer"
+          [ngClass]="
+            isBlueHeaderPage
+              ? 'text-white hover:bg-white/10 focus:ring-white/40'
+              : 'text-woodsmoke hover:bg-[#F0EBE3] focus:ring-twine/40'
+          "
+          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-sm lg:hidden focus:outline-none focus:ring-2 transition cursor-pointer"
           [attr.aria-expanded]="isMenuOpen"
           aria-label="Abrir menú de navegación"
         >
           @if (isMenuOpen) {
-            <svg class="w-6 h-6" [ngClass]="isBlueHeaderPage ? 'text-[#E8D8B5]' : 'text-twine'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              class="w-6 h-6"
+              [ngClass]="isBlueHeaderPage ? 'text-[#E8D8B5]' : 'text-twine'"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           } @else {
-            <svg class="w-6 h-6" [ngClass]="isBlueHeaderPage ? 'text-white' : 'text-woodsmoke'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              class="w-6 h-6"
+              [ngClass]="isBlueHeaderPage ? 'text-white' : 'text-woodsmoke'"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           }
         </button>
       </div>
 
       <!-- Menú de Enlaces para Escritorio -->
-      <div class="items-center justify-center hidden md:flex md:w-auto md:order-1" id="navbar-desktop">
-        <ul class="flex flex-row space-x-5 lg:space-x-8 font-sans text-xs font-semibold uppercase tracking-widest">
+      <div
+        class="items-center justify-center hidden lg:flex flex-1 min-w-0 px-2 lg:pl-8 xl:pl-14 lg:translate-x-3 xl:translate-x-6 lg:order-1"
+        id="navbar-desktop"
+      >
+        <ul
+          class="flex flex-row space-x-3 xl:space-x-5 font-sans text-xs font-semibold uppercase tracking-wider xl:tracking-widest"
+        >
           <li>
-            <a routerLink="/" fragment="inicio" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="py-2 transition whitespace-nowrap">
+            <a
+              routerLink="/"
+              fragment="inicio"
+              routerLinkActive
+              #rlaD0="routerLinkActive"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD0.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
               Inicio
             </a>
           </li>
           <li>
-            <a routerLink="/rooms/cards" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="py-2 transition whitespace-nowrap">
+            <a
+              routerLink="/rooms/cards"
+              routerLinkActive
+              #rlaD1="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD1.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
               Habitaciones
             </a>
           </li>
           <li>
-            <a routerLink="/services" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="py-2 transition whitespace-nowrap">
+            <a
+              routerLink="/services"
+              routerLinkActive
+              #rlaD2="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD2.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
               Servicios
             </a>
           </li>
           <li>
-            <a routerLink="/gallery" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="py-2 transition whitespace-nowrap">
+            <a
+              routerLink="/gallery"
+              routerLinkActive
+              #rlaD3="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD3.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
               Galería
             </a>
           </li>
           <li>
-            <a routerLink="/location" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="py-2 transition whitespace-nowrap">
-              Ubicación & Contacto
+            <a
+              routerLink="/location"
+              routerLinkActive
+              #rlaD4="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD4.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
+              Ubicación<span class="hidden xl:inline"> & Contacto</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/discover-monaco"
+              routerLinkActive
+              #rlaD5="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaD5.isActive)"
+              class="py-2 border-b-2 transition whitespace-nowrap"
+            >
+              Descubre Mónaco
             </a>
           </li>
         </ul>
@@ -100,31 +227,100 @@
 
     <!-- Menú Desplegable Móvil -->
     @if (isMenuOpen) {
-      <div [ngClass]="isBlueHeaderPage ? 'bg-[#15232F] border-white/10' : 'bg-white border-[rgba(202,198,198,0.5)]'" class="md:hidden border-t shadow-lg animate-fade-in px-4 py-5">
-        <ul [ngClass]="isBlueHeaderPage ? 'border-white/20' : 'border-[rgba(202,198,198,0.4)]'" class="flex flex-col space-y-3 font-sans text-xs font-semibold uppercase tracking-widest pb-4 border-b">
+      <div
+        [ngClass]="
+          isBlueHeaderPage
+            ? 'bg-[#15232F] border-white/10'
+            : 'bg-white border-[rgba(202,198,198,0.5)]'
+        "
+        class="lg:hidden border-t shadow-lg animate-fade-in px-4 py-5"
+      >
+        <ul
+          [ngClass]="
+            isBlueHeaderPage
+              ? 'border-white/20'
+              : 'border-[rgba(202,198,198,0.4)]'
+          "
+          class="flex flex-col space-y-3 font-sans text-xs font-semibold uppercase tracking-widest pb-4 border-b"
+        >
           <li>
-            <a routerLink="/" fragment="inicio" (click)="closeMenu()" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="block py-2 transition">
+            <a
+              routerLink="/"
+              fragment="inicio"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM0="routerLinkActive"
+              [routerLinkActiveOptions]="{ exact: true }"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM0.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
               Inicio
             </a>
           </li>
           <li>
-            <a routerLink="/rooms/cards" (click)="closeMenu()" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="block py-2 transition">
+            <a
+              routerLink="/rooms/cards"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM1="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM1.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
               Habitaciones
             </a>
           </li>
           <li>
-            <a routerLink="/services" (click)="closeMenu()" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="block py-2 transition">
+            <a
+              routerLink="/services"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM2="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM2.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
               Servicios
             </a>
           </li>
           <li>
-            <a routerLink="/gallery" (click)="closeMenu()" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="block py-2 transition">
+            <a
+              routerLink="/gallery"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM3="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM3.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
               Galería
             </a>
           </li>
           <li>
-            <a routerLink="/location" (click)="closeMenu()" [ngClass]="isBlueHeaderPage ? 'text-white hover:text-[#E8D8B5]' : 'text-woodsmoke hover:text-twine'" class="block py-2 transition">
+            <a
+              routerLink="/location"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM4="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM4.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
               Ubicación & Contacto
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/discover-monaco"
+              (click)="closeMenu()"
+              routerLinkActive
+              #rlaM5="routerLinkActive"
+              ariaCurrentWhenActive="page"
+              [ngClass]="navLinkClass(rlaM5.isActive)"
+              class="block py-2 pl-3 border-l-2 transition"
+            >
+              Descubre Mónaco
             </a>
           </li>
         </ul>
@@ -132,30 +328,52 @@
         <!-- Acciones en Móvil -->
         <div class="pt-4 flex flex-col gap-2.5">
           @if (currentClient) {
-            <a routerLink="/profile" (click)="closeMenu()"
-              [ngClass]="isBlueHeaderPage
-                ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
-                : 'border-twine text-twine hover:bg-twine hover:text-white'"
-              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border py-2.5 rounded-sm transition">
-              Mi Perfil ({{ currentClient.firstName || currentClient.username }})
+            <a
+              routerLink="/profile"
+              (click)="closeMenu()"
+              [ngClass]="
+                isBlueHeaderPage
+                  ? 'border-[#D9C08E] text-[#E8D8B5] hover:bg-[#D9C08E] hover:text-[#15232F]'
+                  : 'border-twine text-twine hover:bg-twine hover:text-white'
+              "
+              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border py-2.5 rounded-sm transition"
+            >
+              Mi Perfil ({{
+                currentClient.firstName || currentClient.username
+              }})
             </a>
-            <button type="button" (click)="logout()"
-              [ngClass]="isBlueHeaderPage ? 'text-white/70 hover:text-red-300' : 'text-woodsmoke/60 hover:text-red-600'"
-              class="w-full text-center font-sans text-xs font-semibold uppercase tracking-widest py-2 transition">
+            <button
+              type="button"
+              (click)="logout()"
+              [ngClass]="
+                isBlueHeaderPage
+                  ? 'text-white/70 hover:text-red-300'
+                  : 'text-woodsmoke/60 hover:text-red-600'
+              "
+              class="w-full text-center font-sans text-xs font-semibold uppercase tracking-widest py-2 transition"
+            >
               Cerrar Sesión
             </button>
           } @else {
-            <a routerLink="/login" (click)="closeMenu()"
-              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine py-2.5 rounded-sm hover:bg-twine hover:text-white transition">
+            <a
+              routerLink="/login"
+              (click)="closeMenu()"
+              class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest border border-twine text-twine py-2.5 rounded-sm hover:bg-twine hover:text-white transition"
+            >
               Iniciar Sesión / Login
             </a>
           }
 
-          <a routerLink="/reservations/book" (click)="closeMenu()"
-            [ngClass]="isBlueHeaderPage
-              ? 'bg-[#B88A56] hover:bg-[#C49A65] text-white'
-              : 'bg-twine hover:bg-twine-hover text-white'"
-            class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest py-2.5 rounded-sm transition shadow-sm">
+          <a
+            routerLink="/reservations/book"
+            (click)="closeMenu()"
+            [ngClass]="
+              isBlueHeaderPage
+                ? 'bg-[#B88A56] hover:bg-[#C49A65] text-white'
+                : 'bg-twine hover:bg-twine-hover text-white'
+            "
+            class="w-full text-center font-sans text-xs font-bold uppercase tracking-widest py-2.5 rounded-sm transition shadow-sm"
+          >
             Reservar Ahora
           </a>
         </div>
