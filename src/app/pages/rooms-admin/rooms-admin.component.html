@@ -22,12 +22,14 @@
   }
   <app-room-filters
     [roomTypes]="roomTypes"
-    [total]="filteredRooms.length"
-    [(selectedTypeId)]="selectedTypeId"
-    [(selectedStatus)]="selectedStatus"
+    [total]="rooms.length"
+    [selectedTypeId]="selectedTypeId"
+    (selectedTypeIdChange)="onTypeFilterChange($event)"
+    [selectedStatus]="selectedStatus"
+    (selectedStatusChange)="onStatusFilterChange($event)"
   ></app-room-filters>
   <app-rooms-table
-    [rooms]="filteredRooms"
+    [rooms]="rooms"
     (editRequested)="onEditRoom($event)"
     (deleteRequested)="confirmDelete($event)"
   ></app-rooms-table>

@@ -48,15 +48,7 @@ export class RoomsAdminComponent implements OnInit {
   }
 
   loadData(): void {
-    this.roomService.findAll().subscribe({
-      next: (rooms) => {
-        this.rooms = rooms || [];
-      },
-      error: () => {
-        this.rooms = [];
-        this.errorMessage = 'No se pudieron cargar las habitaciones.';
-      },
-    });
+    this.loadRooms();
 
     this.roomTypeService.findAll().subscribe({
       next: (types) => {
@@ -69,17 +61,31 @@ export class RoomsAdminComponent implements OnInit {
     });
   }
 
-  get filteredRooms(): Room[] {
-    return this.rooms.filter((room) => {
-      const matchType =
-        this.selectedTypeId === 'ALL' ||
-        room.roomType?.id === Number(this.selectedTypeId);
+  loadRooms(): void {
+    this.roomService
+      .findAll({
+        typeId: this.selectedTypeId,
+        status: this.selectedStatus,
+      })
+      .subscribe({
+        next: (rooms) => {
+          this.rooms = rooms || [];
+        },
+        error: () => {
+          this.rooms = [];
+          this.errorMessage = 'No se pudieron cargar las habitaciones.';
+        },
+      });
+  }
 
-      const matchStatus =
-        this.selectedStatus === 'ALL' || room.status === this.selectedStatus;
+  onTypeFilterChange(typeId: string): void {
+    this.selectedTypeId = typeId;
+    this.loadRooms();
+  }
 
-      return matchType && matchStatus;
-    });
+  onStatusFilterChange(status: RoomStatus | 'ALL'): void {
+    this.selectedStatus = status;
+    this.loadRooms();
   }
 
   onAddRoom(): void {

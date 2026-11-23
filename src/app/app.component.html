@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col w-full max-w-full overflow-x-hidden relative">
+<div class="min-h-screen flex flex-col w-full max-w-full overflow-x-clip relative">
   @if (isAdmin()) {
     <app-admin-navbar />
   } @else if (isOperator()) {
@@ -30,7 +30,7 @@
     <app-navbar />
   }
 
-  <main class="flex-1 w-full max-w-full overflow-x-hidden">
+  <main class="flex-1 w-full max-w-full overflow-x-clip">
     <router-outlet></router-outlet>
   </main>
 

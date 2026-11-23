@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Room } from '../models/room.model';
+import { Room, RoomStatus } from '../models/room.model';
 import { environment } from '../../environments/environment';
 
 export interface OccupiedRoomRange {
@@ -19,9 +19,20 @@ export class RoomService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/rooms`;
 
-  //Lista todas las habitaciones, sin importar su estado.
-  findAll(): Observable<Room[]> {
-    return this.http.get<Room[]>(this.apiUrl);
+  //Lista habitaciones filtradas en el backend por tipo y/o estado (GET /api/rooms).
+  findAll(filters?: {
+    typeId?: number | string | null;
+    status?: RoomStatus | string | null;
+  }): Observable<Room[]> {
+    let params = new HttpParams();
+    if (filters?.typeId !== undefined && filters?.typeId !== null && filters.typeId !== '' && filters.typeId !== 'ALL') {
+      params = params.set('typeId', String(filters.typeId));
+    }
+    if (filters?.status !== undefined && filters?.status !== null && filters.status !== '' && filters.status !== 'ALL') {
+      params = params.set('status', String(filters.status));
+    }
+
+    return this.http.get<Room[]>(this.apiUrl, { params });
   }
 
   //Lista solo las habitaciones disponibles (GET /api/rooms?status=AVAILABLE).

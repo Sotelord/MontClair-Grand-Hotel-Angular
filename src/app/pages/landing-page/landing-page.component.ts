@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Service } from '../../models/service.model';
-import { Room } from '../../models/room.model';
+import { RoomType } from '../../models/roomType.model';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { BookingBarComponent } from './components/booking-bar/booking-bar.component';
@@ -11,7 +11,7 @@ import { RoomSectionComponent } from './components/room-section/room-section.com
 import { GalleryBannerComponent } from './components/gallery-banner/gallery-banner.component';
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { ServicesService } from '../../service/services.service';
-import { RoomService } from '../../service/room.service';
+import { RoomTypeService } from '../../service/room-type.service';
 import { AuthService } from '../../service/auth.service';
 
 @Component({
@@ -32,12 +32,12 @@ export class LandingPageComponent implements OnInit {
   title: string = 'MontClairGrandHotel';
 
   private serviceService = inject(ServicesService);
-  private roomService = inject(RoomService);
+  private roomTypeService = inject(RoomTypeService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
   serviceArray: Service[] = [];
-  roomsArray: Room[] = [];
+  roomTypesArray: RoomType[] = [];
 
   ngOnInit(): void {
     this.redirectIfLoggedIn();
@@ -51,12 +51,12 @@ export class LandingPageComponent implements OnInit {
       },
     });
 
-    this.roomService.findAll().subscribe({
-      next: (rooms) => {
-        this.roomsArray = rooms || [];
+    this.roomTypeService.findAll().subscribe({
+      next: (roomTypes) => {
+        this.roomTypesArray = roomTypes || [];
       },
       error: () => {
-        this.roomsArray = [];
+        this.roomTypesArray = [];
       },
     });
   }

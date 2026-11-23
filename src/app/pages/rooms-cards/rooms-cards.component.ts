@@ -3,8 +3,8 @@ import { PageHeaderComponent } from '../../components/page-header/page-header.co
 import { IntroductionComponent } from './components/introduction/introduction.component';
 import { RoomsCarouselComponent } from './components/rooms-carousel/rooms-carousel.component';
 import { BanerReservaComponent } from './components/baner-reserva/baner-reserva.component';
-import { RoomService } from '../../service/room.service';
-import { Room } from '../../models/room.model';
+import { RoomTypeService } from '../../service/room-type.service';
+import { RoomType } from '../../models/roomType.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,24 +21,24 @@ import { Router } from '@angular/router';
 export class RoomsCardsComponent implements OnInit {
   router = inject(Router);
 
-  private roomService = inject(RoomService);
+  private roomTypeService = inject(RoomTypeService);
 
-  roomsArray: Room[] = [];
+  roomTypesArray: RoomType[] = [];
 
   ngOnInit(): void {
-    this.roomService.findAll().subscribe({
-      next: (rooms) => {
-        this.roomsArray = rooms || [];
+    this.roomTypeService.findAll().subscribe({
+      next: (roomTypes) => {
+        this.roomTypesArray = roomTypes || [];
       },
       error: () => {
-        this.roomsArray = [];
+        this.roomTypesArray = [];
       },
     });
   }
 
-  verDetalleRoom(room: Room): void {
-    if (room.roomType?.id) {
-      this.router.navigate(['/rooms/type', room.roomType.id]);
+  verDetalleRoomType(roomType: RoomType): void {
+    if (roomType.id) {
+      this.router.navigate(['/rooms/type', roomType.id]);
     }
   }
 }

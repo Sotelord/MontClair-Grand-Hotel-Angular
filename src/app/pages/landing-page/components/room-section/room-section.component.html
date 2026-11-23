@@ -32,7 +32,7 @@
       <div class="rooms-grid">
         @for (item of visibleItems(); track $index) {
           <app-room-card
-            [room]="item"
+            [roomType]="item"
             [compact]="$index !== 1"
           />
         }

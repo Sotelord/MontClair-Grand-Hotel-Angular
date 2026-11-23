@@ -1,5 +1,5 @@
 import { Component, ElementRef, input, output, ViewChild } from '@angular/core';
-import { Room } from '../../../../models/room.model';
+import { RoomType } from '../../../../models/roomType.model';
 import { RoomCardComponent } from '../../../../components/room-card/room-card.component';
 
 @Component({
@@ -9,13 +9,13 @@ import { RoomCardComponent } from '../../../../components/room-card/room-card.co
   styleUrl: './rooms-carousel.component.scss',
 })
 export class RoomsCarouselComponent {
-  roomsArray = input.required<Room[]>();
-  roomSelected = output<Room>();
+  roomTypesArray = input.required<RoomType[]>();
+  roomTypeSelected = output<RoomType>();
 
   @ViewChild('carousel') carousel!: ElementRef<HTMLDivElement>;
 
-  onRoomSelected(room: Room): void {
-    this.roomSelected.emit(room);
+  onRoomTypeSelected(roomType: RoomType): void {
+    this.roomTypeSelected.emit(roomType);
   }
 
   scrollLeft(): void {

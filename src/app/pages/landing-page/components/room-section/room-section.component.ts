@@ -1,6 +1,6 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Room } from '../../../../models/room.model';
+import { RoomType } from '../../../../models/roomType.model';
 import { RoomCardComponent } from '../../../../components/room-card/room-card.component';
 
 @Component({
@@ -11,7 +11,7 @@ import { RoomCardComponent } from '../../../../components/room-card/room-card.co
   styleUrl: './room-section.component.scss',
 })
 export class RoomSectionComponent implements OnInit, OnDestroy {
-  roomsArray = input<Room[]>([]);
+  roomTypesArray = input<RoomType[]>([]);
 
   currentIndex: number = 0;
   intervalId: number = 0;
@@ -25,11 +25,11 @@ export class RoomSectionComponent implements OnInit, OnDestroy {
     window.clearInterval(this.intervalId);
   }
 
-  getItems(): Room[] {
-    return this.roomsArray();
+  getItems(): RoomType[] {
+    return this.roomTypesArray();
   }
 
-  visibleItems(): Room[] {
+  visibleItems(): RoomType[] {
     const items = this.getItems();
     const total = items.length;
     if (total === 0) return [];
