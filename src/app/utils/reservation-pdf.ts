@@ -199,15 +199,32 @@ function imageUrlsForRoom(
     room?.imageUrl,
     room?.secondaryImageUrl,
   ].filter((source): source is string => !!cleanValue(source));
+
   const apiOrigin = environment.apiUrl.replace(/\/api\/?$/, '');
+  const candidateBases = [
+    document.baseURI,
+    environment.backendBaseUrl ? `${environment.backendBaseUrl.replace(/\/+$/, '')}/` : '',
+    /^https?:\/\//i.test(apiOrigin) ? `${apiOrigin.replace(/\/+$/, '')}/` : '',
+  ].filter(Boolean);
+
   const urls = new Set<string>();
 
   for (const source of sources) {
-    try {
-      urls.add(new URL(source, `${apiOrigin}/`).href);
-      urls.add(new URL(source, document.baseURI).href);
-    } catch (error) {
-      console.warn('Se omitió una URL de imagen de habitación no válida.', error);
+    if (/^https?:\/\//i.test(source)) {
+      try {
+        urls.add(new URL(source).href);
+      } catch (error) {
+        console.warn('Se omitió una URL de imagen de habitación no válida.', error);
+      }
+      continue;
+    }
+
+    for (const base of candidateBases) {
+      try {
+        urls.add(new URL(source, base).href);
+      } catch (error) {
+        console.warn('Se omitió una URL de imagen de habitación no válida.', error);
+      }
     }
   }
   return [...urls];
