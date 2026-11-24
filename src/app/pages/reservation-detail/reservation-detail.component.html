@@ -76,28 +76,26 @@
         <app-services-section
           [services]="acquiredServices"
         ></app-services-section>
-        <!-- SECCIÓN 4 & 5: CONSERJERÍA Y LIQUIDACIÓN FINANCIERA -->
+        <!-- SECCIÓN 4 & 5: CONSERJERÍA, FACTURACIÓN SIIGO Y LIQUIDACIÓN FINANCIERA -->
         <div
           class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch"
         >
           <div
-            class="p-5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] space-y-4 text-sm h-full flex flex-col justify-between"
+            class="p-5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] space-y-5 text-sm h-full flex flex-col justify-between"
           >
-            <div class="space-y-2.5">
+            <!-- BLOQUE 5: CONSERJERÍA TELEFÓNICA -->
+            <div class="space-y-3">
               <span
                 class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block border-b border-[#E8E2DA] pb-2"
               >
                 5. CONSERJERÍA &amp; ATENCIÓN TELEFÓNICA
               </span>
-              <p class="text-woodsmoke/70 leading-relaxed">
+              <p class="text-woodsmoke/70 leading-relaxed text-xs sm:text-sm">
                 Nuestro servicio de conserjería puede comunicarse directamente a
                 su teléfono registrado para confirmar su itinerario de llegada,
                 resolver inquietudes o coordinar servicios adicionales para su
                 estancia.
               </p>
-            </div>
-
-            <div class="pt-2">
               <button
                 type="button"
                 (click)="requestVoiceCall()"
@@ -126,6 +124,59 @@
                 </span>
               </button>
             </div>
+
+            <!-- BLOQUE 6: FACTURACIÓN -->
+            <div class="space-y-3 pt-4 border-t border-[#E8E2DA]">
+              <div class="flex items-center justify-between border-b border-[#E8E2DA] pb-2">
+                <span
+                  class="text-[10px] uppercase tracking-[2px] font-bold text-twine-hover block"
+                >
+                  6. FACTURACIÓN
+                </span>
+                @if (siigoInvoice) {
+                  <span
+                    class="text-[9px] uppercase tracking-[1.2px] font-semibold px-2 py-0.5 bg-emerald-900/10 text-emerald-800 border border-emerald-800/20 rounded-[2px]"
+                  >
+                    {{ siigoInvoice.invoiceName }}
+                  </span>
+                }
+              </div>
+
+              <p class="text-woodsmoke/70 leading-relaxed text-xs sm:text-sm">
+                Emita y descargue la factura correspondiente a su estancia y a
+                los consumos registrados en su cuenta.
+              </p>
+
+              <button
+                type="button"
+                (click)="generateSiigoInvoice()"
+                [disabled]="isGeneratingSiigo || reservation.status === 'CANCELLED'"
+                class="w-full bg-mirage hover:bg-woodsmoke disabled:opacity-50 disabled:cursor-not-allowed text-pampas border border-mirage text-[10px] uppercase tracking-[1.5px] font-bold py-2.5 px-4 rounded-[2px] transition cursor-pointer inline-flex items-center justify-center gap-2 shadow-xs"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-twine"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <span>
+                  {{
+                    isGeneratingSiigo
+                      ? "Generando factura..."
+                      : siigoInvoice
+                        ? "Ver Factura"
+                        : "Generar Factura"
+                  }}
+                </span>
+              </button>
+            </div>
           </div>
 
           <app-account-summary
@@ -141,6 +192,156 @@
             (payWithBoldClicked)="payWithBold()"
           ></app-account-summary>
         </div>
+
+        <!-- COMPROBANTE DE FACTURA -->
+        @if (showSiigoModal && siigoInvoice) {
+          <div
+            class="mt-6 bg-white border-2 border-twine/50 rounded-[3px] shadow-[0_14px_34px_-12px_rgba(20,30,38,0.25)] overflow-hidden"
+          >
+            <div
+              class="bg-mirage text-pampas px-5 py-4 sm:px-7 sm:py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-twine/40"
+            >
+              <div>
+                <span
+                  class="text-[10px] uppercase tracking-[2.5px] text-twine font-bold block"
+                >
+                  MONTCLAIR GRAND HOTEL • COMPROBANTE DE FACTURACIÓN
+                </span>
+                <h3 class="font-serif text-lg sm:text-xl text-white mt-1">
+                  Factura de Venta — N.° {{ siigoInvoice.invoiceName }}
+                </h3>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2">
+                @if (siigoInvoice.publicUrl) {
+                  <a
+                    [href]="siigoInvoice.publicUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-3 py-1.5 bg-twine hover:bg-twine/90 text-white rounded-[2px] text-[10px] uppercase tracking-[1.5px] font-semibold transition cursor-pointer"
+                  >
+                    Ver en Siigo
+                  </a>
+                }
+                <button
+                  type="button"
+                  (click)="generateSiigoInvoice(true)"
+                  [disabled]="isGeneratingSiigo"
+                  class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-pampas border border-white/20 rounded-[2px] text-[10px] uppercase tracking-[1.5px] font-semibold transition cursor-pointer disabled:opacity-50"
+                >
+                  {{ isGeneratingSiigo ? "Actualizando..." : "Actualizar" }}
+                </button>
+                <button
+                  type="button"
+                  (click)="printSiigoInvoice()"
+                  class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-pampas border border-white/20 rounded-[2px] text-[10px] uppercase tracking-[1.5px] font-semibold transition cursor-pointer"
+                >
+                  Imprimir
+                </button>
+                <button
+                  type="button"
+                  (click)="closeSiigoModal()"
+                  class="px-3 py-1.5 bg-transparent hover:bg-white/10 text-pampas/80 border border-white/15 rounded-[2px] text-[10px] uppercase tracking-[1.5px] font-semibold transition cursor-pointer"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+
+            <div class="p-5 sm:p-7 space-y-5 text-xs sm:text-sm text-woodsmoke">
+              <div
+                class="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-5 border-b border-[#E8E2DA]"
+              >
+                <div class="p-3.5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px]">
+                  <span class="text-[9px] uppercase tracking-[1.8px] text-woodsmoke/55 block">
+                    Huésped Titular
+                  </span>
+                  <p class="font-semibold text-woodsmoke mt-1">
+                    {{ siigoInvoice.guestFullName }}
+                  </p>
+                  <p class="text-xs text-woodsmoke/70 mt-0.5 truncate">
+                    {{ siigoInvoice.guestEmail }}
+                  </p>
+                  <p class="text-[11px] text-woodsmoke/60 mt-1">
+                    Reserva #{{ siigoInvoice.reservationId }}
+                  </p>
+                </div>
+
+                <div class="p-3.5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px]">
+                  <span class="text-[9px] uppercase tracking-[1.8px] text-woodsmoke/55 block">
+                    Cliente Facturado
+                  </span>
+                  <p class="font-semibold text-woodsmoke mt-1">
+                    {{ siigoInvoice.customerSiigoName }}
+                  </p>
+                  <p class="text-xs text-woodsmoke/70 mt-0.5">
+                    ID: <span class="font-mono font-medium">{{ siigoInvoice.customerIdentification }}</span>
+                  </p>
+                </div>
+
+                <div class="p-3.5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px]">
+                  <span class="text-[9px] uppercase tracking-[1.8px] text-woodsmoke/55 block">
+                    Detalles de Emisión
+                  </span>
+                  <p class="font-semibold text-woodsmoke mt-1">
+                    Fecha: {{ siigoInvoice.issueDate }}
+                  </p>
+                  <p class="text-xs text-woodsmoke/70 mt-0.5">
+                    Medio: {{ siigoInvoice.paymentMethodName }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- DETALLE DEL CONCEPTO -->
+              <div class="border border-[#E8E2DA] rounded-[2px] overflow-hidden">
+                <div
+                  class="bg-[#FAF8F5] px-4 py-2.5 border-b border-[#E8E2DA] grid grid-cols-12 text-[10px] uppercase tracking-[1.5px] font-bold text-woodsmoke/70"
+                >
+                  <div class="col-span-3 sm:col-span-2">Código</div>
+                  <div class="col-span-6 sm:col-span-8">Concepto</div>
+                  <div class="col-span-3 sm:col-span-2 text-right">Total</div>
+                </div>
+                <div class="p-4 grid grid-cols-12 gap-2 items-start bg-white">
+                  <div class="col-span-3 sm:col-span-2">
+                    <span
+                      class="font-mono text-xs font-semibold px-2 py-1 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] inline-block"
+                    >
+                      {{ siigoInvoice.productCode }}
+                    </span>
+                  </div>
+                  <div class="col-span-6 sm:col-span-8 space-y-1">
+                    <p class="font-semibold text-woodsmoke">
+                      {{ siigoInvoice.productName }}
+                    </p>
+                    <p class="text-xs text-woodsmoke/75 leading-relaxed">
+                      {{ siigoInvoice.itemDescription }}
+                    </p>
+                  </div>
+                  <div class="col-span-3 sm:col-span-2 text-right font-semibold text-woodsmoke">
+                    {{ siigoInvoice.totalAmount | currency: "USD" : "symbol" : "1.2-2" }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- TOTAL FACTURADO -->
+              <div
+                class="p-3.5 bg-[#FAF8F5] border border-[#E8E2DA] rounded-[2px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+              >
+                <p class="text-[11px] text-woodsmoke/70 leading-relaxed">
+                  {{ siigoInvoice.observations }}
+                </p>
+                <div class="text-right shrink-0">
+                  <span class="text-[10px] uppercase tracking-[1.5px] text-woodsmoke/55 block">
+                    Total Facturado
+                  </span>
+                  <span class="font-serif text-lg font-bold text-mirage">
+                    {{ siigoInvoice.totalAmount | currency: "USD" : "symbol" : "1.2-2" }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
       </div>
 
       <!-- VOUCHER FOOTER -->

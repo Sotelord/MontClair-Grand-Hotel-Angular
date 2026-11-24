@@ -8,6 +8,35 @@ import {
 } from '../models/reservation.model';
 import { environment } from '../../environments/environment';
 
+export interface SiigoInvoiceDTO {
+  success: boolean;
+  liveSiigo: boolean;
+  dianSent: boolean;
+  reservationId: number;
+  siigoInvoiceId: string;
+  documentId: number;
+  documentTypeName: string;
+  invoiceNumber: number;
+  invoiceName: string;
+  issueDate: string;
+  customerIdentification: string;
+  customerSiigoName: string;
+  guestFullName: string;
+  guestEmail: string;
+  guestPhone: string;
+  productCode: string;
+  productName: string;
+  itemDescription: string;
+  roomSubtotal: number;
+  servicesSubtotal: number;
+  totalAmount: number;
+  currency: string;
+  paymentMethodName: string;
+  observations: string;
+  publicUrl?: string;
+  message: string;
+}
+
 //Acceso a la API REST de reservas (/api/reservations) y reglas de negocio que se validan en el cliente: fechas, huéspedes y cálculo de totales.
 @Injectable({
   providedIn: 'root',
@@ -106,6 +135,21 @@ export class ReservationService {
   triggerVoiceCall(reservationId: number, phoneNumber?: string): Observable<any> {
     const body = phoneNumber && phoneNumber.trim() ? { phoneNumber: phoneNumber.trim() } : {};
     return this.http.post<any>(`${environment.apiUrl}/ai/voice/call/reservation/${reservationId}`, body);
+  }
+
+  //Genera o recupera una factura simulada en Siigo Nube (Consumidor Final 222222222222 + Producto único MONTCLAIR-HOTEL, sin envío a DIAN).
+  generateSiigoInvoice(reservationId: number, forceNew = false): Observable<SiigoInvoiceDTO> {
+    return this.http.post<SiigoInvoiceDTO>(
+      `${environment.apiUrl}/invoices/siigo/reservation/${reservationId}?forceNew=${forceNew}`,
+      {},
+    );
+  }
+
+  //Consulta si ya existe una factura simulada de Siigo generada para esta reserva.
+  getExistingSiigoInvoice(reservationId: number): Observable<SiigoInvoiceDTO> {
+    return this.http.get<SiigoInvoiceDTO>(
+      `${environment.apiUrl}/invoices/siigo/reservation/${reservationId}`,
+    );
   }
 
   /*Convierte una fecha "YYYY-MM-DD" a milisegundos en UTC a medianoche. Se usa UTC para que la zona horaria o el horario de verano no alteren

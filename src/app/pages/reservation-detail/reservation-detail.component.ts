@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { CurrencyPipe, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReservationService } from '../../service/reservation.service';
+import { ReservationService, SiigoInvoiceDTO } from '../../service/reservation.service';
 import { BoldPaymentService } from '../../service/bold-payment.service';
 import { AuthService } from '../../service/auth.service';
 import { RoomService } from '../../service/room.service';
@@ -34,6 +34,7 @@ import { ErrorAlertComponent } from '../../components/error-alert/error-alert.co
     AccountSummaryComponent,
     SuccessAlertComponent,
     ErrorAlertComponent,
+    CurrencyPipe,
   ],
   templateUrl: './reservation-detail.component.html',
   styleUrl: './reservation-detail.component.scss',
@@ -49,9 +50,12 @@ export class ReservationDetailComponent implements OnInit {
 
   reservation: ReservationDTO | null = null;
   roomDetails: Room | null = null;
+  siigoInvoice: SiigoInvoiceDTO | null = null;
   isLoading = true;
   isPayingWithBold = false;
   isCallingConcierge = false;
+  isGeneratingSiigo = false;
+  showSiigoModal = false;
   errorMessage: string | null = null;
   paymentSuccessMessage: string | null = null;
   paymentErrorMessage: string | null = null;
@@ -91,6 +95,7 @@ export class ReservationDetailComponent implements OnInit {
       next: (res) => {
         this.reservation = res;
         this.isLoading = false;
+        this.checkExistingSiigoInvoice(res.id);
         if (res.roomId) {
           this.roomService.findById(res.roomId).subscribe({
             next: (room) => {
@@ -152,6 +157,53 @@ export class ReservationDetailComponent implements OnInit {
           'No fue posible establecer la llamada con conserjería en este momento.';
       },
     });
+  }
+
+  private checkExistingSiigoInvoice(reservationId: number): void {
+    this.reservationService.getExistingSiigoInvoice(reservationId).subscribe({
+      next: (inv) => {
+        this.siigoInvoice = inv;
+      },
+      error: () => {
+        // Si aún no existe factura generada en Siigo, no mostramos error
+      },
+    });
+  }
+
+  generateSiigoInvoice(forceNew = false): void {
+    if (!this.reservation || this.isGeneratingSiigo) {
+      return;
+    }
+    if (this.siigoInvoice && this.siigoInvoice.liveSiigo && !forceNew) {
+      this.showSiigoModal = true;
+      return;
+    }
+
+    this.isGeneratingSiigo = true;
+    this.paymentErrorMessage = null;
+
+    this.reservationService.generateSiigoInvoice(this.reservation.id, forceNew).subscribe({
+      next: (invoice) => {
+        this.isGeneratingSiigo = false;
+        this.siigoInvoice = invoice;
+        this.showSiigoModal = true;
+        this.paymentSuccessMessage = `La factura ${invoice.invoiceName} ha sido generada correctamente.`;
+      },
+      error: (err) => {
+        this.isGeneratingSiigo = false;
+        this.paymentErrorMessage =
+          err?.error?.message ||
+          'No fue posible generar la factura en este momento.';
+      },
+    });
+  }
+
+  closeSiigoModal(): void {
+    this.showSiigoModal = false;
+  }
+
+  printSiigoInvoice(): void {
+    window.print();
   }
 
   private handleBoldReturnIfPresent(id: number): void {
