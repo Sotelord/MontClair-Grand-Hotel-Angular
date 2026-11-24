@@ -10,6 +10,6 @@ export const environment = {
     ? 'http://localhost:8080'
     : 'https://supabase-camilo-web.mmzlot.easypanel.host',
   // URL del Webhook de n8n para el Agente IA de MontClair
-  n8nChatWebhookUrl: 'https://primary-production-4cb5.up.railway.app/webhook/chat-montclair',
+  n8nChatWebhookUrl: 'https://n8n-n8n.mmzlot.easypanel.host/webhook/chat-montclair',
 };
 

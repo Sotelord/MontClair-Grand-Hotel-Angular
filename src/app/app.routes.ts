@@ -26,6 +26,7 @@ import { clientGuard } from './guards/client.guard';
 import { staffGuard } from './guards/staff.guard';
 import { OperatorPortalComponent } from './pages/operator-portal/operator-portal.component';
 import { TouristGuideComponent } from './pages/tourist-guide/tourist-guide.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -89,7 +90,17 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    redirectTo: 'admin/rooms',
+    redirectTo: 'admin/dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: 'admin/dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'admin/kpis',
+    redirectTo: 'admin/dashboard',
     pathMatch: 'full',
   },
   {

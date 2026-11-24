@@ -1,0 +1,702 @@
+<section class="max-w-[90rem] w-full mx-auto px-4 py-6 sm:p-8 lg:p-12 space-y-8">
+  <!-- ENCABEZADO EJECUTIVO -->
+  <app-admin-page-header
+    superiorText="DIRECCIÓN EJECUTIVA & ANALÍTICA"
+    title="Dashboard de KPIs del Hotel"
+    description="Monitoreo financiero y operativo en tiempo real: ingresos de hospedaje, ventas de experiencias, indicadores hoteleros (ADR, RevPAR, ocupación) y fidelización de huéspedes."
+    buttonText="Nueva Reserva"
+    (buttonClick)="navigateToNewReservation()"
+  />
+
+  @if (errorMessage) {
+    <app-error-alert
+      [message]="errorMessage"
+      (closed)="errorMessage = null"
+    ></app-error-alert>
+  }
+
+  <!-- BARRA DE FILTROS & CONTROL EN TIEMPO REAL -->
+  <div
+    class="bg-white border border-[#E8E2DA] rounded-[2px] p-4 sm:p-5 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
+  >
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+      <!-- Periodo -->
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-[9px] uppercase tracking-[2px] font-bold text-woodsmoke/60"
+        >
+          Periodo de Análisis
+        </label>
+        <select
+          [(ngModel)]="selectedPeriod"
+          (ngModelChange)="onFilterChange()"
+          class="bg-pampas/40 border border-[#E8E2DA] text-woodsmoke text-xs px-3 py-2 rounded-[2px] focus:outline-none focus:border-twine font-medium"
+        >
+          <option value="ALL">Todo el Historial</option>
+          <option value="THIS_MONTH">Mes Actual</option>
+          <option value="NEXT_30_DAYS">Próximos 30 Días</option>
+          <option value="LAST_30_DAYS">Últimos 30 Días</option>
+        </select>
+      </div>
+
+      <!-- Categoría de Suite -->
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-[9px] uppercase tracking-[2px] font-bold text-woodsmoke/60"
+        >
+          Categoría de Habitación
+        </label>
+        <select
+          [(ngModel)]="selectedRoomTypeFilter"
+          (ngModelChange)="onFilterChange()"
+          class="bg-pampas/40 border border-[#E8E2DA] text-woodsmoke text-xs px-3 py-2 rounded-[2px] focus:outline-none focus:border-twine font-medium"
+        >
+          <option value="ALL">Todas las Categorías ({{ allRooms.length }} hab.)</option>
+          @for (type of allRoomTypes; track type.id) {
+            <option [value]="type.name">{{ type.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between md:justify-end gap-3 pt-2 md:pt-0 border-t md:border-t-0 border-[#E8E2DA]">
+      <span class="text-[11px] text-woodsmoke/60 font-mono">
+        {{ totalReservationsCount }} reservas analizadas
+      </span>
+
+      <button
+        type="button"
+        (click)="loadDashboardData()"
+        [disabled]="isLoading"
+        class="inline-flex items-center gap-2 bg-pampas/50 hover:bg-pampas text-woodsmoke border border-[#E8E2DA] hover:border-twine text-[10px] uppercase tracking-[1.5px] font-bold py-2 px-3.5 rounded-[2px] transition cursor-pointer"
+      >
+        <svg
+          class="w-3.5 h-3.5 text-twine-dark"
+          [class.animate-spin]="isLoading"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+          />
+        </svg>
+        <span>Actualizar</span>
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div
+      class="bg-white border border-[#E8E2DA] rounded-[2px] p-12 text-center space-y-3"
+    >
+      <div
+        class="w-8 h-8 border-2 border-twine border-t-transparent rounded-full animate-spin mx-auto"
+      ></div>
+      <p class="text-xs uppercase tracking-[2px] text-woodsmoke/60 font-semibold">
+        Calculando indicadores ejecutivos del hotel...
+      </p>
+    </div>
+  } @else {
+    <!-- FILA 1: 4 TARJETAS DE KPIS EJECUTIVOS PRINCIPALES -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+      <!-- KPI 1: INGRESOS TOTALES -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 shadow-xs flex flex-col justify-between relative overflow-hidden"
+      >
+        <div class="h-1 bg-twine absolute top-0 left-0 right-0"></div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span
+              class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark"
+            >
+              1. INGRESOS TOTALES (BRUTO)
+            </span>
+            <span
+              class="w-8 h-8 rounded-[2px] bg-pampas/60 border border-[#E8E2DA] grid place-items-center text-twine-dark"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+          </div>
+
+          <p class="font-mono text-2xl sm:text-3xl font-bold text-woodsmoke tracking-tight">
+            {{ formatCurrency(totalRevenue) }}
+          </p>
+          <p class="text-[11px] text-woodsmoke/60 mt-1">
+            Ticket promedio por reserva:
+            <strong class="font-mono text-woodsmoke">{{ formatCurrency(averageTicket) }}</strong>
+          </p>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] space-y-2 text-[11px]">
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Hospedaje ({{ roomRevenuePercent }}%):</span>
+            <span class="font-mono font-semibold text-woodsmoke">{{ formatCurrency(roomRevenue) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Servicios ({{ servicesRevenuePercent }}%):</span>
+            <span class="font-mono font-semibold text-twine-dark">{{ formatCurrency(servicesRevenue) }}</span>
+          </div>
+          <div class="w-full h-1.5 bg-pampas rounded-full overflow-hidden flex">
+            <div class="bg-mirage h-full" [style.width.%]="roomRevenuePercent"></div>
+            <div class="bg-twine h-full" [style.width.%]="servicesRevenuePercent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 2: RECAUDO Y CARTERA -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 shadow-xs flex flex-col justify-between relative overflow-hidden"
+      >
+        <div class="h-1 bg-emerald-700 absolute top-0 left-0 right-0"></div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span
+              class="text-[9px] uppercase tracking-[2px] font-bold text-emerald-800"
+            >
+              2. RECAUDO EFECTIVO &amp; SALDO
+            </span>
+            <span
+              class="w-8 h-8 rounded-[2px] bg-emerald-50 border border-emerald-200 grid place-items-center text-emerald-700"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+          </div>
+
+          <p class="font-mono text-2xl sm:text-3xl font-bold text-emerald-800 tracking-tight">
+            {{ formatCurrency(collectedRevenue) }}
+          </p>
+          <p class="text-[11px] text-woodsmoke/60 mt-1">
+            Tasa de recaudo efectivo:
+            <strong class="font-mono text-emerald-800">{{ collectionRatePercent }}%</strong>
+          </p>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] space-y-2 text-[11px]">
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Cuentas Saldadas ({{ paidReservationsCount }}):</span>
+            <span class="font-mono font-semibold text-emerald-700">{{ formatCurrency(collectedRevenue) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Por Cobrar ({{ unpaidReservationsCount }}):</span>
+            <span class="font-mono font-semibold text-amber-800">{{ formatCurrency(pendingRevenue) }}</span>
+          </div>
+          <div class="w-full h-1.5 bg-amber-100 rounded-full overflow-hidden">
+            <div class="bg-emerald-600 h-full" [style.width.%]="collectionRatePercent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 3: OCUPACIÓN E INVENTARIO -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 shadow-xs flex flex-col justify-between relative overflow-hidden"
+      >
+        <div class="h-1 bg-mirage absolute top-0 left-0 right-0"></div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span
+              class="text-[9px] uppercase tracking-[2px] font-bold text-woodsmoke"
+            >
+              3. OCUPACIÓN &amp; INVENTARIO
+            </span>
+            <span
+              class="w-8 h-8 rounded-[2px] bg-pampas/60 border border-[#E8E2DA] grid place-items-center text-woodsmoke"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="flex items-baseline gap-2">
+            <p class="font-mono text-2xl sm:text-3xl font-bold text-woodsmoke tracking-tight">
+              {{ occupancyRatePercent }}%
+            </p>
+            <span class="text-[11px] text-woodsmoke/60">
+              ({{ occupiedRoomsNowCount }} ocupadas hoy)
+            </span>
+          </div>
+          <p class="text-[11px] text-woodsmoke/60 mt-1">
+            Inventario total registrado:
+            <strong class="font-mono text-woodsmoke">{{ totalRoomsCount }} suites</strong>
+          </p>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] grid grid-cols-3 gap-2 text-center text-[10px]">
+          <div class="bg-emerald-50/70 border border-emerald-200 py-1.5 px-2 rounded-[2px]">
+            <span class="font-mono font-bold text-sm text-emerald-800 block">{{ availableRoomsCount }}</span>
+            <span class="text-emerald-800/80 uppercase tracking-wider">Libres</span>
+          </div>
+          <div class="bg-twine/10 border border-twine/40 py-1.5 px-2 rounded-[2px]">
+            <span class="font-mono font-bold text-sm text-twine-dark block">{{ occupiedRoomsNowCount }}</span>
+            <span class="text-twine-dark uppercase tracking-wider">Ocupadas</span>
+          </div>
+          <div class="bg-amber-50/70 border border-amber-200 py-1.5 px-2 rounded-[2px]">
+            <span class="font-mono font-bold text-sm text-amber-800 block">{{ maintenanceRoomsCount }}</span>
+            <span class="text-amber-800 uppercase tracking-wider">Mantto.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 4: ADR, REVPAR & ESTANCIA PROMEDIO -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 shadow-xs flex flex-col justify-between relative overflow-hidden"
+      >
+        <div class="h-1 bg-twine-dark absolute top-0 left-0 right-0"></div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span
+              class="text-[9px] uppercase tracking-[2px] font-bold text-twine-dark"
+            >
+              4. ADR • REVPAR • ESTANCIA
+            </span>
+            <span
+              class="w-8 h-8 rounded-[2px] bg-pampas/60 border border-[#E8E2DA] grid place-items-center text-twine-dark"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="flex items-baseline justify-between">
+            <div>
+              <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">ADR (Tarifa Media)</span>
+              <p class="font-mono text-2xl font-bold text-woodsmoke">
+                {{ formatCurrency(adr) }}
+              </p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase tracking-wider text-woodsmoke/50 block">RevPAR</span>
+              <p class="font-mono text-lg font-bold text-twine-dark">
+                {{ formatCurrency(revPar) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] space-y-1.5 text-[11px]">
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Total Noches Vendidas:</span>
+            <span class="font-mono font-semibold text-woodsmoke">{{ totalNightsSold }} noches</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Estancia Media (ALOS):</span>
+            <span class="font-mono font-semibold text-woodsmoke">{{ averageStayNights }} noches / res.</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-woodsmoke/70">Ocupación Media:</span>
+            <span class="font-mono font-semibold text-woodsmoke">{{ averageGuestsPerStay }} huéspedes ({{ totalGuestsHosted }} total)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA 2: RENDIMIENTO POR CATEGORÍA DE SUITE & CICLO DE VIDA DE RESERVAS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- PANEL IZQUIERDO (2 COLS): INGRESOS POR TIPO DE HABITACIÓN -->
+      <div
+        class="lg:col-span-2 bg-white border border-[#E8E2DA] rounded-[2px] p-6 sm:p-8 shadow-xs flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#E8E2DA]">
+            <div>
+              <span class="text-[9px] uppercase tracking-[2.5px] font-bold text-twine-dark block">
+                DESEMPEÑO COMERCIAL POR CATEGORÍA
+              </span>
+              <h2 class="font-serif text-lg sm:text-xl text-woodsmoke uppercase tracking-wider mt-0.5">
+                Ingresos y Noches Vendidas por Tipo de Suite
+              </h2>
+            </div>
+            <a
+              routerLink="/admin/rooms-types"
+              class="text-[10px] uppercase tracking-[1.5px] font-bold text-twine-dark hover:underline"
+            >
+              Ver Categorías →
+            </a>
+          </div>
+
+          <div class="mt-6 space-y-5">
+            @for (item of roomTypeKpis; track item.name) {
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-baseline justify-between gap-2 text-xs">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-woodsmoke uppercase tracking-wider">{{ item.name }}</span>
+                    <span class="text-[11px] text-woodsmoke/50 font-mono">
+                      (Tarifa base: {{ formatCurrency(item.baseRate) }}/noche • {{ item.totalRooms }} hab.)
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-4 font-mono">
+                    <span class="text-[11px] text-woodsmoke/70">
+                      {{ item.reservationsCount }} res. • {{ item.nightsSold }} noches
+                    </span>
+                    <span class="font-bold text-woodsmoke">
+                      {{ formatCurrency(item.revenue) }}
+                    </span>
+                    <span
+                      class="text-[10px] font-bold bg-pampas/70 border border-[#E8E2DA] text-twine-dark px-2 py-0.5 rounded-[2px] min-w-[44px] text-center"
+                    >
+                      {{ item.sharePercent }}%
+                    </span>
+                  </div>
+                </div>
+
+                <div class="w-full h-2.5 bg-pampas/60 border border-[#E8E2DA]/60 rounded-[2px] overflow-hidden">
+                  <div
+                    class="h-full bg-gradient-to-r from-mirage via-twine-dark to-twine transition-all duration-500"
+                    [style.width.%]="item.sharePercent > 0 ? item.sharePercent : 2"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-[#E8E2DA] flex flex-wrap items-center justify-between text-[11px] text-woodsmoke/60">
+          <span>Participación calculada sobre ingresos de alojamiento ({{ formatCurrency(roomRevenue) }}).</span>
+          <a routerLink="/admin/rooms" class="font-semibold text-twine-dark hover:underline">
+            Administrar inventario de habitaciones →
+          </a>
+        </div>
+      </div>
+
+      <!-- PANEL DERECHO (1 COL): ESTADO DEL CICLO DE RESERVAS -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 sm:p-8 shadow-xs flex flex-col justify-between"
+      >
+        <div>
+          <div class="pb-4 border-b border-[#E8E2DA]">
+            <span class="text-[9px] uppercase tracking-[2.5px] font-bold text-twine-dark block">
+              OPERACIÓN HOTELERA
+            </span>
+            <h2 class="font-serif text-lg sm:text-xl text-woodsmoke uppercase tracking-wider mt-0.5">
+              Estado de las Reservas
+            </h2>
+          </div>
+
+          <div class="mt-6 space-y-4">
+            <!-- Confirmadas -->
+            <div class="p-3.5 bg-pampas/30 border border-[#E8E2DA] rounded-[2px] space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-twine-dark uppercase tracking-wider flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-twine"></span>
+                  Confirmadas (Próximas)
+                </span>
+                <span class="font-mono font-bold text-woodsmoke">
+                  {{ confirmedCount }} ({{ getStatusPercentage(confirmedCount) }}%)
+                </span>
+              </div>
+              <div class="w-full h-1.5 bg-white rounded-full overflow-hidden">
+                <div class="h-full bg-twine" [style.width.%]="getStatusPercentage(confirmedCount)"></div>
+              </div>
+            </div>
+
+            <!-- Activas (En Estadía) -->
+            <div class="p-3.5 bg-emerald-50/40 border border-emerald-200 rounded-[2px] space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                  Activas (En Estadía)
+                </span>
+                <span class="font-mono font-bold text-emerald-800">
+                  {{ activeCount }} ({{ getStatusPercentage(activeCount) }}%)
+                </span>
+              </div>
+              <div class="w-full h-1.5 bg-white rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-600" [style.width.%]="getStatusPercentage(activeCount)"></div>
+              </div>
+            </div>
+
+            <!-- Finalizadas (Check-Out) -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-[2px] space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                  Finalizadas (Check-Out)
+                </span>
+                <span class="font-mono font-bold text-slate-700">
+                  {{ completedCount }} ({{ getStatusPercentage(completedCount) }}%)
+                </span>
+              </div>
+              <div class="w-full h-1.5 bg-white rounded-full overflow-hidden">
+                <div class="h-full bg-slate-500" [style.width.%]="getStatusPercentage(completedCount)"></div>
+              </div>
+            </div>
+
+            <!-- Canceladas -->
+            <div class="p-3.5 bg-rose-50/40 border border-rose-200 rounded-[2px] space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-rose-800 uppercase tracking-wider flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  Canceladas
+                </span>
+                <span class="font-mono font-bold text-rose-800">
+                  {{ cancelledCount }} ({{ cancellationRatePercent }}%)
+                </span>
+              </div>
+              <div class="w-full h-1.5 bg-white rounded-full overflow-hidden">
+                <div class="h-full bg-rose-500" [style.width.%]="cancellationRatePercent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-[#E8E2DA] flex items-center justify-between text-[11px]">
+          <span class="text-woodsmoke/60">Total histórico en filtro: <strong>{{ totalReservationsCount }}</strong></span>
+          <a routerLink="/admin/reservations" class="font-semibold text-twine-dark hover:underline">
+            Ir a Reservas →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA 3: SERVICIOS ADICIONALES MÁS VENDIDOS & HUÉSPEDES VIP / FIDELIZACIÓN -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- RANKING DE SERVICIOS Y EXPERIENCIAS -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 sm:p-8 shadow-xs flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-[#E8E2DA]">
+            <div>
+              <span class="text-[9px] uppercase tracking-[2.5px] font-bold text-twine-dark block">
+                EXPERIENCIAS &amp; CONSUMOS
+              </span>
+              <h2 class="font-serif text-lg sm:text-xl text-woodsmoke uppercase tracking-wider mt-0.5">
+                Ingresos por Servicios Adicionales
+              </h2>
+            </div>
+            <a
+              routerLink="/admin/services"
+              class="text-[10px] uppercase tracking-[1.5px] font-bold text-twine-dark hover:underline"
+            >
+              Catálogo de Servicios →
+            </a>
+          </div>
+
+          <div class="mt-5 overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead
+                class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
+              >
+                <tr>
+                  <th class="py-3 px-3">Servicio</th>
+                  <th class="py-3 px-3 text-center">Unidades</th>
+                  <th class="py-3 px-3 text-right">Ingresos</th>
+                  <th class="py-3 px-3 text-right">% Part.</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
+                @for (srv of serviceKpis; track srv.name) {
+                  <tr class="hover:bg-pampas/20">
+                    <td class="py-3 px-3 font-semibold">{{ srv.name }}</td>
+                    <td class="py-3 px-3 text-center font-mono">{{ srv.quantitySold }}</td>
+                    <td class="py-3 px-3 text-right font-mono font-semibold text-woodsmoke">
+                      {{ formatCurrency(srv.revenue) }}
+                    </td>
+                    <td class="py-3 px-3 text-right font-mono text-twine-dark font-bold">
+                      {{ srv.sharePercent }}%
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] flex justify-between text-[11px] text-woodsmoke/60">
+          <span>Total facturado en servicios adicionales:</span>
+          <strong class="font-mono text-twine-dark">{{ formatCurrency(servicesRevenue) }}</strong>
+        </div>
+      </div>
+
+      <!-- CLIENTES VIP & PROGRAMA DE FIDELIZACIÓN -->
+      <div
+        class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 sm:p-8 shadow-xs flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex items-center justify-between pb-4 border-b border-[#E8E2DA]">
+            <div>
+              <span class="text-[9px] uppercase tracking-[2.5px] font-bold text-twine-dark block">
+                COMUNIDAD &amp; LEALTAD MONTCLAIR
+              </span>
+              <h2 class="font-serif text-lg sm:text-xl text-woodsmoke uppercase tracking-wider mt-0.5">
+                Top Huéspedes &amp; Niveles de Fidelización
+              </h2>
+            </div>
+            <a
+              routerLink="/admin/clients"
+              class="text-[10px] uppercase tracking-[1.5px] font-bold text-twine-dark hover:underline"
+            >
+              Directorio de Clientes →
+            </a>
+          </div>
+
+          <!-- Resumen de Tiers -->
+          <div class="grid grid-cols-4 gap-3 my-5 text-center">
+            <div class="p-3 bg-pampas/40 border border-[#E8E2DA] rounded-[2px]">
+              <span class="font-mono font-bold text-base text-woodsmoke block">{{ totalGuestClients }}</span>
+              <span class="text-[9px] uppercase tracking-wider text-woodsmoke/60 font-bold">Huéspedes</span>
+            </div>
+            <div class="p-3 bg-mirage text-white border border-twine/40 rounded-[2px]">
+              <span class="font-mono font-bold text-base text-twine block">{{ imperialClientsCount }}</span>
+              <span class="text-[9px] uppercase tracking-wider text-white/70 font-bold">Imperial</span>
+            </div>
+            <div class="p-3 bg-twine/15 border border-twine/40 rounded-[2px]">
+              <span class="font-mono font-bold text-base text-twine-dark block">{{ privilegeClientsCount }}</span>
+              <span class="text-[9px] uppercase tracking-wider text-twine-dark font-bold">Privilege</span>
+            </div>
+            <div class="p-3 bg-pampas/30 border border-[#E8E2DA] rounded-[2px]">
+              <span class="font-mono font-bold text-base text-woodsmoke block">{{ classicClientsCount }}</span>
+              <span class="text-[9px] uppercase tracking-wider text-woodsmoke/60 font-bold">Classic</span>
+            </div>
+          </div>
+
+          <!-- Tabla Top 5 Clientes por facturación -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead
+                class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
+              >
+                <tr>
+                  <th class="py-2.5 px-3">Huésped</th>
+                  <th class="py-2.5 px-3 text-center">Nivel</th>
+                  <th class="py-2.5 px-3 text-center">Reservas</th>
+                  <th class="py-2.5 px-3 text-right">Inversión Total</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
+                @for (vip of vipClients; track vip.clientId) {
+                  <tr class="hover:bg-pampas/20">
+                    <td class="py-2.5 px-3">
+                      <span class="font-semibold block">{{ vip.fullName }}</span>
+                      <span class="text-[10px] text-woodsmoke/50 font-mono">{{ vip.email }}</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                      <span
+                        class="text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-[2px] border border-twine/40 bg-pampas/50 text-twine-dark"
+                      >
+                        {{ vip.tier }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-center font-mono">{{ vip.reservationsCount }}</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-woodsmoke">
+                      {{ formatCurrency(vip.totalSpent) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4 border-t border-[#E8E2DA] flex justify-between text-[11px] text-woodsmoke/60">
+          <span>Puntos de fidelización activos en circulación:</span>
+          <strong class="font-mono text-twine-dark">{{ totalLoyaltyPoints }} pts</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA 4: ÚLTIMAS RESERVAS Y ACCESO DIRECTO A VOUCHERS -->
+    <div class="bg-white border border-[#E8E2DA] rounded-[2px] p-6 sm:p-8 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-[#E8E2DA]">
+        <div>
+          <span class="text-[9px] uppercase tracking-[2.5px] font-bold text-twine-dark block">
+            ACTIVIDAD RECIENTE
+          </span>
+          <h2 class="font-serif text-lg sm:text-xl text-woodsmoke uppercase tracking-wider mt-0.5">
+            Últimas Reservas Registradas
+          </h2>
+        </div>
+        <a
+          routerLink="/admin/reservations"
+          class="text-[10px] uppercase tracking-[1.5px] font-bold text-twine-dark hover:underline"
+        >
+          Ver Todas las Reservas →
+        </a>
+      </div>
+
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead
+            class="bg-pampas/60 text-[10px] uppercase tracking-wider text-woodsmoke/70 border-b border-[#E8E2DA]"
+          >
+            <tr>
+              <th class="py-3 px-4">ID</th>
+              <th class="py-3 px-4">Huésped</th>
+              <th class="py-3 px-4">Suite / Hab.</th>
+              <th class="py-3 px-4">Check-In → Check-Out</th>
+              <th class="py-3 px-4 text-center">Estado</th>
+              <th class="py-3 px-4 text-center">Pago</th>
+              <th class="py-3 px-4 text-right">Total</th>
+              <th class="py-3 px-4 text-right">Detalle</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#E8E2DA] text-woodsmoke">
+            @for (res of recentReservations; track res.id) {
+              <tr class="hover:bg-pampas/20">
+                <td class="py-3 px-4 font-mono font-bold text-twine-dark">#{{ res.id }}</td>
+                <td class="py-3 px-4">
+                  <span class="font-semibold block">{{ res.clientFirstName }} {{ res.clientLastName }}</span>
+                  <span class="text-[10px] text-woodsmoke/50 font-mono">{{ res.clientEmail }}</span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="font-semibold">{{ res.roomTypeName }}</span>
+                  @if (res.roomNumber) {
+                    <span class="text-[10px] text-woodsmoke/60 font-mono block">Hab. #{{ res.roomNumber }}</span>
+                  }
+                </td>
+                <td class="py-3 px-4 font-mono text-[11px]">
+                  {{ res.checkInDate }} → {{ res.checkOutDate }}
+                  <span class="text-woodsmoke/50 block">({{ res.nights }} noches)</span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-[2px] border"
+                    [ngClass]="{
+                      'bg-emerald-50 text-emerald-800 border-emerald-300': res.status === 'ACTIVE',
+                      'bg-twine/10 text-twine-dark border-twine/40': res.status === 'CONFIRMED',
+                      'bg-slate-100 text-slate-700 border-slate-300': res.status === 'INACTIVE',
+                      'bg-rose-50 text-rose-700 border-rose-300': res.status === 'CANCELLED'
+                    }"
+                  >
+                    {{ res.status }}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  @if (res.paid) {
+                    <span class="text-[9px] uppercase font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[2px] border border-emerald-200">
+                      Pagada
+                    </span>
+                  } @else {
+                    <span class="text-[9px] uppercase font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-[2px] border border-amber-300">
+                      Pendiente
+                    </span>
+                  }
+                </td>
+                <td class="py-3 px-4 text-right font-mono font-bold text-woodsmoke">
+                  {{ formatCurrency(res.totalPrice) }}
+                </td>
+                <td class="py-3 px-4 text-right">
+                  <a
+                    [routerLink]="['/admin/reservations', res.id]"
+                    class="text-[10px] uppercase tracking-wider font-bold text-twine-dark hover:underline"
+                  >
+                    Ver Voucher →
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>
